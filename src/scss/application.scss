@@ -1,0 +1,19 @@
+@import "variables";
+
+// Bootstrap
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Fonts
+@import "../../node_modules/font-awesome/scss/font-awesome";
+@import '../../node_modules/line-awesome/css/line-awesome.min.css';
+
+// Overides
+@import "bootstrap-override";
+@import "libs-override";
+
+// Custom Styling
+@import "font";
+@import "general";
+@import "base";
+
+

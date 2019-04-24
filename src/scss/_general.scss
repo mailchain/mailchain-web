@@ -1,0 +1,41 @@
+@-ms-viewport{
+  width: auto;
+}
+
+html, body{
+  height: 100%;
+}
+
+html {
+  font-size: 14px;
+}
+
+body{
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+th{
+  font-weight: 600;
+}
+
+a {
+  cursor: pointer;
+}
+
+svg {
+  width: 100%;
+}
+
+strong, b {
+  font-weight: bold;
+}
+
+abbr[title] {
+  text-decoration: none;
+  border-bottom: 1px dotted #999;
+}
+
+button {
+  cursor: pointer;
+}
