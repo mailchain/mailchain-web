@@ -38,16 +38,7 @@ export class InboxComponent implements OnInit {
   ) {}
 
 
-  // TODO: Can this be merged with below?
-  handleReply(message?): void {
-    this.currentMessage = void 0;
-    if (message != undefined) {
-      this.currentMessage = message;
-    }
-    this.changeView('compose');
-  }
-
-  handleCompose(message?): void {
+  composeMessage(message?): void {
     this.currentMessage = void 0;
     if (message != undefined) {
       this.currentMessage = message;
@@ -65,7 +56,7 @@ export class InboxComponent implements OnInit {
   }
 
   onOpenMessage(mail: any): void {
-    this.currentMail = mail;
+    this.currentMessage = mail;
     this.changeView('message');
   }
 

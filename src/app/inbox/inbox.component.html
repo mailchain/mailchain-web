@@ -15,7 +15,7 @@
     <div id="actionButtons" class="mb-4">
       <button class="btn btn-secondary btn-block" type="button" id="fetch-messages-btn" (click)="getMails(false)"
         [disabled]="fetchMessagesDisabled">{{fetchMessagesText}}</button>
-      <a class="btn btn-danger btn-block" href="#" id="compose" (click)="handleComposeBtn()">Compose</a>
+      <a class="btn btn-danger btn-block" href="#" id="compose" (click)="composeMessage()">Compose</a>
     </div>
 
     <div class="card">
@@ -55,8 +55,21 @@
 
 
   <div *ngIf="inboxPartial == 'messages'" inbox-messages class="col-lg-8 col-xl-9 col-12"
-    [messagesLoaded]="messagesLoaded" [currentAccount]="currentAccount" [inboxMessages]="inboxMessages"
-    (openMessage)="onOpenMessage($event)" (inboxCounter)="onInboxCounter($event)"></div>
+    [messagesLoaded]="messagesLoaded"
+    [currentAccount]="currentAccount"
+    [inboxMessages]="inboxMessages"
+    
+    (openMessage)="onOpenMessage($event)"
+    (inboxCounter)="onInboxCounter($event)"
+  ></div>
+
+  <div *ngIf="inboxPartial == 'message'" inbox-message class="col-lg-8 col-xl-9 col-12"
+    [currentMessage]="currentMessage"
+    [inboxMessages]="inboxMessages"
+
+    (replyToMessage)="composeMessage($event)"
+    (goToInboxMessages)="changeView('messages')"
+  ></div>
 
 
 </div>
@@ -88,7 +101,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-gray" (click)="modalWindowNetwork.hide()">Close</button>
+        <button type="button" class="btn btn-secondary" (click)="modalWindowNetwork.hide()">Close</button>
       </div>
     </div>
   </div>
