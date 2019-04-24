@@ -1,6 +1,6 @@
 <div class="clearfix mb-xs">
     <a class="btn btn-outline-secondary btn-sm float-left" id="back-btn" (click)="returnToInboxMessages()">
-      <i class="fa fa-angle-left fa-lg"></i> Back
+      <i class="fa fa-angle-left fa-lg"></i> Back To Messages
     </a>
   </div>
   <hr>
@@ -36,7 +36,7 @@
   </div>
   <hr>
   <div class="message-body">
-    <div [innerText]="currentMessage.body"></div>
+    <pre class="pre-inherit" [innerText]="currentMessage.body"></pre> 
   </div>
   
   

@@ -24,7 +24,7 @@
       </div>
       <ul class="list-group list-group-flush">
         <li *ngFor="let address of fromAddressesKeys"
-          [class]="addressIsActive(address) ? 'list-group-item py-0 active' : 'list-group-item py-0'"
+          [class]="addressIsActive(address) ? 'list-group-item account-item active' : 'list-group-item account-item'"
           [id]="address+'-folder-inbox'">
           <div class="row">
             <div class="col-2 p-0 my-auto">
@@ -68,6 +68,14 @@
     [inboxMessages]="inboxMessages"
 
     (replyToMessage)="composeMessage($event)"
+    (goToInboxMessages)="changeView('messages')"
+  ></div>
+
+  <div *ngIf="inboxPartial == 'compose'" inbox-compose class="col-lg-8 col-xl-9 col-12"
+    [currentMessage]="currentMessage"
+    [currentNetwork]="currentNetwork"
+
+    (openMessage)="onOpenMessage($event)"
     (goToInboxMessages)="changeView('messages')"
   ></div>
 
