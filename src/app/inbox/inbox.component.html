@@ -1,3 +1,92 @@
-<p>
-  inbox works!
-</p>
+<div class="row">
+  <div class="col-md-6">
+    <h1 class="page-title">Mailchain</h1>
+  </div>
+  <div class="col-md-6 text-right">
+    <i class="fa fa-chain text-success"></i>&nbsp;
+    Network: {{currentNetwork}}
+    <a (click)="modalWindowNetwork.show()">
+      (change)
+    </a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-4 col-xl-3 col-12">
+    <div id="actionButtons" class="mb-4">
+      <button class="btn btn-secondary btn-block" type="button" id="fetch-messages-btn" (click)="getMails(false)"
+        [disabled]="fetchMessagesDisabled">{{fetchMessagesText}}</button>
+      <a class="btn btn-danger btn-block" href="#" id="compose" (click)="handleComposeBtn()">Compose</a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        Addresses
+      </div>
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let address of fromAddressesKeys"
+          [class]="addressIsActive(address) ? 'list-group-item py-0 active' : 'list-group-item py-0'"
+          [id]="address+'-folder-inbox'">
+          <div class="row">
+            <div class="col-2 p-0 my-auto">
+              <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">
+                <img class="rounded-circle addressFolderIcon" src="{{accountIdenticons[address]}}" alt="">
+              </a>
+            </div>
+            <div class="col-9 p-0 my-auto">
+              <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">{{address}}</a>
+            </div>
+            <div class="col-1 p-0 my-auto">
+              <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">
+                <span *ngIf="messagesLoaded"
+                  [class]="fromAddresses[address]['messageCount']['inbox'] > 0 ? 'float-right' : 'float-right text-muted'">
+                  {{fromAddresses[address]['messageCount']['inbox']}}
+                </span>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div *ngIf="inboxPartial == 'messages'" inbox-messages class="col-lg-8 col-xl-9 col-12"
+    [messagesLoaded]="messagesLoaded" [currentAccount]="currentAccount" [inboxMessages]="inboxMessages"
+    (openMessage)="onOpenMessage($event)" (inboxCounter)="onInboxCounter($event)"></div>
+
+
+</div>
+
+<!-- modalWindowNetwork -->
+<div bsModal #modalWindowNetwork="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header flex-column">
+        <button (click)="modalWindowNetwork.hide()" aria-label="Close" class="close ml-auto" type="button">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="col-12 text-center">
+          <h3 class="modal-title" id="accountModal">Network</h3>
+          <h5>Current Network:</h5>
+          <h5>{{currentNetwork}}</h5>
+        </div>
+        <p class="text-center text-muted mt-sm">
+          To change to a different network, please select one from the list below:
+        </p>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <select class="form-control" name="account" [(ngModel)]="currentNetwork" (change)="changeNetwork()">
+            <option *ngFor="let network of networks; let i = index" [value]="network.value">
+              {{network.label}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-gray" (click)="modalWindowNetwork.hide()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end modalWindowNetwork -->
