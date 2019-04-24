@@ -1,0 +1,52 @@
+<div class="clearfix mb-xs">
+  <a class="btn btn-outline-secondary btn-sm float-left" id="back-btn" (click)="returnToMessage()">
+    <i class="fa fa-angle-left fa-lg"></i> Back To Message
+  </a>
+</div>
+<hr>
+<div>
+  <h4>Compose <span class="fw-semi-bold">New</span></h4>
+  <div class="compose-form" id="compose-view">
+    
+    <form #mailForm="ngForm" id="message-compose" (ngSubmit)="onSubmit(mailForm)" autocomplete="off">
+      
+      <div class="form-group">
+        <label for="from">From:</label>
+        <select class="form-control" [(ngModel)]="model.from" name="from">
+          <option *ngFor="let address of fromAddresses; let i = index" [value]="address">
+              {{address}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="to">To:</label>
+        <input type="text" id="messageTo" placeholder="To" [(ngModel)]="model.to" name="to" class="input-transparent form-control" placeholder="0x00000000000000000000">
+      </div>
+
+      <div class="form-group">
+        <label for="from">Subject:</label>
+        <input type="text" id="messageSubject" placeholder="Subject" [(ngModel)]="model.subject"  name="subject" class="input-transparent form-control">
+      </div>
+
+      <div class="form-group">
+          <textarea class="form-control" id="messageBody" [(ngModel)]="model.body" name="body" rows="18"></textarea>
+      </div>
+
+      <div class="clearfix">
+        <div class="btn-toolbar pull-right">
+          <div class="btn-group mr-2">
+            <button type="reset" class="btn btn-outline-secondary" (click)="returnToMessage()">Discard</button>
+          </div>
+          <div class="btn-group mr-2">
+            <button
+              type="submit"
+              class="btn btn-danger"
+              [disabled]="sendMessagesDisabled"
+            >&nbsp;&nbsp;&nbsp;Send&nbsp;&nbsp;&nbsp;</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
