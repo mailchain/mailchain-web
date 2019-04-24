@@ -1,0 +1,13 @@
+.account-item {
+  padding-bottom: 0;
+  padding-top: 0;
+  &.active {
+    color: inherit;
+    background-color: #f2f2f2;
+    border-color: #f2f2f2;
+  }
+}
+
+.addressFolderIcon{
+  width: 100%;
+}
