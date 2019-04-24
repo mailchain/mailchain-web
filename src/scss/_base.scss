@@ -1,9 +1,5 @@
 // custom styles
 
-.addressFolderIcon{
-  width: 100%;
-}
-
 pre {
   white-space: pre-wrap;       /* Since CSS 2.1 */
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -11,3 +7,13 @@ pre {
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+
+main {
+  margin-bottom: $footer-margin-offset;
+}
+
+.widget-body {
+  padding-top: 15px;
+  border-radius: 5px;
+}
+
