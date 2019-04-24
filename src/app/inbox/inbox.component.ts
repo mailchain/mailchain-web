@@ -9,7 +9,6 @@ import { InboundMail } from '../models/inbound-mail';
   selector: 'app-inbox',
   templateUrl: './inbox.component.html',
   styleUrls: ['./inbox.component.scss'],
-  // providers: [ SearchPipe, AddressPipe ]
 })
 export class InboxComponent implements OnInit {
   public fromAddresses: any = {};
