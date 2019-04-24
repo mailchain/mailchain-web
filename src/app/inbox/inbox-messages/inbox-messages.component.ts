@@ -19,9 +19,8 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   @Output() openMessage = new EventEmitter();
   @Output() inboxCounter = new EventEmitter<any>();
   
-  
   public currentAccountInboxMessages: Array<any> = [];
-  searchText: string = '';
+  public searchText: string = '';
 
   constructor(
     private mailchainService: MailchainService,

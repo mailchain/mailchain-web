@@ -29,7 +29,7 @@
 </div>
 
 <div class="widget-body" id="mailbox-content">
-  <table class="table table-striped table-hover" id="folder-view" #messagesTable
+  <table class="table table-striped table-hover" id="messages-table" #messagesTable
     attr.data-value="{{currentAccountInboxMessages}}">
     <tbody>
       <tr *ngFor="let mail of currentAccountInboxMessages" [ngClass]="{'unread': !mail.read}">

@@ -38,8 +38,12 @@
             <div class="col-1 p-0 my-auto">
               <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">
                 <span *ngIf="messagesLoaded"
-                  [class]="fromAddresses[address]['messageCount']['inbox'] > 0 ? 'float-right' : 'float-right text-muted'">
+                  [class]="fromAddresses[address]['messageCount']['inbox'] > 0 ? 'badge badge-pill badge-secondary float-right' : 'badge badge-pill badge-light float-right text-muted'">
                   {{fromAddresses[address]['messageCount']['inbox']}}
+                </span>
+                <span *ngIf="!messagesLoaded"
+                  class="badge badge-pill badge-light float-right text-muted">
+                  ...
                 </span>
               </a>
             </div>

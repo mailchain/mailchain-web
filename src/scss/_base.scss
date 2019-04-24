@@ -24,3 +24,12 @@ pre {
 main {
   margin-bottom: $footer-margin-offset;
 }
+
+.widget-body {
+  padding-top: 15px;
+  border-radius: 5px;
+}
+
+.unread {
+  font-weight: 600;
+}
