@@ -2,11 +2,14 @@ import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angu
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { ReadService } from 'src/app/services/mailchain/messages/read.service';
 import { InboundMail } from 'src/app/models/inbound-mail';
+import { SearchPipe } from 'src/app/pipes/search-pipe/search-pipe.pipe';
+import { AddressPipe } from 'src/app/pipes/address-pipe/address-pipe.pipe';
 
 @Component({
   selector: '[inbox-messages]',
   templateUrl: './inbox-messages.component.html',
-  styleUrls: ['./inbox-messages.component.scss']
+  styleUrls: ['./inbox-messages.component.scss'],
+  providers: [ SearchPipe, AddressPipe ]
 })
 export class InboxMessagesComponent implements OnInit, OnChanges {
   @Input() messagesLoaded: boolean;
@@ -23,7 +26,8 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   constructor(
     private mailchainService: MailchainService,
     private readService: ReadService,
-
+    private searchPipe: SearchPipe,
+    private addressPipe: AddressPipe,
   ) {
   }
 
@@ -156,8 +160,17 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * Dedupe message array - workaround for dupe messages @TODO: waiting on dupe bugfix in mailchain
    */
   getCurrentAccountInboxMessages(){
-
-    this.currentAccountInboxMessages = this.inboxMessages
+    var inboxMessagesFilteredByAddress = this.addressPipe.transform(
+      this.inboxMessages,
+      this.currentAccount
+    )
+    var inboxMessagesFilteredByAddressSearch:Array<any> = this.searchPipe.transform(
+      inboxMessagesFilteredByAddress,
+      this.searchText
+    )
+    this.currentAccountInboxMessages = []
+    // Dedupe messages
+    this.currentAccountInboxMessages = this.mailchainService.dedupeMessagesByIds(inboxMessagesFilteredByAddressSearch)
 
   }
 
