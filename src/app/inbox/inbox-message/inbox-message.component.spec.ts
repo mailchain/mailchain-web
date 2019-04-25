@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InboxMessageComponent } from './inbox-message.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 describe('InboxMessageComponent', () => {
   let component: InboxMessageComponent;
@@ -8,7 +9,13 @@ describe('InboxMessageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InboxMessageComponent ]
+      declarations: [
+        InboxMessageComponent
+      ],
+      providers: [],
+      imports: [
+        ModalModule.forRoot()
+      ]
     })
     .compileComponents();
   }));

@@ -4,6 +4,7 @@ import { MailchainService } from './mailchain.service';
 import { of } from 'rxjs';
 import { OutboundMail } from 'src/app/models/outbound-mail';
 import { Mail } from 'src/app/models/mail';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('MailchainService', () => {
   let mailchainService: MailchainService;
@@ -12,8 +13,7 @@ describe('MailchainService', () => {
     TestBed.configureTestingModule({
       providers: [
         MailchainService,
-      ],
-      imports: []
+      ]
     });
 
     mailchainService = TestBed.get(MailchainService);

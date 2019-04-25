@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InboxComposeComponent } from './inbox-compose.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpHelpersService } from 'src/app/services/helpers/http-helpers/http-helpers.service';
 
 describe('InboxComposeComponent', () => {
   let component: InboxComposeComponent;
@@ -8,7 +11,16 @@ describe('InboxComposeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InboxComposeComponent ]
+      declarations: [
+        InboxComposeComponent,
+      ],
+      providers: [
+        HttpHelpersService,
+      ],
+      imports: [
+        FormsModule,
+        HttpClientModule,
+      ] 
     })
     .compileComponents();
   }));

@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { InboundMail } from 'src/app/models/inbound-mail';
 
 @Component({
   selector: '[inbox-message]',
@@ -6,8 +7,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./inbox-message.component.scss']
 })
 export class InboxMessageComponent {
-  @Input() currentMessage: any;
-  @Input() inboxMessages: any;
+  @Input() currentMessage: InboundMail = new InboundMail;
+  @Input() inboxMessages: Array<any> = [];
   @Output() goToInboxMessages = new EventEmitter();
   @Output() replyToMessage = new EventEmitter();
   

@@ -68,7 +68,7 @@ export class MailchainService {
    * @param messages an array of Mailchain messages
    * TODO: deprecate this and remove
    */
-  dedupeMessagesByIds(messages:Array<any>): Array<any>{
+  dedupeMessagesByIds(messages:Array<any> = []): Array<any>{
     let output = [];
     
     messages.forEach(msg => {
