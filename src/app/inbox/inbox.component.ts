@@ -165,8 +165,7 @@ export class InboxComponent implements OnInit {
     this.fromAddressesKeys.forEach(address => {
       var self = this
       this.messagesService.getMessages(address, this.currentNetwork).subscribe(function(res){
-        // var counter = res["messages"].length
-        //!!!!!!!
+        
         let unreadMsgs = res["messages"].filter(msg => msg.status === "ok" && !msg.read);
         let uniqUnreadMsgs = self.mailchainService.dedupeMessagesByIds(unreadMsgs)
 
