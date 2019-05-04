@@ -1,7 +1,5 @@
 # MailchainWeb Readme
 
-
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 ## Welcome to Mailchain
 
 This repository contains the Mailchain Web Application that is powered by [https://github.com/mailchain/mailchain](https://github.com/mailchain/mailchain), built to the [Mailchain specification](https://github.com/mailchain/mailchain-specification).
