@@ -1,8 +1,29 @@
 # MailchainWeb Readme
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web?ref=badge_shield)
 
-
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+* [MailchainWeb Readme](#mailchainweb-readme)
+	* [Welcome to Mailchain](#welcome-to-mailchain)
+	* [About Mailchain](#about-mailchain)
+		* [Introduction](#introduction)
+		* [Mailchain Message Lifecycle](#mailchain-message-lifecycle)
+	* [Getting Started](#getting-started)
+	* [Address Formats](#address-formats)
+		* [URL and Port Settings](#url-and-port-settings)
+		* [Browser Storage](#browser-storage)
+		* [Message Storage](#message-storage)
+	* [Development Info](#development-info)
+		* [Development server](#development-server)
+		* [Build](#build)
+		* [Running unit tests](#running-unit-tests)
+		* [Running end-to-end tests](#running-end-to-end-tests)
+	* [License](#license)
+
+<!-- /code_chunk_output -->
+
 ## Welcome to Mailchain
 
 This repository contains the Mailchain Web Application that is powered by [https://github.com/mailchain/mailchain](https://github.com/mailchain/mailchain), built to the [Mailchain specification](https://github.com/mailchain/mailchain-specification).
@@ -10,10 +31,10 @@ This repository contains the Mailchain Web Application that is powered by [https
 ---
 
 
-## About Mailchain ###
+## About Mailchain 
 Extract from the [Mailchain specification](https://github.com/mailchain/mailchain-specification):
 
-### Introduction ###
+### Introduction 
 Mailchain enables blockchain-based email-like messaging with plain or rich text and attachment capabilities. Using blockchain protocols and decentralized storage, Mailchain delivers a simple, secure, messaging experience.
 
 Account holders or owners of a public address often need to communicate in the context of the account or public address. Communication may relate to transactions, account actions or some type of notification.
@@ -24,7 +45,7 @@ The majority of blockchain protocols provide no standard way to handle messaging
 
 This proposal outlines how Mailchain gives users the ability to send and receive rich-media HTML messages between public addresses through a simple, email-like interface. All message contents and attachments are encrypted so only the intended recipient of the message can decrypt and view messages.
 
-### Mailchain Message Lifecycle ###
+### Mailchain Message Lifecycle
 
 Mailchain is a simple, secure and practical standard which can be implemented across different blockchains. It uses underlying native blockchain protocol capabilities including addressing, immutability, data transmission, and cryptography.
 
@@ -53,6 +74,23 @@ The following address formats are referenced:
 | --- | --- | --- |
 | Ethereum | `0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6` | Case insensitive |
 | Mailchain | `<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>` | Case insensitive |
+
+### URL and Port Settings
+By default, the Mailchain web interface expects to communicate with the Mailchain application running on the localhost using port 8080.
+
+@TODO It is possible to change the ‘url’ and ‘port’ in the Mailchain settings.
+
+### Browser Storage
+The following values are cached in the browser session storage:
+
+Key | Value
+| - | - |
+currentNetwork: | The current selected network (e.g. `ropsten`, `mainnet`)
+currentAccount: | The current selected account for this network
+
+### Message Storage
+The Mailchain web application does not store message contents.
+
 
 ## Development Info
 
