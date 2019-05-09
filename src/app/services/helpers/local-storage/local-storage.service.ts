@@ -57,4 +57,48 @@ export class LocalStorageService {
     sessionStorage.setItem('currentNetwork', network);
   }
 
+  /**
+   * Retrieves the current host for the mailchain application. If no value is stored, it will return the default host set in environment.ts
+   */
+  getCurrentHost(){
+    
+    if (sessionStorage['currentHost'] && sessionStorage['currentHost']!= "undefined") {
+       return sessionStorage.getItem('currentHost')
+     } else {       
+       var host = applicationApiConfig.mailchainNodeBaseHost
+       this.setCurrentHost(host)
+       return host
+     }
+  }
+
+  /**
+   * Sets the current host for the mailchain application
+   * @param host is the server host e.g. 127.0.0.1
+   */
+  setCurrentHost(host){
+    sessionStorage.setItem('currentHost', host);
+  }
+
+  /**
+   * Retrieves the current port for the mailchain application. If no value is stored, it will return the default port set in environment.ts
+   */
+  getCurrentPort(){
+    
+    if (sessionStorage['currentPort'] && sessionStorage['currentPort']!= "undefined") {
+       return sessionStorage.getItem('currentPort')
+     } else {       
+       var port = applicationApiConfig.mailchainNodeBasePort
+       this.setCurrentPort(port)
+       return port
+     }
+  }
+
+  /**
+   * Sets the current port for the mailchain application
+   * @param port is the server port e.g. 8080
+   */
+  setCurrentPort(port){
+    sessionStorage.setItem('currentPort', port);
+  }
+
 }

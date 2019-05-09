@@ -4,6 +4,7 @@ import { PublicKeyService } from '../services/mailchain/public-key/public-key.se
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { InboundMail } from '../models/inbound-mail';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-inbox',
@@ -25,6 +26,10 @@ export class InboxComponent implements OnInit {
   public currentNetwork: string;
   public currentMail: any;
   public currentMessage: any;
+
+  public currentHost: string;
+  public currentPort: string;
+  public serverSettings: any = {};
   
   public accountIdenticons: any = {};
 
@@ -93,6 +98,37 @@ export class InboxComponent implements OnInit {
     this.getMails()
   }
 
+  /**
+   * Changes the server settings in the client.
+   */
+  serverSettingsFormSubmit(form: NgForm){    
+    // serverSettingsForm
+    var host = form["form"]["value"]["serverSettingsHost"]
+    var port = form["form"]["value"]["serverSettingsPort"]
+    var formChanged = false
+
+    if ( host != undefined && host != this.currentHost ) {
+      this.localStorageService.setCurrentHost(host)
+      formChanged = true
+    }
+    if ( port != undefined && port != this.currentPort ) {      
+      this.localStorageService.setCurrentPort(port)
+      formChanged = true
+    }
+    if (formChanged) {
+      this.getServerSettings()
+      this.ngOnInit()
+    }
+  }
+
+  /**
+   * Retrieve the current server settings for the inbox
+   */
+  public getServerSettings() {
+    this.currentHost = this.localStorageService.getCurrentHost()
+    this.currentPort = this.localStorageService.getCurrentPort()
+  }
+
   public addressIsActive(address){
     return address == this.currentAccount
   }
@@ -137,17 +173,29 @@ export class InboxComponent implements OnInit {
       this.accountIdenticons[address] = this.mailchainService.generateIdenticon(address)
     });    
   }
+  
+  /**
+   * Initiates the server settings form with default values
+   */
+  setupServerSettingsForm() {
+    this.serverSettings = {
+      host: this.currentHost,
+      port: this.currentPort
+    }
+  }
 
   async ngOnInit(): Promise<void> {
     this.currentAccount = await this.localStorageService.getCurrentAccount()
     this.currentNetwork = this.localStorageService.getCurrentNetwork()
+    this.getServerSettings()
     
+    this.setupServerSettingsForm()
     await this.setFromAddressList()
     this.getMails()
     this.setNetworkList()
     this.setAccountIdenticons()
   }
-
+  
 
   /**
    * Fetch mails from the server
