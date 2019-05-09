@@ -54,7 +54,11 @@ export class InboxComposeComponent implements OnInit {
    * Go back to the inbox-messages view
    */
   public returnToMessage(): void {
-    this.openMessage.emit(this.currentMessage);
+    if (this.currentMessage == undefined) {
+      this.returnToInboxMessages();
+    } else {
+      this.openMessage.emit(this.currentMessage);
+    }
   }
 
   /**
