@@ -1,41 +1,16 @@
 import { Injectable } from '@angular/core';
-import { PublicKeyService } from '../../mailchain/public-key/public-key.service';
 import { applicationApiConfig } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LocalStorageService {
+export class LocalStorageServerService {
 
   constructor(
-    private publicKeyService: PublicKeyService
   ) { }
 
   /**
-   * Retrieves the current account for the user. If no value is stored, it will try to fetch the first account listed
-   */
-  async getCurrentAccount(){
-    
-    if (sessionStorage['currentAccount'] && sessionStorage['currentAccount']!= "undefined") {
-       return sessionStorage.getItem('currentAccount')
-     } else {       
-       var addresses = await this.publicKeyService.getPublicSenderAddresses();
-       var address = addresses.length ? addresses[0] : ""
-       this.setCurrentAccount(address)
-       return address
-     }
-  }
-
-  /**
-   * Sets the current account for the user
-   * @param address is the public address
-   */
-  setCurrentAccount(address){
-    sessionStorage.setItem('currentAccount', address);
-  }
-
-  /**
-   * Retrieves the current account for the user. If no value is stored, it will try to fetch the first account listed
+   * Retrieves the current network. If no value is stored, it will try to fetch the first network from the environment config
    */
   getCurrentNetwork(){
     
@@ -55,6 +30,28 @@ export class LocalStorageService {
    */
   setCurrentNetwork(network){
     sessionStorage.setItem('currentNetwork', network);
+  }
+
+  /**
+   * Retrieves the current web protocol for the mailchain application. If no value is stored, it will return the default web protocol set in environment.ts
+   */
+  getCurrentWebProtocol(){
+    
+    if (sessionStorage['currentWebProtocol'] && sessionStorage['currentWebProtocol']!= "undefined") {
+       return sessionStorage.getItem('currentWebProtocol')
+     } else {       
+       var webProtocol = applicationApiConfig.mailchainNodeBaseWebProtocol
+       this.setCurrentWebProtocol(webProtocol)
+       return webProtocol
+     }
+  }
+
+  /**
+   * Sets the current web protocol for the mailchain application
+   * @param webProtocol is the server web protocol e.g. http or https
+   */
+  setCurrentWebProtocol(webProtocol){
+    sessionStorage.setItem('currentWebProtocol', webProtocol);
   }
 
   /**
@@ -101,4 +98,11 @@ export class LocalStorageService {
     sessionStorage.setItem('currentPort', port);
   }
 
+  /**
+   * Gets the server `protocol`, `host` & `port`
+   */
+  getCurrentServerDetails(){
+    return `${this.getCurrentWebProtocol()}://${this.getCurrentHost()}:${this.getCurrentPort()}`
+  }
+  
 }

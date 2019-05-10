@@ -2,14 +2,15 @@ export const environment = {
   production: true
 };
 
-const mailchainNodeBaseProtocol = "http"
+const mailchainNodeBaseWebProtocol = "http"
 const mailchainNodeBaseHost = "127.0.0.1"
 const mailchainNodeBasePort = "8080"
 
 export const applicationApiConfig = {
   "networks": ["ropsten"],
-  "mailchainNodeBaseProtocol": mailchainNodeBaseProtocol,
+  "protocols": ["ethereum"],
+
+  "mailchainNodeBaseWebProtocol": mailchainNodeBaseWebProtocol,
   "mailchainNodeBaseHost": mailchainNodeBaseHost,
   "mailchainNodeBasePort": mailchainNodeBasePort,
-  "mailchainNodeBaseUrl": `${mailchainNodeBaseProtocol}://${mailchainNodeBaseHost}:${mailchainNodeBasePort}`,
 }

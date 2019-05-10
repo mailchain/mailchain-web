@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalStorageService } from '../services/helpers/local-storage/local-storage.service';
+import { LocalStorageAccountService } from '../services/helpers/local-storage-account/local-storage-account.service';
 import { PublicKeyService } from '../services/mailchain/public-key/public-key.service';
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { InboundMail } from '../models/inbound-mail';
 import { NgForm } from '@angular/forms';
+import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 
 @Component({
   selector: 'app-inbox',
@@ -35,7 +36,8 @@ export class InboxComponent implements OnInit {
 
 
   constructor(
-    private localStorageService: LocalStorageService,
+    private localStorageAccountService: LocalStorageAccountService,
+    private localStorageServerService: LocalStorageServerService,
     private publicKeyService: PublicKeyService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
@@ -86,7 +88,7 @@ export class InboxComponent implements OnInit {
       this.changeView('messages');
     }
     this.currentAccount = address
-    this.localStorageService.setCurrentAccount(this.currentAccount)
+    this.localStorageAccountService.setCurrentAccount(this.currentAccount)
   }
 
   /**
@@ -94,7 +96,7 @@ export class InboxComponent implements OnInit {
    */
   changeNetwork(){    
     this.changeView('messages')
-    this.localStorageService.setCurrentNetwork(this.currentNetwork)
+    this.localStorageServerService.setCurrentNetwork(this.currentNetwork)
     this.getMails()
   }
 
@@ -108,11 +110,11 @@ export class InboxComponent implements OnInit {
     var formChanged = false
 
     if ( host != undefined && host != this.currentHost ) {
-      this.localStorageService.setCurrentHost(host)
+      this.localStorageServerService.setCurrentHost(host)
       formChanged = true
     }
     if ( port != undefined && port != this.currentPort ) {      
-      this.localStorageService.setCurrentPort(port)
+      this.localStorageServerService.setCurrentPort(port)
       formChanged = true
     }
     if (formChanged) {
@@ -125,8 +127,8 @@ export class InboxComponent implements OnInit {
    * Retrieve the current server settings for the inbox
    */
   public getServerSettings() {
-    this.currentHost = this.localStorageService.getCurrentHost()
-    this.currentPort = this.localStorageService.getCurrentPort()
+    this.currentHost = this.localStorageServerService.getCurrentHost()
+    this.currentPort = this.localStorageServerService.getCurrentPort()
   }
 
   public addressIsActive(address){
@@ -185,8 +187,8 @@ export class InboxComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.currentAccount = await this.localStorageService.getCurrentAccount()
-    this.currentNetwork = this.localStorageService.getCurrentNetwork()
+    this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
+    this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
     this.getServerSettings()
     
     this.setupServerSettingsForm()
