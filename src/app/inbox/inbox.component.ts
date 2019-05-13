@@ -16,6 +16,7 @@ export class InboxComponent implements OnInit {
   public fromAddresses: any = {};
   public fromAddressesKeys: Array<any> = [];
   public networks: Array<any> = [];
+  public currentWebProtocols: Array<any> = [];
   public inboxMessages: Array<any> = [];
   public messagesLoaded: boolean = false;
   public fetchMessagesDisabled: boolean = false;
@@ -28,6 +29,7 @@ export class InboxComponent implements OnInit {
   public currentMail: any;
   public currentMessage: any;
 
+  public currentWebProtocol: string;
   public currentHost: string;
   public currentPort: string;
   public serverSettings: any = {};
@@ -120,10 +122,15 @@ export class InboxComponent implements OnInit {
    */
   serverSettingsFormSubmit(form: NgForm){    
     // serverSettingsForm
+    var webProtocol = form["form"]["value"]["serverSettingsWebProtocol"]
     var host = form["form"]["value"]["serverSettingsHost"]
     var port = form["form"]["value"]["serverSettingsPort"]
     var formChanged = false
-
+    
+    if ( webProtocol != undefined && webProtocol != this.currentWebProtocol ) {      
+      this.localStorageServerService.setCurrentWebProtocol(webProtocol)
+      formChanged = true
+    }
     if ( host != undefined && host != this.currentHost ) {
       this.localStorageServerService.setCurrentHost(host)
       formChanged = true
@@ -144,6 +151,7 @@ export class InboxComponent implements OnInit {
    * Retrieve the current server settings for the inbox
    */
   public getServerSettings() {
+    this.currentWebProtocol = this.localStorageServerService.getCurrentWebProtocol()
     this.currentHost = this.localStorageServerService.getCurrentHost()
     this.currentPort = this.localStorageServerService.getCurrentPort()  
   }
@@ -180,6 +188,19 @@ export class InboxComponent implements OnInit {
     });
   }
 
+  /**
+   * Set the list of web protocols in the server settings dropdown
+   */
+  setCurrentWebProtocolsList(){
+    var currentWebProtocols = this.mailchainService.getWebProtocols();
+    currentWebProtocols.forEach(network => {
+      this.currentWebProtocols.push({
+        label: network,
+        value: network,
+      })
+    });
+  }
+
   getIdenticon(address){
     this.mailchainService.generateIdenticon(address)
   }
@@ -198,20 +219,31 @@ export class InboxComponent implements OnInit {
    */
   setupServerSettingsForm() {
     this.serverSettings = {
+      webProtocol: this.currentWebProtocol,
       host: this.currentHost,
       port: this.currentPort
     }
   }
 
   async ngOnInit(): Promise<void> {
-    this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
-    this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
-    this.getServerSettings()
     
+    try {
+      this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
+      this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
+      this.getServerSettings()
+    } catch (error) {
+      this.getServerSettings()
+     // @TODO add error handling for failure to reach server
+     console.log("error: it doesn't loogk like your application is running. Please check your settings.");
+     
+    }
+    
+    this.setCurrentWebProtocolsList()
+    this.setNetworkList()
     this.setupServerSettingsForm()
+
     await this.setFromAddressList()
     this.getMails()
-    this.setNetworkList()
     this.setAccountIdenticons()
   }
   

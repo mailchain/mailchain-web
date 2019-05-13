@@ -58,9 +58,20 @@ export class MailchainService {
     return makeBlockie(addr)
   }
 
+  /**
+   * Return available networks supported by mailchain
+   */
   getPublicNetworks(){
     // TODO add method for getting networks
     return  applicationApiConfig.networks
+  }
+  
+  /**
+   * Return available web protocols supported by mailchain
+   */
+  getWebProtocols(){
+    // TODO add method for getting networks
+    return  applicationApiConfig.webProtocols
   }
 
   /**

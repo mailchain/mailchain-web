@@ -146,6 +146,17 @@
       <form #serverSettingsForm="ngForm" id="serverSettingsForm" (ngSubmit)="serverSettingsFormSubmit(serverSettingsForm);modalWindowSettings.hide()" autocomplete="off">
         
         <div class="modal-body">
+          <div class="form-group">
+            <label for="serverSettingsWebProtocol">Web Protocol:</label>
+            <select class="input-transparent form-control" 
+              name="serverSettingsWebProtocol"
+              [(ngModel)]="serverSettings.webProtocol"
+            >
+              <option *ngFor="let webProtocol of currentWebProtocols; let i = index" [value]="webProtocol.value">
+                {{webProtocol.label}}
+              </option>
+            </select>
+          </div>
       
           <div class="form-group">
             <label for="serverSettingsHost">Host:</label>
