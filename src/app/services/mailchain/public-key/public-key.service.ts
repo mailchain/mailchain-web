@@ -1,17 +1,28 @@
 import { Injectable } from '@angular/core';
-import { applicationApiConfig } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PublicKeyService {
-  private url = `${applicationApiConfig.mailchainNodeBaseUrl}/api`
+  private url: string
   
   constructor(
     private http: HttpClient,
-  ) { }
-    /**
+    private localStorageServerService: LocalStorageServerService,
+  ) {
+    this.initUrl()
+  }
+
+  /**
+   * Initialize URL from local storage
+   */
+  initUrl(){
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
+  }
+
+  /**
    * Get the public key of a public address
    */
   getPublicKeyFromAddress(public_address, network) { 
@@ -21,7 +32,7 @@ export class PublicKeyService {
     );
   }
 
-    /**
+  /**
    * Get and return the public addresses from my wallet to send from
    */
   async getPublicSenderAddresses() {
