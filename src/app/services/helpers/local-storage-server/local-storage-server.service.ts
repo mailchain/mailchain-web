@@ -33,6 +33,13 @@ export class LocalStorageServerService {
   }
 
   /**
+   * Removes current network
+   */
+  removeCurrentNetwork(){
+    sessionStorage.removeItem('currentNetwork')
+  }
+
+  /**
    * Retrieves the current web protocol for the mailchain application. If no value is stored, it will return the default web protocol set in environment.ts
    */
   getCurrentWebProtocol(){
@@ -57,8 +64,7 @@ export class LocalStorageServerService {
   /**
    * Retrieves the current host for the mailchain application. If no value is stored, it will return the default host set in environment.ts
    */
-  getCurrentHost(){
-    
+  getCurrentHost(){    
     if (sessionStorage['currentHost'] && sessionStorage['currentHost']!= "undefined") {
        return sessionStorage.getItem('currentHost')
      } else {       
@@ -101,7 +107,7 @@ export class LocalStorageServerService {
   /**
    * Gets the server `protocol`, `host` & `port`
    */
-  getCurrentServerDetails(){
+  getCurrentServerDetails(){   
     return `${this.getCurrentWebProtocol()}://${this.getCurrentHost()}:${this.getCurrentPort()}`
   }
   

@@ -32,4 +32,12 @@ export class LocalStorageAccountService {
     sessionStorage.setItem('currentAccount', address);
   }
 
+  /**
+   * Removes current account
+   */
+  removeCurrentAccount(){
+    sessionStorage.removeItem('currentAccount')
+  }
+
+
 }

@@ -101,6 +101,21 @@ export class InboxComponent implements OnInit {
   }
 
   /**
+   * Removes the session storage account setting
+   */
+  removeCurrentAccount(){
+    this.localStorageAccountService.removeCurrentAccount()
+    
+  }
+
+  /**
+   * Removes the session storage network setting
+   */
+  removeCurrentNetwork(){
+    this.localStorageServerService.removeCurrentNetwork()
+  }
+
+  /**
    * Changes the server settings in the client.
    */
   serverSettingsFormSubmit(form: NgForm){    
@@ -118,8 +133,10 @@ export class InboxComponent implements OnInit {
       formChanged = true
     }
     if (formChanged) {
-      this.getServerSettings()
-      this.ngOnInit()
+      this.removeCurrentAccount();
+      this.removeCurrentNetwork();
+
+      window.location.reload()
     }
   }
 
@@ -128,7 +145,7 @@ export class InboxComponent implements OnInit {
    */
   public getServerSettings() {
     this.currentHost = this.localStorageServerService.getCurrentHost()
-    this.currentPort = this.localStorageServerService.getCurrentPort()
+    this.currentPort = this.localStorageServerService.getCurrentPort()  
   }
 
   public addressIsActive(address){
