@@ -295,7 +295,8 @@ export class InboxComponent implements OnInit {
      console.log("error: it doesn't look like your application is running. Please check your settings.");
      
     }
-    
+    await this.checkServerSettingsInQueryParams()
+
     this.setCurrentWebProtocolsList()
     this.setNetworkList()
     this.setupServerSettingsForm()
