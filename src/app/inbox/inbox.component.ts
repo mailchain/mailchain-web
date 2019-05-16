@@ -292,7 +292,7 @@ export class InboxComponent implements OnInit {
     } catch (error) {
       this.getServerSettings()
      // @TODO add error handling for failure to reach server
-     console.log("error: it doesn't loogk like your application is running. Please check your settings.");
+     console.log("error: it doesn't look like your application is running. Please check your settings.");
      
     }
     
