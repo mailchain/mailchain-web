@@ -6,6 +6,7 @@ import { MessagesService } from '../services/mailchain/messages/messages.service
 import { InboundMail } from '../models/inbound-mail';
 import { NgForm } from '@angular/forms';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-inbox',
@@ -43,6 +44,7 @@ export class InboxComponent implements OnInit {
     private publicKeyService: PublicKeyService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
 
@@ -118,33 +120,67 @@ export class InboxComponent implements OnInit {
   }
 
   /**
-   * Changes the server settings in the client.
+   * Changes the server settings in the client from form data.
+   * @param form is the settings form submitted from the view
    */
   serverSettingsFormSubmit(form: NgForm){    
-    // serverSettingsForm
     var webProtocol = form["form"]["value"]["serverSettingsWebProtocol"]
     var host = form["form"]["value"]["serverSettingsHost"]
     var port = form["form"]["value"]["serverSettingsPort"]
-    var formChanged = false
+    var settingsHash = {}
     
     if ( webProtocol != undefined && webProtocol != this.currentWebProtocol ) {      
-      this.localStorageServerService.setCurrentWebProtocol(webProtocol)
-      formChanged = true
+      settingsHash["web-protocol"] = webProtocol
     }
     if ( host != undefined && host != this.currentHost ) {
-      this.localStorageServerService.setCurrentHost(host)
-      formChanged = true
+      settingsHash["host"] = host
     }
     if ( port != undefined && port != this.currentPort ) {      
-      this.localStorageServerService.setCurrentPort(port)
-      formChanged = true
+      settingsHash["port"] = port
     }
-    if (formChanged) {
+    this.updateServerSettings(settingsHash)
+  }
+
+  /**
+   * Updates the server settings and reloads the current path. The reload is intended to remove url params and reload a clean component.
+   * @param settingsHash the server settings hash
+   * `{ "web-protocol": "http"|"https", "url": "127.0.0.1", "port": "8080" }`
+   */
+  async updateServerSettings(
+    settingsHash: any
+  ){
+    let serverSettingsChanged: boolean = false
+    
+    if (
+      settingsHash["web-protocol"] != undefined &&
+      settingsHash["web-protocol"] != this.currentWebProtocol
+    ) {      
+      this.localStorageServerService.setCurrentWebProtocol(settingsHash["web-protocol"])
+      serverSettingsChanged = true
+    }
+    if (
+      settingsHash["host"] != undefined &&
+      settingsHash["host"] != this.currentHost
+    ) {
+      this.localStorageServerService.setCurrentHost(settingsHash["host"])
+      serverSettingsChanged = true
+    }
+    if (
+      settingsHash["port"] != undefined &&
+      settingsHash["port"] != this.currentPort
+    ) {      
+      this.localStorageServerService.setCurrentPort(settingsHash["port"])
+      serverSettingsChanged = true
+    }
+
+    if (serverSettingsChanged) {
       this.removeCurrentAccount();
       this.removeCurrentNetwork();
 
-      window.location.reload()
+      let path = window.location.pathname
+      window.location.replace(path)
     }
+
   }
 
   /**
@@ -156,6 +192,10 @@ export class InboxComponent implements OnInit {
     this.currentPort = this.localStorageServerService.getCurrentPort()  
   }
 
+  /**
+   * Returns true or false for whether the address is the active currentAccount
+   * @param address the address to query
+   */
   public addressIsActive(address){
     return address == this.currentAccount
   }
@@ -201,10 +241,6 @@ export class InboxComponent implements OnInit {
     });
   }
 
-  getIdenticon(address){
-    this.mailchainService.generateIdenticon(address)
-  }
-
   /**
    * Fetch account identicons for all fromAddresses and set the address value in accountIdenticons.
    */
@@ -225,8 +261,30 @@ export class InboxComponent implements OnInit {
     }
   }
 
+  /**
+   * Checks for server setting query params in the url. If present, it will call updateServerSettings with the relevant settings
+   * e.g. http://localhost:4200/#/?web-protocol=http&url=127.0.0.1&port=8080
+   * web-protocol=http
+   * url=127.0.0.1
+   * port=8080
+   */
+  checkServerSettingsInQueryParams(){
+    let serverParams: any[] = ["web-protocol", "url", "port"]
+    let serverSettings: any = {}
+    let serverSettingsPresent: boolean = false
+
+    this.activatedRoute.queryParamMap.subscribe(paramsAsMap => {
+      paramsAsMap.keys.filter(v => serverParams.includes(v)).forEach(val => {
+        serverSettingsPresent = true
+        serverSettings[val] = paramsAsMap["params"][val]
+      })
+      if (serverSettingsPresent) {
+        this.updateServerSettings(serverSettings)
+      }
+    })
+  }
+
   async ngOnInit(): Promise<void> {
-    
     try {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
@@ -234,10 +292,11 @@ export class InboxComponent implements OnInit {
     } catch (error) {
       this.getServerSettings()
      // @TODO add error handling for failure to reach server
-     console.log("error: it doesn't loogk like your application is running. Please check your settings.");
+     console.log("error: it doesn't look like your application is running. Please check your settings.");
      
     }
-    
+    await this.checkServerSettingsInQueryParams()
+
     this.setCurrentWebProtocolsList()
     this.setNetworkList()
     this.setupServerSettingsForm()
