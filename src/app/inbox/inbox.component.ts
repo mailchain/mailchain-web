@@ -144,7 +144,7 @@ export class InboxComponent implements OnInit {
   /**
    * Updates the server settings and reloads the current path. The reload is intended to remove url params and reload a clean component.
    * @param settingsHash the server settings hash
-   * `{ "web-protocol": "http"|"https", "url": "127.0.0.1", "port": "8080" }`
+   * `{ "web-protocol": "http"|"https", "host": "127.0.0.1", "port": "8080" }`
    */
   async updateServerSettings(
     settingsHash: any
@@ -263,13 +263,13 @@ export class InboxComponent implements OnInit {
 
   /**
    * Checks for server setting query params in the url. If present, it will call updateServerSettings with the relevant settings
-   * e.g. http://localhost:4200/#/?web-protocol=http&url=127.0.0.1&port=8080
+   * e.g. http://localhost:4200/#/?web-protocol=http&host=127.0.0.1&port=8080
    * web-protocol=http
-   * url=127.0.0.1
+   * host=127.0.0.1
    * port=8080
    */
   checkServerSettingsInQueryParams(){
-    let serverParams: any[] = ["web-protocol", "url", "port"]
+    let serverParams: any[] = ["web-protocol", "host", "port"]
     let serverSettings: any = {}
     let serverSettingsPresent: boolean = false
 
