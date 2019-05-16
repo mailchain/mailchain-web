@@ -241,10 +241,6 @@ export class InboxComponent implements OnInit {
     });
   }
 
-  getIdenticon(address){
-    this.mailchainService.generateIdenticon(address)
-  }
-
   /**
    * Fetch account identicons for all fromAddresses and set the address value in accountIdenticons.
    */
