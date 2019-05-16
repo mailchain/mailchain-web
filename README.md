@@ -78,7 +78,23 @@ The following address formats are referenced:
 ### URL and Port Settings
 By default, the Mailchain web interface expects to communicate with the Mailchain application running on the localhost using port 8080.
 
-@TODO It is possible to change the ‘url’ and ‘port’ in the Mailchain settings.
+To change this:
+
+#### Change server settings on the Inbox page
+
+1. Click 'Settings' on the Inbox page
+1. Make any updates
+1. Click 'save'
+
+#### Change server settings using url query parameters
+
+It is possible to change the settings programatically using a url with params. For example, `http://localhost:4200/#/?web-protocol=http&host=localhost&port=8080` will configure the Inbox to use: `http` to contact `localhost` on port `8080`. The Inbox will set the values, then refresh the page.
+
+| Query Parameter | Description |
+| --- | --- | 
+| `web-protocol` | The Internet protocol e.g. `http` or `https` | 
+| `host` | The host e.g. `localhost`, `127.0.0.1` or another host | 
+| `port` | The port e.g. `8080` |
 
 ### Browser Storage
 The following values are cached in the browser session storage:
@@ -87,6 +103,10 @@ Key | Value
 | - | - |
 currentNetwork: | The current selected network (e.g. `ropsten`, `mainnet`)
 currentAccount: | The current selected account for this network
+currentProtocol: | The current selected blockchain protocol
+currentWebProtocol: | The current selected web protocol (e.g. `https` or `http`) for contacting the mailchian application
+currentPort: | The current selected port (e.g. `8080`) for contacting the mailchian application
+currentHost: | The current selected host (e.g. `127.0.0.1`, `localhost`, etc.) for contacting the mailchian application
 
 ### Message Storage
 The Mailchain web application does not store message contents.
