@@ -1,17 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
-import { applicationApiConfig } from 'src/environments/environment';
+import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReadService {
+  private url: string
 
   constructor(
     private http: HttpClient,
-    private httpHelpersService: HttpHelpersService
-  ) { }
+    private httpHelpersService: HttpHelpersService,
+    private localStorageServerService: LocalStorageServerService,
+  ) {
+    this.initUrl()
+  }
 
   /**
    * Marks a message as read. This is stored locally in the client
@@ -34,7 +38,18 @@ export class ReadService {
     return this.http.delete(url, httpOptions);
   }
 
+    /**
+   * Initialize URL from local storage
+   */
+  initUrl(){
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
+  }
+
+  /**
+   * Inserts the message id into the api url endpoint
+   * @param message_id the message id to insert into url
+   */
   urlHelper(message_id){
-    return `${applicationApiConfig.mailchainNodeBaseUrl}/api/messages/${message_id}/read`
+    return `${this.url}/messages/${message_id}/read`
   }
 }

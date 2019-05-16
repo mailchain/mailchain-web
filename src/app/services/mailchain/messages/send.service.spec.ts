@@ -42,12 +42,11 @@ describe('SendService', () => {
       let resResponse = mailchainTestService.sendMailResponse()
 
       let response = sendService.sendMail(outboundMailObject,'ropsten')
-
+      
       response.subscribe(res => { 
         expect(res["url"]).toEqual(resResponse["url"])
-      })
-
-      // handle open connections
+      })      
+      // handle open connections      
       const req = httpTestingController.expectOne(resResponse["url"]);
       expect(req.request.method).toBe("POST");
       req.flush(resResponse);
