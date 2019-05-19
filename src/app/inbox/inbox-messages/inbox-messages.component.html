@@ -45,7 +45,7 @@
         <td class="subject" (click)="openMail(mail)">{{mail.subject}}</td>
         <td class="">{{mail.headers.date}}</td>
       </tr>
-      <tr *ngIf="messagesLoaded && (inboxMessages).length == 0">
+      <tr *ngIf="messagesLoaded && (currentAccountInboxMessages).length == 0">
         <td colspan="12">
           Nothing here yet
         </td>
