@@ -7,7 +7,13 @@ const mailchainNodeBaseHost = "127.0.0.1"
 const mailchainNodeBasePort = "8080"
 
 export const applicationApiConfig = {
-  "networks": ["ropsten"],
+  "webProtocols": ["http","https"],
+  "networks": [
+    "ropsten", 
+    "rinkeby", 
+    "kovan", 
+    "goerli"
+  ],
   "protocols": ["ethereum"],
 
   "mailchainNodeBaseWebProtocol": mailchainNodeBaseWebProtocol,
