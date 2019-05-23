@@ -43,3 +43,4 @@ testem.log
 .DS_Store
 Thumbs.db
 deploy.sh
+deploy-staging.sh
