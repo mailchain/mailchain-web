@@ -62,6 +62,13 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
+   * Surpress propagation of events to extensions etc.
+   */
+  public supressEnterPropagation($event: KeyboardEvent): void {
+    $event.stopPropagation()
+  }
+  
+  /**
    * Sets the first available address in the `from` dropdown
    * -or-
    * When replying, sets the from address as the address the message was sent to
