@@ -30,7 +30,12 @@
       </div>
 
       <div class="form-group">
-          <textarea class="form-control courier" id="messageBody" [(ngModel)]="model.body" name="body" rows="18"></textarea>
+          <textarea class="form-control courier" id="messageBody"
+            [(ngModel)]="model.body"
+            (keydown.enter)="supressEnterPropagation($event)"
+            name="body"
+            rows="18"
+          ></textarea>
       </div>
 
       <div class="clearfix">
