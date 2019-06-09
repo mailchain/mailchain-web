@@ -4,5 +4,5 @@ export class InboundMail {
   public body: string = "";
   public read: boolean = false;
   public selected: boolean = false;
-  public senderIdenticon: ""
+  public senderIdenticon: string = "";
 }

@@ -28,6 +28,7 @@ describe('InboxMessagesComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InboxMessagesComponent);
     component = fixture.componentInstance;
+    component.currentAccount = "";
     fixture.detectChanges();
   });
 
