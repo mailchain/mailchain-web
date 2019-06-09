@@ -25,7 +25,12 @@ describe('MailchainService', () => {
 
   describe('getPublicNetworks', () => {
     it('should return an array of networks', () => {
-      const networksResponse = ['ropsten']
+      const networksResponse = [
+        "ropsten", 
+        "rinkeby", 
+        "kovan", 
+        "goerli"
+      ]
       let response;
 
       response = mailchainService.getPublicNetworks()
