@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { version } from '../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'mailchain-web';
+  public version: string = version;
+  public title = 'Mailchain Inbox';
 }
