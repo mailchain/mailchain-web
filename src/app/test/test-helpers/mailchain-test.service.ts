@@ -41,5 +41,60 @@ export class MailchainTestService {
     }
   }
 
+  public messagesResponse(): any {
+    return {
+      "messages": [
+        {
+          "headers": {
+            "date": "2019-06-07T14:53:36Z",
+            "from": "\u003c0x0123456789012345678901234567890123456789@testnet.ethereum\u003e",
+            "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
+            "message-id": "0020c"
+          },
+          "body": "",
+          "subject": "Re: Mailchain Test!",
+          "status": "ok",
+          "status-code": "",
+          "read": true
+        },
+        {
+          "status": "could not decrypt location: invalid mac",
+          "status-code": "",
+          "read": false
+        },
+        {
+          "headers": {
+            "date": "2019-06-07T13:52:28Z",
+            "from": "\u003c0x0123456789012345678901234567890123456789@testnet.ethereum\u003e",
+            "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
+            "message-id": "002a"
+          },
+          "body": "Hi Rob\r\n\r\nI sent you a mailchain message\r\n\r\nTim\r\n\r\n\u003e",
+          "subject": "Welcome to Mailchain!",
+          "status": "ok",
+          "status-code": "",
+          "read": false
+        }
+      ]
+    }
+  }
+
+  public inboundMessage(): any {
+    return {
+      "headers": {
+        "date": "2019-06-07T14:53:36Z",
+        "from": "\u003c0x0123456789012345678901234567890123456789@testnet.ethereum\u003e",
+        "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
+        "message-id": "0020c"
+      },
+      "body": "",
+      "subject": "Re: Mailchain Test!",
+      "status": "ok",
+      "status-code": "",
+      "read": true,
+      "senderIdenticon": ""
+    }
+  }
+
 }
 
