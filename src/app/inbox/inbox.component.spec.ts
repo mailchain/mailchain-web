@@ -13,7 +13,6 @@ import { LocalStorageAccountService } from '../services/helpers/local-storage-ac
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 import { PublicKeyService } from '../services/mailchain/public-key/public-key.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
-import { ReadService } from '../services/mailchain/messages/read.service';
 import { of } from 'rxjs';
 import { MailchainTestService } from '../test/test-helpers/mailchain-test.service';
 
@@ -21,7 +20,6 @@ import { MailchainTestService } from '../test/test-helpers/mailchain-test.servic
 describe('InboxComponent', () => {
   let component: InboxComponent;
   let fixture: ComponentFixture<InboxComponent>;
-  let localStorageAccountService: LocalStorageAccountService
   let mailchainTestService: MailchainTestService
 
   const currentAccount = '0x0123456789012345678901234567890123456789';
@@ -60,9 +58,6 @@ describe('InboxComponent', () => {
       return addresses
     }
   }
-  // class ReadServiceStub {
-
-  // }
   class MessagesServiceStub {    
     getMessages() {
       let messages = mailchainTestService.messagesResponse
