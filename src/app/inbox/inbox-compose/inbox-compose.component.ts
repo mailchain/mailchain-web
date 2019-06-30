@@ -5,6 +5,7 @@ import { OutboundMail } from 'src/app/models/outbound-mail';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { SendService } from 'src/app/services/mailchain/messages/send.service';
 import { PublicKeyService } from 'src/app/services/mailchain/public-key/public-key.service';
+import { AddressesService } from 'src/app/services/mailchain/addresses/addresses.service';
 
 @Component({
   selector: '[inbox-compose]',
@@ -27,6 +28,7 @@ export class InboxComposeComponent implements OnInit {
     private mailchainService: MailchainService,
     private sendService : SendService,
     private publicKeyService: PublicKeyService,
+    private addressesService: AddressesService,
   ) { }
 
   private initMail() {
@@ -40,7 +42,7 @@ export class InboxComposeComponent implements OnInit {
    * Sets the available from addresses
    */
   private async setFromAddressList(){
-    this.fromAddresses = await this.publicKeyService.getPublicSenderAddresses();    
+    this.fromAddresses = await this.addressesService.getAddresses();    
   }
   
   /**

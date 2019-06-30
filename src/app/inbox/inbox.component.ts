@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageAccountService } from '../services/helpers/local-storage-account/local-storage-account.service';
-import { PublicKeyService } from '../services/mailchain/public-key/public-key.service';
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { InboundMail } from '../models/inbound-mail';
 import { NgForm } from '@angular/forms';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 import { ActivatedRoute } from '@angular/router';
+import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 
 @Component({
   selector: 'app-inbox',
@@ -41,7 +41,7 @@ export class InboxComponent implements OnInit {
   constructor(
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
-    private publicKeyService: PublicKeyService,
+    private addressesService: AddressesService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
     private activatedRoute: ActivatedRoute,
@@ -202,7 +202,7 @@ export class InboxComponent implements OnInit {
 
 
   async setFromAddressList(){
-    this.fromAddressesKeys = await this.publicKeyService.getPublicSenderAddresses();
+    this.fromAddressesKeys = await this.addressesService.getAddresses();
     
     this.fromAddressesKeys.forEach(address => {
       this.fromAddresses[address] = {

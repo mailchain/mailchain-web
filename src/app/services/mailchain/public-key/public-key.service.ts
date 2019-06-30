@@ -32,27 +32,4 @@ export class PublicKeyService {
     );
   }
 
-  /**
-   * Get and return the public addresses from my wallet to send from
-   */
-  async getPublicSenderAddresses() {
-    var addresses = []
-    let res = await this.http.get(
-      this.url + `/addresses`
-      // TODO handle failure
-    ).toPromise();      
-    res["addresses"].forEach(address => {
-      addresses.push(this.handleAddressFormatting(address,'ethereum'))
-    });    
-    return addresses
-  }
-
-  handleAddressFormatting(address,chain){
-    switch (chain) {
-      case 'ethereum':
-        return '0x' + address.toLowerCase()
-      default:
-        break;
-    }
-  }
 }

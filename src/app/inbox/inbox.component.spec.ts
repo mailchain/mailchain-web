@@ -11,10 +11,10 @@ import { HttpHelpersService } from '../services/helpers/http-helpers/http-helper
 import { RouterTestingModule } from '@angular/router/testing';
 import { LocalStorageAccountService } from '../services/helpers/local-storage-account/local-storage-account.service';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
-import { PublicKeyService } from '../services/mailchain/public-key/public-key.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { of } from 'rxjs';
 import { MailchainTestService } from '../test/test-helpers/mailchain-test.service';
+import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 
 
 describe('InboxComponent', () => {
@@ -53,8 +53,8 @@ describe('InboxComponent', () => {
 
     }
   }
-  class PublicKeyServiceStub {
-    getPublicSenderAddresses(){
+  class AddressesServiceStub {
+    getAddresses(){
       return addresses
     }
   }
@@ -79,7 +79,7 @@ describe('InboxComponent', () => {
         HttpHelpersService,
         { provide: LocalStorageAccountService, useClass: LocalStorageAccountServiceStub },
         { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
-        { provide: PublicKeyService, useClass: PublicKeyServiceStub },
+        { provide: AddressesService, useClass: AddressesServiceStub },
         { provide: MessagesService, useClass: MessagesServiceStub }
 
       ],
