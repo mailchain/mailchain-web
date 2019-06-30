@@ -121,5 +121,15 @@ export class MailchainTestService {
     }
   }
 
+  public networkList(): any {
+    return [
+      { label: "goerli", value: "goerli"}, 
+      { label: "kovan", value: "kovan"}, 
+      { label: "mainnet", value: "mainnet"}, 
+      { label: "rinkeby", value: "rinkeby"}, 
+      { label: "ropsten", value: "ropsten"}
+    ]
+  }
+
 }
 

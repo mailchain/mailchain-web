@@ -39,7 +39,7 @@ describe('ProtocolsService', () => {
     expect(protocolsService).toBeTruthy();
   });
 
-  it('should get an array of sender addresses', () => {    
+  it('should get an array of protocols and networks', () => {    
     protocolsService.getProtocols().subscribe(res => {
       expect(res).toEqual(serverResponse)
     });

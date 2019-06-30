@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 import { ActivatedRoute } from '@angular/router';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
+import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 
 @Component({
   selector: 'app-inbox',
@@ -42,6 +43,7 @@ export class InboxComponent implements OnInit {
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
     private addressesService: AddressesService,
+    private protocolsService: ProtocolsService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
     private activatedRoute: ActivatedRoute,
@@ -219,12 +221,19 @@ export class InboxComponent implements OnInit {
    * Set the list of networks in the dropdown
    */
   setNetworkList(){
-    var networks = this.mailchainService.getPublicNetworks();
-    networks.forEach(network => {
-      this.networks.push({
-        label: network,
-        value: network,
-      })
+    let protocols
+    this.protocolsService.getProtocols().subscribe(res => {      
+      protocols = res["protocols"]
+      if (protocols.length > 0) {
+        protocols.forEach(protocol => {
+          protocol["networks"].forEach(network => {
+            this.networks.push({
+              label: network,
+              value: network,
+            })
+          });
+        });
+      }
     });
   }
 

@@ -15,12 +15,15 @@ import { MessagesService } from '../services/mailchain/messages/messages.service
 import { of } from 'rxjs';
 import { MailchainTestService } from '../test/test-helpers/mailchain-test.service';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
+import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
   let fixture: ComponentFixture<InboxComponent>;
   let mailchainTestService: MailchainTestService
+  let protocolsService: ProtocolsService
+  let networkList: any
 
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
@@ -64,6 +67,11 @@ describe('InboxComponent', () => {
       return of(messages)
     }
   }
+  class ProtocolsServiceStub {    
+    getProtocols() {
+      return of(mailchainTestService.protocolsServerResponse())
+    }
+  }
 
 
   beforeEach(async(() => {
@@ -80,6 +88,7 @@ describe('InboxComponent', () => {
         { provide: LocalStorageAccountService, useClass: LocalStorageAccountServiceStub },
         { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
         { provide: AddressesService, useClass: AddressesServiceStub },
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: MessagesService, useClass: MessagesServiceStub }
 
       ],
@@ -93,10 +102,10 @@ describe('InboxComponent', () => {
     })
     .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
+    protocolsService = TestBed.get(ProtocolsService);
+    networkList = mailchainTestService.networkList();
   }));
-
-
-
+  
   beforeEach(() => {
     
     fixture = TestBed.createComponent(InboxComponent);
@@ -107,5 +116,11 @@ describe('InboxComponent', () => {
   
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  
+  it('should setNetworkList', () => {
+    expect(fixture.componentInstance.networks).toEqual([]);
+    fixture.componentInstance.setNetworkList()
+    expect(fixture.componentInstance.networks).toEqual(networkList)
   });
 });
