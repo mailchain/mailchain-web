@@ -24,6 +24,7 @@ describe('InboxComponent', () => {
   let mailchainTestService: MailchainTestService
   let protocolsService: ProtocolsService
   let networkList: any
+  let currentWebProtocolsList: any
 
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
@@ -104,6 +105,7 @@ describe('InboxComponent', () => {
     mailchainTestService = TestBed.get(MailchainTestService);
     protocolsService = TestBed.get(ProtocolsService);
     networkList = mailchainTestService.networkList();
+    currentWebProtocolsList = mailchainTestService.currentWebProtocolsList()
   }));
   
   beforeEach(() => {
@@ -113,6 +115,10 @@ describe('InboxComponent', () => {
     fixture.detectChanges();
 
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  })
   
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -122,5 +128,11 @@ describe('InboxComponent', () => {
     expect(fixture.componentInstance.networks).toEqual([]);
     fixture.componentInstance.setNetworkList()
     expect(fixture.componentInstance.networks).toEqual(networkList)
+  });
+  
+  it('should setCurrentWebProtocolsList', () => {
+    expect(fixture.componentInstance.currentWebProtocols).toEqual([]);
+    fixture.componentInstance.setCurrentWebProtocolsList()
+    expect(fixture.componentInstance.currentWebProtocols).toEqual(currentWebProtocolsList)
   });
 });

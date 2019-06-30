@@ -131,5 +131,12 @@ export class MailchainTestService {
     ]
   }
 
+  public currentWebProtocolsList(): any {
+    return [
+      { label: "http", value: "http"}, 
+      { label: "https", value: "https"}, 
+    ]
+  }
+
 }
 
