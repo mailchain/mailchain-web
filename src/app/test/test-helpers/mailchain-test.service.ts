@@ -112,5 +112,14 @@ export class MailchainTestService {
     ]
   }
 
+  public protocolsServerResponse(): any {
+    return {
+      "protocols": [{
+          "name": "ethereum",
+          "networks": ["goerli", "kovan", "mainnet", "rinkeby", "ropsten"]
+        }]
+    }
+  }
+
 }
 
