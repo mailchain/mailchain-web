@@ -35,6 +35,18 @@ describe('SendService', () => {
     expect(sendService).toBeTruthy();
   });
 
+  describe('initUrl', () => {
+    it('should initialize the url', () => {    
+      let sendService: SendService = TestBed.get(SendService)
+      expect(sendService['url']).toEqual('http://127.0.0.1:8080/api')
+    });
+    
+    it('should initialize the protocol', () => {    
+      let sendService: SendService = TestBed.get(SendService)
+      expect(sendService['protocol']).toEqual('ethereum')
+    });
+  });
+
   describe('SendMail', () => {
     it('should send an outbound mail to the right url', () => {
 

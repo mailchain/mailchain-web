@@ -38,6 +38,13 @@ describe('ProtocolsService', () => {
     const protocolsService: ProtocolsService = TestBed.get(ProtocolsService);
     expect(protocolsService).toBeTruthy();
   });
+  
+  describe('initUrl', () => {
+    it('should initialize the url', () => {    
+      let protocolsService: ProtocolsService = TestBed.get(ProtocolsService)
+      expect(protocolsService['url']).toEqual('http://127.0.0.1:8080/api')
+    });
+  });
 
   it('should get an array of protocols and networks', () => {    
     protocolsService.getProtocols().subscribe(res => {

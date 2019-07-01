@@ -76,6 +76,20 @@ describe('ReadService', () => {
       expect(response).toEqual(desiredUrl);
     });
   });
+
+  describe('initUrl', () => {
+    it('should initialize the url', () => {    
+      let readService: ReadService = TestBed.get(ReadService)
+      expect(readService['url']).toEqual('http://127.0.0.1:8080/api')
+    });
+  })
+  
+  describe('urlHelper', () => {
+    it('should return the url containing the message id', () => {    
+      let readService: ReadService = TestBed.get(ReadService)
+      expect(readService.urlHelper("12345")).toEqual('http://127.0.0.1:8080/api/messages/12345/read')
+    });
+  })
   
   
 

@@ -37,6 +37,14 @@ describe('AddressesService', () => {
     httpTestingController.verify();
   });
 
+
+  describe('initUrl', () => {
+    it('should initialize the url', () => {    
+      let addressesService: AddressesService = TestBed.get(AddressesService)
+      expect(addressesService['url']).toEqual('http://127.0.0.1:8080/api')
+    });
+  })
+
   it('should be created', () => {
     expect(addressesService).toBeTruthy();
   });
