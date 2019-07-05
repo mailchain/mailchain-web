@@ -11,6 +11,12 @@ export class AddressPipe implements PipeTransform {
   constructor(
     private mailchainService: MailchainService,
   ){}
+
+  /**
+   * Filters and returns messages sent to a particular address using the 'to' field
+   * @param value array of messages
+   * @param args the address to filter by
+   */
   transform(value: any, args?: any): any {
     var address = args;
     

@@ -58,6 +58,19 @@ export class MailchainTestService {
           "read": true
         },
         {
+          "headers": {
+            "date": "2019-05-06T11:23:13Z",
+            "from": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
+            "to": "\u003c0x0000000000000000000000000000000000000000@testnet.ethereum\u003e",
+            "message-id": "0020f"
+          },
+          "body": "",
+          "subject": "Sender to Recipient",
+          "status": "ok",
+          "status-code": "",
+          "read": true
+        },
+        {
           "status": "could not decrypt location: invalid mac",
           "status-code": "",
           "read": false
