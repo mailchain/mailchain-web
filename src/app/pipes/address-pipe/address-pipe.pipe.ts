@@ -17,7 +17,7 @@ export class AddressPipe implements PipeTransform {
    * @param value array of messages
    * @param args the address to filter by
    */
-  transform(value: any, args?: any): any {
+  transform(value: any, args: any): any {
     var address = args;
     
     if (value) {
