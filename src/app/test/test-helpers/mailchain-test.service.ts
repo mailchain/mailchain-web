@@ -96,5 +96,47 @@ export class MailchainTestService {
     }
   }
 
+  public senderAddressServerResponse(): any {
+    return {
+      "addresses":[
+        "92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
+        "d5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
+      ]
+    }
+  };
+
+  public senderAddresses(): Array<any> {
+    return [
+      "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
+      "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+    ]
+  }
+
+  public protocolsServerResponse(): any {
+    return {
+      "protocols": [{
+          "name": "ethereum",
+          "networks": ["goerli", "kovan", "mainnet", "rinkeby", "ropsten"]
+        }]
+    }
+  }
+
+  public networkList(): any {
+    return [
+      { label: "goerli", value: "goerli"}, 
+      { label: "kovan", value: "kovan"}, 
+      { label: "mainnet", value: "mainnet"}, 
+      { label: "rinkeby", value: "rinkeby"}, 
+      { label: "ropsten", value: "ropsten"}
+    ]
+  }
+
+  public currentWebProtocolsList(): any {
+    return [
+      { label: "http", value: "http"}, 
+      { label: "https", value: "https"}, 
+    ]
+  }
+
 }
 

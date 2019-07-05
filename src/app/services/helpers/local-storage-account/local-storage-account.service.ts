@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PublicKeyService } from '../../mailchain/public-key/public-key.service';
+import { AddressesService } from '../../mailchain/addresses/addresses.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +7,7 @@ import { PublicKeyService } from '../../mailchain/public-key/public-key.service'
 export class LocalStorageAccountService {
 
   constructor(
-    private publicKeyService: PublicKeyService
+    private addressesService: AddressesService
   ) { }
 
   /**
@@ -17,7 +17,7 @@ export class LocalStorageAccountService {
     if (sessionStorage['currentAccount'] && sessionStorage['currentAccount']!= "undefined") {
        return sessionStorage.getItem('currentAccount')
      } else {       
-       var addresses = await this.publicKeyService.getPublicSenderAddresses();
+       var addresses = await this.addressesService.getAddresses();
        var address = addresses.length ? addresses[0] : ""
        this.setCurrentAccount(address)
        return address

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageAccountService } from '../services/helpers/local-storage-account/local-storage-account.service';
-import { PublicKeyService } from '../services/mailchain/public-key/public-key.service';
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { InboundMail } from '../models/inbound-mail';
 import { NgForm } from '@angular/forms';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 import { ActivatedRoute } from '@angular/router';
+import { AddressesService } from '../services/mailchain/addresses/addresses.service';
+import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 
 @Component({
   selector: 'app-inbox',
@@ -41,7 +42,8 @@ export class InboxComponent implements OnInit {
   constructor(
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
-    private publicKeyService: PublicKeyService,
+    private addressesService: AddressesService,
+    private protocolsService: ProtocolsService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
     private activatedRoute: ActivatedRoute,
@@ -202,7 +204,7 @@ export class InboxComponent implements OnInit {
 
 
   async setFromAddressList(){
-    this.fromAddressesKeys = await this.publicKeyService.getPublicSenderAddresses();
+    this.fromAddressesKeys = await this.addressesService.getAddresses();
     
     this.fromAddressesKeys.forEach(address => {
       this.fromAddresses[address] = {
@@ -219,12 +221,19 @@ export class InboxComponent implements OnInit {
    * Set the list of networks in the dropdown
    */
   setNetworkList(){
-    var networks = this.mailchainService.getPublicNetworks();
-    networks.forEach(network => {
-      this.networks.push({
-        label: network,
-        value: network,
-      })
+    let protocols
+    this.protocolsService.getProtocols().subscribe(res => {      
+      protocols = res["protocols"]
+      if (protocols.length > 0) {
+        protocols.forEach(protocol => {
+          protocol["networks"].forEach(network => {
+            this.networks.push({
+              label: network,
+              value: network,
+            })
+          });
+        });
+      }
     });
   }
 

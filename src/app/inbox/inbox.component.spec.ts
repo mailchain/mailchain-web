@@ -11,16 +11,20 @@ import { HttpHelpersService } from '../services/helpers/http-helpers/http-helper
 import { RouterTestingModule } from '@angular/router/testing';
 import { LocalStorageAccountService } from '../services/helpers/local-storage-account/local-storage-account.service';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
-import { PublicKeyService } from '../services/mailchain/public-key/public-key.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { of } from 'rxjs';
 import { MailchainTestService } from '../test/test-helpers/mailchain-test.service';
+import { AddressesService } from '../services/mailchain/addresses/addresses.service';
+import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
   let fixture: ComponentFixture<InboxComponent>;
   let mailchainTestService: MailchainTestService
+  let protocolsService: ProtocolsService
+  let networkList: any
+  let currentWebProtocolsList: any
 
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
@@ -53,8 +57,8 @@ describe('InboxComponent', () => {
 
     }
   }
-  class PublicKeyServiceStub {
-    getPublicSenderAddresses(){
+  class AddressesServiceStub {
+    getAddresses(){
       return addresses
     }
   }
@@ -62,6 +66,11 @@ describe('InboxComponent', () => {
     getMessages() {
       let messages = mailchainTestService.messagesResponse
       return of(messages)
+    }
+  }
+  class ProtocolsServiceStub {    
+    getProtocols() {
+      return of(mailchainTestService.protocolsServerResponse())
     }
   }
 
@@ -79,7 +88,8 @@ describe('InboxComponent', () => {
         HttpHelpersService,
         { provide: LocalStorageAccountService, useClass: LocalStorageAccountServiceStub },
         { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
-        { provide: PublicKeyService, useClass: PublicKeyServiceStub },
+        { provide: AddressesService, useClass: AddressesServiceStub },
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: MessagesService, useClass: MessagesServiceStub }
 
       ],
@@ -93,10 +103,11 @@ describe('InboxComponent', () => {
     })
     .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
+    protocolsService = TestBed.get(ProtocolsService);
+    networkList = mailchainTestService.networkList();
+    currentWebProtocolsList = mailchainTestService.currentWebProtocolsList()
   }));
-
-
-
+  
   beforeEach(() => {
     
     fixture = TestBed.createComponent(InboxComponent);
@@ -104,8 +115,24 @@ describe('InboxComponent', () => {
     fixture.detectChanges();
 
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  })
   
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  
+  it('should setNetworkList', () => {
+    expect(fixture.componentInstance.networks).toEqual([]);
+    fixture.componentInstance.setNetworkList()
+    expect(fixture.componentInstance.networks).toEqual(networkList)
+  });
+  
+  it('should setCurrentWebProtocolsList', () => {
+    expect(fixture.componentInstance.currentWebProtocols).toEqual([]);
+    fixture.componentInstance.setCurrentWebProtocolsList()
+    expect(fixture.componentInstance.currentWebProtocols).toEqual(currentWebProtocolsList)
   });
 });

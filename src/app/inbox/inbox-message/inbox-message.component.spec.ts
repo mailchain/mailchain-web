@@ -56,8 +56,8 @@ describe('InboxMessageComponent', () => {
     fixture.detectChanges();
   });
 
-  xit('should create', () => {
-    console.log(component);
+
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 import { ReadService } from './read.service';
-import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 describe('ReadService', () => {
   let readService: ReadService;
@@ -76,6 +76,20 @@ describe('ReadService', () => {
       expect(response).toEqual(desiredUrl);
     });
   });
+
+  describe('initUrl', () => {
+    it('should initialize the url', () => {    
+      let readService: ReadService = TestBed.get(ReadService)
+      expect(readService['url']).toEqual('http://127.0.0.1:8080/api')
+    });
+  })
+  
+  describe('urlHelper', () => {
+    it('should return the url containing the message id', () => {    
+      let readService: ReadService = TestBed.get(ReadService)
+      expect(readService.urlHelper("12345")).toEqual('http://127.0.0.1:8080/api/messages/12345/read')
+    });
+  })
   
   
 

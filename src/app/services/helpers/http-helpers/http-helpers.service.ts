@@ -7,7 +7,10 @@ export class HttpHelpersService {
 
   constructor() { }
 
-
+  /**
+   * Get the httpOptions for a request
+   * @param queryParams (optional) as array of arrays containing [['key', 'value']]
+   */
   public getHttpOptions(queryParams?) {
      let httpOptions = {
       headers: new HttpHeaders({
@@ -33,7 +36,7 @@ export class HttpHelpersService {
         httpOptions.params = httpOptions.params.append( param[0], param[1] );
       });
     } else {
-      httpOptions.params = new HttpParams() // need to make sure params are not cached
+      httpOptions.params = new HttpParams() // need to make sure params are not cached as strange things can happen
     }
     return httpOptions;
   };
