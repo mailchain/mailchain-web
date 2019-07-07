@@ -77,13 +77,7 @@ export class InboxComponent implements OnInit {
   }
 
   /**
-   * Changes active folder in list
    */
-  changeActiveItem(elementId): void {
-    document.querySelectorAll('.nav-item').forEach(element => {
-      element.classList.remove("active")
-    })
-    document.getElementById(elementId).classList.add("active");
   }
 
   /**
