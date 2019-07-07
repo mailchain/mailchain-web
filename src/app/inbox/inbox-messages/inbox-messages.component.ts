@@ -158,7 +158,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * Get the inbox messages, filtered by 'currently selected account' > 'searchtext'.
    * Dedupe message array - workaround for dupe messages @TODO: waiting on dupe bugfix in mailchain
    */
-  getCurrentAccountInboxMessages(){
+  getCurrentAccountInboxMessages(){    
     var inboxMessagesFilteredByAddress = this.addressPipe.transform(
       this.inboxMessages,
       this.currentAccount

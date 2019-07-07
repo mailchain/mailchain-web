@@ -76,4 +76,5 @@ describe('AddressPipe', () => {
     expect(pipe.transform(messages, addr3).length).toEqual(0);
     expect(pipe.transform(messages, addr3)).toEqual(result);
   });
+
 });

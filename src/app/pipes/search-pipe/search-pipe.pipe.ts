@@ -5,15 +5,19 @@ import { Pipe, PipeTransform } from '@angular/core';
   pure: false,
 })
 export class SearchPipe implements PipeTransform {
-
-  transform(value: any, args?: any): any {
+  /**
+   * Filters and returns messages with the search term in 'sender', 'subject' or 'body' fields
+   * @param value the object to search
+   * @param args the serch term
+   */
+  transform(value: any, args: any): any {
     const searchText = new RegExp(args, 'ig');
     if (value) {
       return value.filter(mail => {
         var result = false;
 
         [
-          mail["sender"],
+          mail["headers"]["from"],
           mail["subject"],
           mail["body"],
         ].forEach(el => {
