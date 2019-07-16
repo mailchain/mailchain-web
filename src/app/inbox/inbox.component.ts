@@ -8,6 +8,7 @@ import { LocalStorageServerService } from '../services/helpers/local-storage-ser
 import { ActivatedRoute } from '@angular/router';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-inbox',
@@ -49,7 +50,10 @@ export class InboxComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
   ) {}
 
-
+  /**
+   * Changes the view to 'compose' a message.
+   * @param message (optional) message to reply to (>> 'currentMessage')
+   */
   composeMessage(message?): void {
     this.currentMessage = void 0;
     if (message != undefined) {
@@ -59,7 +63,8 @@ export class InboxComponent implements OnInit {
   }
 
   /**
-   * [address: string,count: number]
+   * Changes the messageCount for each inbox
+   * @param array [address: string,count: number]
    */
   onInboxCounter(array) {
     var address: string = array[0] 
@@ -67,21 +72,30 @@ export class InboxComponent implements OnInit {
     this.fromAddresses[address.toLowerCase()]["messageCount"]["inbox"] = count
   }
 
+  /**
+   * Changes the view to message and shows the mail
+   * @param mail the message to show
+   */
   onOpenMessage(mail: any): void {
     this.currentMessage = mail;
     this.changeView('message');
   }
 
-  changeView(inboxPartial: string): void {
-    this.inboxPartial = inboxPartial
-  }
-
   /**
+   * Changes the inboxPartial component in view. If an invalid inboxPartial is passed, it will throw a warning on the console and not change the partial.
+   * @param inboxPartial String required: `messages` | `message` | `compose`
    */
+  changeView(inboxPartial: string): void {
+    if ( [ "messages", "message", "compose"].includes(inboxPartial) ) {
+      this.inboxPartial = inboxPartial
+    } else {
+      console.error('Error: Invalid partial')
+    }
   }
 
   /**
-   * Changes the local current Account and fetches mails for that account.
+   * Changes the local currentAccount.
+   * @param address is the account/address to set 
    */
   changeAccount(address){    
     if (this.inboxPartial != 'messages') {
@@ -95,21 +109,22 @@ export class InboxComponent implements OnInit {
    * Changes the network and fetches mails for that network.
    */
   changeNetwork(){    
-    this.changeView('messages')
+    if (this.inboxPartial != 'messages') {
+      this.changeView('messages');
+    }
     this.localStorageServerService.setCurrentNetwork(this.currentNetwork)
     this.getMails()
   }
 
   /**
-   * Removes the session storage account setting
+   * Removes the session storage currentAccount setting
    */
   removeCurrentAccount(){
     this.localStorageAccountService.removeCurrentAccount()
-    
   }
 
   /**
-   * Removes the session storage network setting
+   * Removes the session storage currentNetwork setting
    */
   removeCurrentNetwork(){
     this.localStorageServerService.removeCurrentNetwork()
@@ -119,7 +134,8 @@ export class InboxComponent implements OnInit {
    * Changes the server settings in the client from form data.
    * @param form is the settings form submitted from the view
    */
-  serverSettingsFormSubmit(form: NgForm){    
+  serverSettingsFormSubmit(form: NgForm){ 
+       
     var webProtocol = form["form"]["value"]["serverSettingsWebProtocol"]
     var host = form["form"]["value"]["serverSettingsHost"]
     var port = form["form"]["value"]["serverSettingsPort"]
