@@ -134,11 +134,11 @@ export class InboxComponent implements OnInit {
    * Changes the server settings in the client from form data.
    * @param form is the settings form submitted from the view
    */
-  serverSettingsFormSubmit(form: NgForm){ 
+  serverSettingsFormSubmit(){ 
        
-    var webProtocol = form["form"]["value"]["serverSettingsWebProtocol"]
-    var host = form["form"]["value"]["serverSettingsHost"]
-    var port = form["form"]["value"]["serverSettingsPort"]
+    var webProtocol = this.serverSettings["webProtocol"]
+    var host = this.serverSettings["host"]
+    var port = this.serverSettings["port"]
     var settingsHash = {}
     
     if ( webProtocol != undefined && webProtocol != this.currentWebProtocol ) {      
@@ -158,9 +158,7 @@ export class InboxComponent implements OnInit {
    * @param settingsHash the server settings hash
    * `{ "web-protocol": "http"|"https", "host": "127.0.0.1", "port": "8080" }`
    */
-  async updateServerSettings(
-    settingsHash: any
-  ){
+  async updateServerSettings(settingsHash: any){
     let serverSettingsChanged: boolean = false
     
     if (
@@ -189,10 +187,18 @@ export class InboxComponent implements OnInit {
       this.removeCurrentAccount();
       this.removeCurrentNetwork();
 
-      let path = window.location.pathname
-      window.location.replace(path)
+      this.windowReload()
     }
 
+  }
+
+  /**
+   * Reload the window with the original path.
+   * Used to remove url params and reload a clean component
+   */
+  public windowReload() {
+    let path = window.location.pathname
+    window.location.replace(path)
   }
 
   /**
@@ -212,7 +218,13 @@ export class InboxComponent implements OnInit {
     return address == this.currentAccount
   }
 
-
+  /**
+   * Creates a list of 'from' addresses (i.e. sender addresses) formatted as a hash with the following fields:
+   * label: the address
+   * value: the address
+   * messageCount: a hash containing folder values of message count:
+   *   inbox: default 0
+   */
   async setFromAddressList(){
     this.fromAddressesKeys = await this.addressesService.getAddresses();
     
