@@ -169,6 +169,46 @@ describe('MailchainService', () => {
       expect(response).toEqual(outboundMailObject)
     })
   })
+
+  describe('filterMessages', () => {
+    // id 00: read & status ok
+    // id 01: read & status error
+    // id 02: unread & status ok
+    // id 03: unread & status error
+    const messages = [
+      {
+        "read": true,
+        "status": "ok",
+      },
+      {
+        "read": true,
+        "status": "error",
+      },
+      {
+        "read": false,
+        "status": "ok",
+      },
+      {
+        "read": false,
+        "status": "error",
+      }
+    ]
+
+    it('should return messages with a matching status to the options["status"] value', () => {
+      expect(mailchainService.filterMessages(messages, {status: "ok"})).toEqual([ messages[0],messages[2] ])
+      expect(mailchainService.filterMessages(messages, {status: "error"})).toEqual([ messages[1],messages[3] ])
+    })
+    it('should return messages with a readState to the options["readState"] value', () => {
+      expect(mailchainService.filterMessages(messages, {readState: true})).toEqual([ messages[0],messages[1] ])
+      expect(mailchainService.filterMessages(messages, {readState: false})).toEqual([ messages[2],messages[3] ])
+    })
+    it('should return messages with a readState to the options["readState"] value', () => {
+      expect(mailchainService.filterMessages(messages, {status: "ok", readState: true})).toEqual([ messages[0] ])
+      expect(mailchainService.filterMessages(messages, {status: "ok", readState: false})).toEqual([ messages[2] ])
+      expect(mailchainService.filterMessages(messages, {status: "error", readState: true})).toEqual([ messages[1] ])
+      expect(mailchainService.filterMessages(messages, {status: "error", readState: false})).toEqual([ messages[3] ])
+    })
+  })
   
 
 });

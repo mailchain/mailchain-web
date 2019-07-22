@@ -83,4 +83,24 @@ export class MailchainService {
     return output
   }
 
+  /**
+   * Filter message array
+   * @param msgsArray the array of messages
+   * @param options: hash with the following options:
+   *    status: "ok" 
+   *    readState: boolean where false returns unread messages
+   */
+  public filterMessages(msgsArray, options){
+    let status = options.status 
+    let readState = options.readState
+    let output = msgsArray
+    if (status != undefined ) {
+      output = output.filter(msg => msg.status === status)
+    }
+    if (readState != undefined) {
+      output = output.filter(msg => msg.read === readState)
+    }
+    return output
+  }
+
 } 

@@ -37,18 +37,18 @@
       <ul class="list-group list-group-flush">
         <li *ngFor="let address of fromAddressesKeys"
           [class]="addressIsActive(address) ? 'list-group-item account-item active' : 'list-group-item account-item'"
-          [id]="address+'-folder-inbox'">
+        >
           <div class="row">
             <div class="col-2 p-0 my-auto">
-              <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">
+              <a class="nav-link" (click)="changeAccount(address)">
                 <img class="rounded-circle addressFolderIcon" src="{{accountIdenticons[address]}}" alt="">
               </a>
             </div>
             <div class="col-9 p-0 my-auto">
-              <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">{{address}}</a>
+              <a class="nav-link" (click)="changeAccount(address)">{{address}}</a>
             </div>
             <div class="col-1 p-0 my-auto">
-              <a class="nav-link" (click)="changeAccount(address); changeActiveItem(address+'-folder-inbox');">
+              <a class="nav-link" (click)="changeAccount(address)">
                 <span *ngIf="messagesLoaded"
                   [class]="fromAddresses[address]['messageCount']['inbox'] > 0 ? 'badge badge-pill badge-secondary float-right' : 'badge badge-pill badge-light float-right text-muted'">
                   {{fromAddresses[address]['messageCount']['inbox']}}
@@ -143,7 +143,7 @@
           <h5></h5>
         </div>
       </div>
-      <form #serverSettingsForm="ngForm" id="serverSettingsForm" (ngSubmit)="serverSettingsFormSubmit(serverSettingsForm);modalWindowSettings.hide()" autocomplete="off">
+      <form #serverSettingsForm="ngForm" id="serverSettingsForm" (ngSubmit)="serverSettingsFormSubmit();modalWindowSettings.hide()" autocomplete="off">
         
         <div class="modal-body">
           <div class="form-group">
