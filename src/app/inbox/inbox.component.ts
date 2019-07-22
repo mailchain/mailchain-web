@@ -23,7 +23,7 @@ export class InboxComponent implements OnInit {
   public inboxMessages: Array<any> = [];
   public messagesLoaded: boolean = false;
   public fetchMessagesDisabled: boolean = false;
-  public fetchMessagesText: String = "Check Messages";
+  public fetchMessagesText: String
   
   public inboxPartial: string = 'messages'
 
@@ -282,7 +282,7 @@ export class InboxComponent implements OnInit {
   }
   
   /**
-   * Initiates the server settings form with default values
+   * Initiates the server settings form with default values. Default values are retrieved from local storage
    */
   setupServerSettingsForm() {
     this.serverSettings = {
@@ -316,6 +316,8 @@ export class InboxComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.setFetchingMessagesState(true)
+
     try {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
@@ -341,37 +343,25 @@ export class InboxComponent implements OnInit {
 
   /**
    * Fetch mails from the server
+   * @param 
    */
-  public getMails(quiet?: boolean){
-    if (!quiet) {
-      this.inboxMessages = []
-      this.messagesLoaded = false;
-    }
-    this.fetchMessagesText = "Loading...";
-    this.fetchMessagesDisabled = true;
-    
+  public getMails(quietMode: boolean = false){
+
+    this.setFetchingMessagesState(true, quietMode)
+
     let fetchCount = this.fromAddressesKeys.length // we count this down for each req
-    
+
     this.fromAddressesKeys.forEach(address => {
       var self = this
       this.messagesService.getMessages(address, this.currentNetwork).subscribe(function(res){
-        
-        let unreadMsgs = res["messages"].filter(msg => msg.status === "ok" && !msg.read);
-        let uniqUnreadMsgs = self.mailchainService.dedupeMessagesByIds(unreadMsgs)
 
-        self.onInboxCounter([address, uniqUnreadMsgs.length])
-        res["messages"].forEach(decryptedData => {
-          // only parse valid messages
-          if (decryptedData.status == "ok") {
-            self.addMailToInboxMessages(decryptedData);
-          }
-        });
-        --fetchCount
+        self.processUnreadMessagesInboxCounter(address, res["messages"])
+        self.processInboxMessages(res["messages"])
         
-        if (fetchCount == 0 ) { // all get reqs should be complete
-          self.messagesLoaded = true;
-          self.fetchMessagesText = "Check Messages";
-          self.fetchMessagesDisabled = false;  
+        --fetchCount // decrement fetchCount
+        
+        if (fetchCount == 0 ) { // all get requests should be complete
+           self.setFetchingMessagesState(false)
         }
       })
       
@@ -379,8 +369,76 @@ export class InboxComponent implements OnInit {
     
   };
 
-    /**
-   * 
+  /**
+   * processUnreadMessagesInboxCounter: counts the number of unread messages for an address and sets the inbox counter.
+   * @param address: (string) the address of the messages
+   * @param messages: array of messages
+   */
+  public processUnreadMessagesInboxCounter(address, messages) {
+    let unreadMsgs = this.mailchainService.filterMessages(
+      messages,
+      {status: "ok", readState: false}
+    )
+    let uniqUnreadMsgs = this.mailchainService.dedupeMessagesByIds(unreadMsgs)
+
+    this.onInboxCounter([address, uniqUnreadMsgs.length])
+    
+  }
+  
+  /**
+   * processInboxMessages: adds messages with status: "ok" to the InboxMessages as an InboundMail object
+   * @param messages 
+   */
+  public processInboxMessages(messages: Array<any>) {
+    let validMessages = this.mailchainService.filterMessages(
+      messages,
+      {status: "ok"}
+    )
+    validMessages.forEach(msg => this.addMailToInboxMessages(msg));
+  }
+  
+
+  /**
+   * setFetchingMessagesState
+   * @param state: boolean;
+   *  true when fetching messages
+   *  false when NOT fetching message
+   * @param quietMode: (optional) when true, messages are quietly loaded
+   */
+  public setFetchingMessagesState(state: boolean, quietMode?: boolean) {
+    this.fetchMessagesDisabled = state;
+    if (state) {
+      this.setFetchMessagesText(1)
+      if (!quietMode) {
+        this.inboxMessages = []
+        this.messagesLoaded = false;
+      }
+    } else {
+      this.setFetchMessagesText(0)
+      this.messagesLoaded = true;
+    }
+  }
+
+  /**
+   * Set the fetchMessagesText variable
+   * @param statusCode:
+   *    0 = Default state ('Check Messages')
+   *    1 = Loading ('Loading...')
+   */
+  private setFetchMessagesText(statusCode: number){
+    switch (statusCode) {
+      case 0:
+        this.fetchMessagesText = "Check Messages"
+        break
+      case 1:
+        this.fetchMessagesText = "Loading..."
+        break
+    }
+    
+  }
+
+  /**
+   * Adds a message to inboxMessages as an InboundMessage object
    * @param decryptedMsg 
    */
   addMailToInboxMessages(decryptedMsg){  

@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {BehaviorSubject} from 'rxjs';
+import {convertToParamMap, ParamMap} from '@angular/router';
 
 import { InboxComponent } from './inbox.component';
 import { InboxMessagesComponent } from './inbox-messages/inbox-messages.component';
@@ -18,6 +20,8 @@ import { AddressesService } from '../services/mailchain/addresses/addresses.serv
 import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
+import { container } from '@angular/core/src/render3';
+import { InboundMail } from '../models/inbound-mail';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -27,6 +31,7 @@ describe('InboxComponent', () => {
   let localStorageAccountService: LocalStorageAccountService
   let localStorageServerService: LocalStorageServerService
   let mailchainService: MailchainService
+  let activatedRoute: any
   let networkList: any
   let currentWebProtocolsList: any
   let inboundMessage: any
@@ -107,7 +112,38 @@ describe('InboxComponent', () => {
   }
 
   class ActivatedRouteStub {
-    
+    //Observable that contains a map of the parameters
+    private subjectParamMap = new BehaviorSubject(convertToParamMap(this.testParamMap));
+    paramMap = this.subjectParamMap.asObservable();
+
+    private _testParamMap: ParamMap;
+    get testParamMap() {
+        return this._testParamMap;
+    }
+    set testParamMap(params: {}) {
+        this._testParamMap = convertToParamMap(params);
+        this.subjectParamMap.next(this._testParamMap);
+    }
+
+    //Observable that contains a map of the query parameters
+    private subjectQueryParamMap = new BehaviorSubject(convertToParamMap(this.testParamMap));
+    queryParamMap = this.subjectQueryParamMap.asObservable();
+
+    private _testQueryParamMap: ParamMap;
+    get testQueryParamMap() {
+        return this._testQueryParamMap;
+    }
+    set testQueryParamMap(params: {}) {
+        this._testQueryParamMap = convertToParamMap(params);
+        this.subjectQueryParamMap.next(this._testQueryParamMap);
+    }
+
+    get snapshot() {
+        return {
+            paramMap: this.testParamMap,
+            queryParamMap: this.testQueryParamMap
+        }
+    }
   }
 
 
@@ -145,7 +181,7 @@ describe('InboxComponent', () => {
     protocolsService = TestBed.get(ProtocolsService);
     localStorageAccountService = TestBed.get(LocalStorageAccountService);
     localStorageServerService = TestBed.get(LocalStorageServerService);
-    mailchainService = TestBed.get(MailchainService)
+    mailchainService = TestBed.get(MailchainService);
     
   }));
   
@@ -289,7 +325,7 @@ describe('InboxComponent', () => {
     });
 
     it('should trigger the "getMails" function', async() => {
-      spyOn(fixture.componentInstance, 'getMails');
+      spyOn(component, 'getMails');
       
       component.changeNetwork();
       expect(component.getMails).toHaveBeenCalled();
@@ -338,7 +374,7 @@ describe('InboxComponent', () => {
   });
   describe('updateServerSettings', () => {
     beforeEach(() => {
-      spyOn(fixture.componentInstance, 'windowReload').and.callFake(function(){});
+      spyOn(component, 'windowReload').and.callFake(function(){});
     });
     
     it('should set the webProtocol value from the settingsHash',  async() => {
@@ -590,26 +626,307 @@ describe('InboxComponent', () => {
     });
   });
   describe('checkServerSettingsInQueryParams', () => {
-    xit('should update serverSettings if params are present', () => {
-      console.log(fixture.nativeElement);
+    let wpVal = 'zttps'
+    let hostVal = 'someexample.com'
+    let portVal = '2019'
+
+    beforeEach(()=>{
+      activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as any;
       
+      
+      spyOn(component, 'windowReload').and.callFake(function(){});
+      // activatedRoute.testParamMap = {category: 'api-02'};
+      // activatedRoute.testQueryParamMap = {period:'2018',size:'14'};
+    })
+
+    it('should update serverSettings if params are present', () => { 
+      activatedRoute.testQueryParamMap = {
+        "web-protocol":wpVal,
+        "host":hostVal,
+        "port":portVal
+      };
+      
+      component.checkServerSettingsInQueryParams()
+      expect(localStorageServerService.getCurrentWebProtocol()).toEqual(wpVal)
+      expect(localStorageServerService.getCurrentHost()).toEqual(hostVal)
+      expect(localStorageServerService.getCurrentPort()).toEqual(portVal)
     });
-    xit('should NOT update serverSettings if params are NOT present', () => {
+
+    it('should NOT update webProtocol serverSettings if webProtocol param is NOT present', () => {
+      let originalVal = localStorageServerService.getCurrentWebProtocol()
+      
+      activatedRoute.testQueryParamMap = {
+        // "web-protocol":wpVal,
+        "host":hostVal,
+        "port":portVal
+      };
+
+      component.checkServerSettingsInQueryParams()
+      expect(localStorageServerService.getCurrentWebProtocol()).not.toEqual(wpVal)
+      expect(localStorageServerService.getCurrentWebProtocol()).toEqual(originalVal)
     });
-    xit('should only accept valid params', () => {
+    it('should NOT update host serverSettings if host param is NOT present', () => {
+      let originalVal = localStorageServerService.getCurrentHost()
+
+      activatedRoute.testQueryParamMap = {
+        "web-protocol":wpVal,
+        // "host":hostVal,
+        "port":portVal
+      };
+
+      component.checkServerSettingsInQueryParams()
+      expect(localStorageServerService.getCurrentHost()).not.toEqual(hostVal)
+      expect(localStorageServerService.getCurrentHost()).toEqual(originalVal)
     });
+    it('should NOT update port serverSettings if port param is NOT present', () => {
+      let originalVal = localStorageServerService.getCurrentPort()
+
+      activatedRoute.testQueryParamMap = {
+        "web-protocol":wpVal,
+        "host":hostVal,
+        // "port":portVal
+      };
+
+      component.checkServerSettingsInQueryParams()
+      expect(localStorageServerService.getCurrentPort()).not.toEqual(portVal)
+      expect(localStorageServerService.getCurrentPort()).toEqual(originalVal)
+    });
+
   });
-  describe('ngOnInit', () => {
-    xit('should change the view to "compose"', () => {
-    });
-  });
+
   describe('getMails', () => {
-    xit('should change the view to "compose"', () => {
+    xit('should fetch mails from the server', () => {
+    });
+    xit('should fetch mails in the background by default (quietly)', () => {
+    });
+    xit('should refetch mails as a clean fetch (NOT quietly)', () => {
+    });
+    xit('should set the fetchCount', () => {
+    });
+
+
+    xit('should fetch mails for each fromAddress', () => {
+    });
+    xit('should handle unread mails', () => {
+    });
+    xit('should ignore messages with message status NOT "ok"', () => {
+    });
+    xit('should add messages with message status "ok" to inbox', () => {
+      component.getMails.prototype.fil
+    });
+    xit('should handle unread mails', () => {
+    });
+    xit('should increment inbox counters for addresses', () => {
+    });
+
+
+    xit('should set messagesLoaded to TRUE when all addresses have been retrieved', () => {
+    });
+    xit('should set fetchMessagesDisabled to FALSE when all addresses have been retrieved', () => {
     });
   });
-  describe('addMailToInboxMessages', () => {
-    xit('should change the view to "compose"', () => {
+  
+  describe('processUnreadMessagesInboxCounter', () => {
+    it('should call onInboxCounter with the correct params', () => {
+      spyOn(component, 'onInboxCounter')
+      const messages = [
+        {
+          "headers": {
+            "message-id": "00"
+          },
+          "read": true,
+          "status": "ok",
+        },
+        {
+          "headers": {
+            "message-id": "01"
+          },
+          "read": true,
+          "status": "error",
+        },
+        {
+          "headers": {
+            "message-id": "02"
+          },
+          "read": false,
+          "status": "ok",
+        },
+        {
+          "headers": {
+            "message-id": "03"
+          },
+          "read": false,
+          "status": "error",
+        }
+      ]
+      component.processUnreadMessagesInboxCounter(currentAccount, messages)
+      expect(component.onInboxCounter).toHaveBeenCalledWith([currentAccount,1])
     });
+  });
+  
+  describe('processInboxMessages', () => {
+    const messages = [
+      {
+        "headers": {
+          "message-id": "00",
+          "from": "<0x0000000000000000000000000000000000000000@ropsten.ethereum>",
+
+        },
+        "read": true,
+        "status": "ok",
+      },
+      {
+        "headers": {
+          "message-id": "01",
+          "from": "<0x0000000000000000000000000000000000000000@ropsten.ethereum>",
+
+        },
+        "read": true,
+        "status": "error",
+      },
+      {
+        "headers": {
+          "message-id": "02",
+          "from": "<0x0000000000000000000000000000000000000000@ropsten.ethereum>",
+
+        },
+        "read": false,
+        "status": "ok",
+      },
+      {
+        "headers": {
+          "message-id": "03",
+          "from": "<0x0000000000000000000000000000000000000000@ropsten.ethereum>",
+
+        },
+        "read": false,
+        "status": "error",
+      }
+    ]
+    
+    it('should add valid messages to inboxMessages', () => {
+      expect(component.inboxMessages).toEqual([])
+      component.processInboxMessages(messages)
+      expect(component.inboxMessages.map(msg => msg["headers"]["message-id"])).toEqual(["00","02"]);
+    });
+  });
+  
+  describe('setFetchingMessagesState', () => {
+    describe('fetchMessagesText', () => {
+      it('should set fetchMessagesText to "Check Messages" when state is false', () => {
+        component.setFetchingMessagesState(false)
+        expect(component.fetchMessagesText).toEqual("Check Messages")
+      });
+      it('should set fetchMessagesText to "Loading..." when state is true', () => {
+        component.setFetchingMessagesState(true)
+        expect(component.fetchMessagesText).toEqual("Loading...")
+      });
+    });
+    
+    describe('fetchMessagesDisabled', () => {
+      it('should set fetchMessagesDisabled to true when state is true', () => {
+        component.fetchMessagesDisabled = false
+        component.setFetchingMessagesState(true)
+        expect(component.fetchMessagesDisabled).toBe(true)
+      });
+      it('should set fetchMessagesDisabled to false when state is true', () => {
+        component.fetchMessagesDisabled = true
+        component.setFetchingMessagesState(false)
+        expect(component.fetchMessagesDisabled).toBe(false)
+      });
+    });
+    
+    describe('messagesLoaded', () => {
+      it('should set messagesLoaded to false when NOT in quietMode', () => {
+        component.setFetchingMessagesState(true, false)
+        expect(component.messagesLoaded).toBe(false)
+      });
+      it('should NOT set messagesLoaded to false when in quietMode', () => {
+        component.messagesLoaded = true
+        component.setFetchingMessagesState(true, true)
+        expect(component.messagesLoaded).toBe(true)
+
+        component.messagesLoaded = false
+        component.setFetchingMessagesState(true, true)
+        expect(component.messagesLoaded).toBe(false)
+      });
+      it('should set messagesLoaded to false when quietMode is NOT defined', () => {
+        component.messagesLoaded = true
+        component.setFetchingMessagesState(true)
+        expect(component.messagesLoaded).toBe(false)
+      });
+    });
+  });
+
+  describe('addMailToInboxMessages', () => {
+    const message = {
+      "headers": {
+        "date": "2019-06-07T14:53:36Z",
+        "from": "\u003c0x0123456789012345678901234567890123456789@testnet.ethereum\u003e",
+        "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
+        "message-id": "0020c"
+      },
+      "body": "",
+      "subject": "Re: Mailchain Test!",
+      "status": "ok",
+      "status-code": "",
+      "read": true
+    }
+
+    it('should add a message to inboxMessages', () => {      
+      expect(component.inboxMessages).toEqual([])
+      
+      component.addMailToInboxMessages(message)
+      let obj = component.inboxMessages[0]
+
+      expect(component.inboxMessages.length).toEqual(1)
+
+    })
+    
+    it('should set the `headers` field', () => {
+      component.addMailToInboxMessages(message)
+      let obj = component.inboxMessages[0]
+
+      expect(obj["headers"]["message-id"]).toEqual(message["headers"]["message-id"])
+      expect(obj["headers"]).toEqual(message["headers"])
+    });
+
+    it('should set the `subject` field', () => {
+      component.addMailToInboxMessages(message)
+      let obj = component.inboxMessages[0]
+      
+      expect(obj["subject"]).toEqual(message["subject"])
+    });
+
+    it('should set the `body` field', () => {
+      component.addMailToInboxMessages(message)
+      let obj = component.inboxMessages[0]
+
+      expect(obj["body"]).toEqual(message["body"])
+    });
+
+    it('should set the `read` field', () => {
+      component.addMailToInboxMessages(message)
+      let obj = component.inboxMessages[0]
+
+      expect(obj["read"]).toEqual(message["read"])
+    });
+
+    it('should set the `selected` field', () => {
+      component.addMailToInboxMessages(message)
+      let obj = component.inboxMessages[0]
+
+      expect(obj["selected"]).toEqual(false)
+    });
+
+    it('should set the `senderIdenticon` field', () => {
+      component.addMailToInboxMessages(message)
+      let identicon = mailchainService.generateIdenticon(message.headers.from)
+      let obj = component.inboxMessages[0]
+
+      expect(obj["senderIdenticon"]).toEqual(identicon)
+    });
+
   });
 
 
