@@ -2,7 +2,7 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web?ref=badge_shield)
 [![Build Status](https://travis-ci.com/mailchain/mailchain-web.svg?branch=master)](https://travis-ci.com/mailchain/mailchain-web)
 [![Coverage Status](https://coveralls.io/repos/github/mailchain/mailchain-web/badge.svg?branch=master)](https://coveralls.io/github/mailchain/mailchain-web?branch=master)
- [![Join the chat at https://gitter.im/Mailchain/mailchain-web](https://badges.gitter.im/Mailchain/mailchain.svg)](https://gitter.im/Mailchain/mailchain-web?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+ [![Join the chat at https://gitter.im/Mailchain/community](https://badges.gitter.im/Mailchain/mailchain.svg)](https://gitter.im/Mailchain/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
