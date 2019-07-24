@@ -14,8 +14,9 @@ import { AddressesService } from 'src/app/services/mailchain/addresses/addresses
 })
 
 export class InboxComposeComponent implements OnInit {
-  @Input() currentMessage: any;
+  @Input() currentAccount: string;
   @Input() currentNetwork: string;
+  @Input() currentMessage: any;
   
   @Output() openMessage = new EventEmitter();
   @Output() goToInboxMessages = new EventEmitter();
@@ -31,6 +32,9 @@ export class InboxComposeComponent implements OnInit {
     private addressesService: AddressesService,
   ) { }
 
+  /**
+   * Initialize empty values for the message model
+   */
   private initMail() {
     this.model.to = ""
     this.model.from = ""
@@ -53,7 +57,7 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
-   * Go back to the inbox-messages view
+   * If there is a currentMessage, call the openMessage.emit to go back to the inbox-messages view; Otherwise, call the functin to return to inbox view
    */
   public returnToMessage(): void {
     if (this.currentMessage == undefined) {
@@ -71,14 +75,13 @@ export class InboxComposeComponent implements OnInit {
   }
   
   /**
-   * Sets the first available address in the `from` dropdown
+   * Sets the currentAccount as the address in the `from` dropdown
    * -or-
    * When replying, sets the from address as the address the message was sent to
    */
-  private setFirstOptionInFromAddressDropdown(){
-    // Set first option in dropdown
-    if ( this.fromAddresses[0] != undefined ) {
-      this.model.from = this.fromAddresses[0]
+  private setCurrentAccountInFromAddressDropdown(){
+    if ( this.currentAccount != undefined ) {
+      this.model.from = this.currentAccount
     } 
   }
 
@@ -91,15 +94,23 @@ export class InboxComposeComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.setFromAddressList()
     this.initMail()
-    this.setFirstOptionInFromAddressDropdown()
+    this.setCurrentAccountInFromAddressDropdown()
+    this.handleReplyFields()
     
+  }
+
+  /**
+   * Set the fields for a reply
+   */
+  private handleReplyFields(){
     if ( this.currentMessage && this.currentMessage.headers ) {
-      var messageFrom:    string = "",
-        messageReplyTo:   string = "",
-        messageDate:      string = "",
-        messageTo:        string = "",
-        messageSubject:   string = "",
-        messageBody:      string = ""
+
+      var messageFrom:  string = "",
+      messageReplyTo:   string = "",
+      messageDate:      string = "",
+      messageTo:        string = "",
+      messageSubject:   string = "",
+      messageBody:      string = ""
 
       if (this.currentMessage.headers["from"]) {
         messageFrom = '\r\n\r\n>From: ' + this.currentMessage.headers["from"] + "\r\n"
@@ -151,11 +162,11 @@ export class InboxComposeComponent implements OnInit {
   
   /**
   * onSubmit sends email to the local service. It includes the reset form to handle errors and resets.
-  * @param form is the form being sent to the local service
   */
-  public onSubmit(form: NgForm) {  
+  public onSubmit() {  
     this.sendMessagesDisabled = true
     var self = this
+    
     this.publicKeyService.getPublicKeyFromAddress(
       this.model.to,
       this.currentNetwork
@@ -163,7 +174,7 @@ export class InboxComposeComponent implements OnInit {
 
       this.model.publicKey = res["public_key"]
       var outboundMail = this.generateMessage(this.model)
-            
+
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
         self.returnToInboxMessages();
@@ -183,8 +194,9 @@ export class InboxComposeComponent implements OnInit {
    * Sends the OutboundMail object on the currently selected network
    * @param outboundMail The OutboundMail object
    */
-  private sendMessage(outboundMail: OutboundMail) {
+  private sendMessage(outboundMail: OutboundMail) {    
     let network = this.currentNetwork
+    
     return this.sendService.sendMail(outboundMail, network)    
   }
 }
