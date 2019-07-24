@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {convertToParamMap, ParamMap} from '@angular/router';
 
 import { InboxComponent } from './inbox.component';
@@ -7,21 +7,18 @@ import { InboxMessagesComponent } from './inbox-messages/inbox-messages.componen
 import { InboxMessageComponent } from './inbox-message/inbox-message.component';
 import { InboxComposeComponent } from './inbox-compose/inbox-compose.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpHelpersService } from '../services/helpers/http-helpers/http-helpers.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LocalStorageAccountService } from '../services/helpers/local-storage-account/local-storage-account.service';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
-import { of } from 'rxjs';
 import { MailchainTestService } from '../test/test-helpers/mailchain-test.service';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
-import { container } from '@angular/core/src/render3';
-import { InboundMail } from '../models/inbound-mail';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -199,7 +196,6 @@ describe('InboxComponent', () => {
     fixture = TestBed.createComponent(InboxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  
   });
 
   afterEach(() => {

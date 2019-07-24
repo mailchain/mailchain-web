@@ -84,6 +84,7 @@
   ></div>
 
   <div *ngIf="inboxPartial == 'compose'" inbox-compose class="col-lg-8 col-xl-9 col-12"
+    [currentAccount]="currentAccount"
     [currentMessage]="currentMessage"
     [currentNetwork]="currentNetwork"
 

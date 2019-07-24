@@ -100,7 +100,7 @@ export class MailchainTestService {
         "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
         "message-id": "0020c"
       },
-      "body": "",
+      "body": "A body",
       "subject": "Re: Mailchain Test!",
       "status": "ok",
       "status-code": "",
