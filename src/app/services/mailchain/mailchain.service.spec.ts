@@ -171,28 +171,46 @@ describe('MailchainService', () => {
   })
 
   describe('filterMessages', () => {
-    // id 00: read & status ok
-    // id 01: read & status error
-    // id 02: unread & status ok
-    // id 03: unread & status error
+    // id 00: read & status ok;
+    //        address 1
+    // id 01: read & status error;
+    //        address 2
+    // id 02: unread & status ok;
+    //        address 1
+    // id 03: unread & status error;
+    //        address 2
     const messages = [
       {
+        "headers": {
+          "to":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        },
         "read": true,
         "status": "ok",
       },
       {
+        "headers": {
+          "to":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        },
         "read": true,
         "status": "error",
       },
       {
+        "headers": {
+          "to":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        },
         "read": false,
         "status": "ok",
       },
       {
+        "headers": {
+          "to":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        },
         "read": false,
         "status": "error",
       }
     ]
+    const address1 = "0x0000000000000000000000000000000000000001"
+    const address2 = "0x0000000000000000000000000000000000000002"
 
     it('should return messages with a matching status to the options["status"] value', () => {
       expect(mailchainService.filterMessages(messages, {status: "ok"})).toEqual([ messages[0],messages[2] ])
@@ -207,6 +225,16 @@ describe('MailchainService', () => {
       expect(mailchainService.filterMessages(messages, {status: "ok", readState: false})).toEqual([ messages[2] ])
       expect(mailchainService.filterMessages(messages, {status: "error", readState: true})).toEqual([ messages[1] ])
       expect(mailchainService.filterMessages(messages, {status: "error", readState: false})).toEqual([ messages[3] ])
+    })
+    it('should return messages with a TO adddress matching the options["headersTo"] value', () => {
+      expect(mailchainService.filterMessages(messages, {headersTo: address1})).toEqual([ messages[0],messages[2] ])
+      expect(mailchainService.filterMessages(messages, {headersTo: address2})).toEqual([ messages[1],messages[3] ])
+    })
+    it('should return messages with a TO adddress matching the options["headersTo"] value', () => {      
+      expect(mailchainService.filterMessages(messages, {status: "ok", readState: true, headersTo: address1 })).toEqual([ messages[0] ])
+      expect(mailchainService.filterMessages(messages, {status: "ok", readState: false, headersTo: address1})).toEqual([ messages[2] ])
+      expect(mailchainService.filterMessages(messages, {status: "error", readState: true, headersTo: address2})).toEqual([ messages[1] ])
+      expect(mailchainService.filterMessages(messages, {status: "error", readState: false, headersTo: address2})).toEqual([ messages[3] ])
     })
   })
   

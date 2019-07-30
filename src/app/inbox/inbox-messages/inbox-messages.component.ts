@@ -30,31 +30,42 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   ) {
   }
 
+  /**
+   * Emits an array with [address, inboxCount] for each of the addresses inputs
+   * @param addresses an array of addresses
+   */
   emitInboxCount(addresses: Array<any>){
     
     addresses.forEach(address => {
       // emit message count for inbox component
-      var inboxCount = 0
-      var _this = this
-      this.mailchainService.dedupeMessagesByIds(this.inboxMessages).map(function(msg) {        
-        var addr = _this.parseAddressFromMailchain(msg["headers"]["to"]).toLowerCase()
-        
-        if (addr.includes(address.toLowerCase()) && !msg.read) {          
-          ++inboxCount
+      let inboxCount
+      let unreadMsgs
+      let uniqUnreadMsgs
+
+      unreadMsgs = this.mailchainService.filterMessages(
+        this.inboxMessages,
+        {
+          status: "ok",
+          readState: false,
+          headersTo: address,
         }
-      });
+      )
+      
+      uniqUnreadMsgs = this.mailchainService.dedupeMessagesByIds(unreadMsgs)
+
+      inboxCount = uniqUnreadMsgs.length
       
       this.inboxCounter.emit([address,inboxCount]);  
-    });
-    
+    });    
   }
 
   /**
-   * 
-   * @param decryptedMsg 
+   * addMailToInboxMessages adds a decrypted message object to the inboxMessages array with the correct attributes
+   * @param decryptedMsg the decrypted message object
    */
   addMailToInboxMessages(decryptedMsg){  
     decryptedMsg.senderIdenticon = this.generateIdenticon(decryptedMsg.headers.from)
+
     var msg = {
       ...new InboundMail,
       ...decryptedMsg
@@ -62,6 +73,13 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
     this.inboxMessages.push(msg)
   }
 
+  /**
+   * Handles message opening, including:
+   *    Emit openMessage event
+   *    Emit inboxCount
+   *    Mark the message as read
+   * @param mail the message to open
+   */
   openMail(mail: any): void {
     this.readService.markRead(mail["headers"]["message-id"]).subscribe(res => {
       mail.read = true;
@@ -70,10 +88,18 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
     })
   }
 
+  /**
+   * Returns the identicon for the mailchain formatted address
+   * @param address formatted <0x...@network.protocol> address
+   */
   private generateIdenticon(address){
     return this.mailchainService.generateIdenticon(address)
   }
   
+  /**
+   * Returns the extracted public address from mailchain formatted address
+   * @param address formatted <0x...@network.protocol> address
+   */
   private parseAddressFromMailchain(address){
     return this.mailchainService.parseAddressFromMailchain(address)
   }

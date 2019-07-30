@@ -89,10 +89,12 @@ export class MailchainService {
    * @param options: hash with the following options:
    *    status: "ok" 
    *    readState: boolean where false returns unread messages
+   *    headersTo: TO address to match
    */
   public filterMessages(msgsArray, options){
     let status = options.status 
     let readState = options.readState
+    let headersTo = options.headersTo
     let output = msgsArray
     if (status != undefined ) {
       output = output.filter(msg => msg.status === status)
@@ -100,7 +102,14 @@ export class MailchainService {
     if (readState != undefined) {
       output = output.filter(msg => msg.read === readState)
     }
+    if (headersTo != undefined) {
+      output = output.filter(msg => 
+        this.parseAddressFromMailchain(msg["headers"]["to"]) == headersTo
+      )      
+    }
     return output
   }
+
+
 
 } 
