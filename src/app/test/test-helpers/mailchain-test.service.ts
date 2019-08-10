@@ -151,5 +151,17 @@ export class MailchainTestService {
     ]
   }
 
+  public resolveNameResponse(): any {
+    return {
+      "address": "0x0000000000000000000000000000000000000022"
+    }
+  }
+
+  public resolveAddressResponse(): any {
+    return {
+      "name":"mailchain.eth"
+    }
+  }
+
 }
 
