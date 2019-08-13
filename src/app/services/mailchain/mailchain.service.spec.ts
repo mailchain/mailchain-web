@@ -237,6 +237,155 @@ describe('MailchainService', () => {
       expect(mailchainService.filterMessages(messages, {status: "error", readState: false, headersTo: address2})).toEqual([ messages[3] ])
     })
   })
-  
+
+  describe('validateEnsName', () => {
+    it('should accept alphanumeric names', () => {
+      let exps = [
+        "somedomain.eth",
+        "somedomain1.eth",
+        "s0m3d0m41n.eth",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(true)
+      })
+    })
+    it('should accept alphanumeric subdomains', () => {
+      let exps = [
+        "somedomain.domain.eth",
+        "somedomain1.domain.eth",
+        "s0m3d0m41n.domain.eth",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(true)
+      })
+    })
+    it('should be valid if tld is 2 chars or more', () => {
+      let exps = [
+        "somedomain.et",
+        "somedomain.eth",
+        "somedomain.funkytld",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(true)
+      })
+    })
+    it('should be valid if it is a subdomain', () => {
+      let exps = [
+        "subdomain.somedomain.et",
+        "subdomain.somedomain.eth",
+        "subdomain.somedomain.funkytld",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(true)
+      })
+    })
+    it('should be valid if it is has a hyphen in the domain', () => {
+      let exps = [
+        "some-domain.eth",
+        "subdomain.some-domain.eth"
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(true)
+      })
+    })
+    it('should be valid if it is has a hyphen in the subdomain', () => {
+      let exps = [
+        "sub-domain.somedomain.eth",
+        "sub-domain.some-domain.eth"
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(true)
+      })
+    })
+
+    it('should return false if there is an invalid character', () => {
+      let exps = [
+        "some_domain.eth",
+        "some*domain.eth",
+        "some+domain.eth",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(false)
+      })
+    })
+    it('should return false if tld extension is less than 2 chars', () => {
+      let exp = "somedomain.e"
+      expect(mailchainService.validateEnsName(exp)).toBe(false)
+    })
+    it('should return false if there is no tld extension', () => {
+      let exp = "somedomain"
+      expect(mailchainService.validateEnsName(exp)).toBe(false)
+    })
+    it('should return false if there are 2 dots consecutively (..)', () => {
+      let exps = [
+        "somedomain..eth",
+        "subdomain.somedomain..eth",
+        "subdomain..somedomain.eth",
+      ]
+      exps.forEach(exp => {        
+        expect(mailchainService.validateEnsName(exp)).toBe(false)
+      })
+    })
+    it('should return false if there are non-alphabet characters in the tld', () => {
+      let exps = [
+        "somedomain.3th",
+        "subdomain.somedomain.3th",
+        "subdomain..somedomain.e2h",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(false)
+      })
+    })
+    it('should return false if the name starts with a hyphen (-)', () => {
+      let exps = [
+        "-somedomain.eth",
+        "subdomain.-somedomain.eth"
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEnsName(exp)).toBe(false)
+      })
+    })
+    it('should return false if the subdomain starts with a hyphen (-)', () => {
+      let exp = "-subdomain.somedomain.eth"
+      expect(mailchainService.validateEnsName(exp)).toBe(false)
+    })
+  })
+
+  describe('validateEthAddress', () => {
+    it('should return true forvalid ethereum addresses', () => {
+      let exps = [
+        "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6",
+        "0x0000000000000000000000000000000000000000",
+        "0xD5AB4CE3605cd590db609b6b5c8901fdb2ef7fe6",
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEthAddress(exp)).toBe(true)
+      })
+    })
+    it('should return false if the ethereum address does not start with 0x', () => {
+      let exps = [
+        "00d5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6", // 0x >> 00
+        "0000000000000000000000000000000000000000",   // no 0x
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEthAddress(exp)).toBe(false)
+      })
+    })
+    it('should return false if the ethereum address is not the right length', () => {
+      let exps = [
+        "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7f",     //-2
+        "0x000000000000000000000000000000000000000",    //-1
+        "0xD5AB4CE3605cd590db609b6b5c8901fdb2ef7fe66",  // +1
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateEthAddress(exp)).toBe(false)
+      })
+    })
+    it('should return false if the ethereum address contains non-hex values', () => {
+      let exp = "0xg5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+      expect(mailchainService.validateEthAddress(exp)).toBe(false)
+    })
+  });
+
 
 });

@@ -45,17 +45,16 @@ export class MailchainService {
    * @param address can be Mailchain format or Ethereum format
    */
   public generateIdenticon(address){
-    var addr
     var regexMailAddr = new RegExp('<0x[0-9a-fA-Z]{40}[@].+>$');
-    var regexEthAddr = new RegExp('0x[0-9a-fA-Z]{40}$');
+    var regexEthAddr = new RegExp('0x[0-9a-fA-F]{40}$');
     
     if ( regexMailAddr.test(address) ) {
-      addr = this.parseAddressFromMailchain(address)
+      return makeBlockie(this.parseAddressFromMailchain(address))
     } else if (regexEthAddr.test(address)) {
-      addr = address;
-    }
-    
-    return makeBlockie(addr)
+      return makeBlockie(address);
+    } else {
+      return ""
+    };
   }
   
   /**
@@ -110,6 +109,26 @@ export class MailchainService {
     return output
   }
 
+  /**
+   * tests the value matches the ENS Name Regex
+   * @param value the ens name value to test, e.g. alice.eth, alice.xyz
+   * see tests for conditions 
+   */
+  public validateEnsName(value){
+    let regex = new RegExp('^([0-9a-zA-Z][0-9a-zA-Z\-]{2,}[\.]){1,}[a-zA-Z]{2,}$')
+    return regex.test(value)
+  };
+
+
+  /**
+   * tests the value matches the Eth Address Regex
+   * @param value the address value to test, e.g. 0x000...
+   * expects '0x' + 40 hex chars
+   */
+  public validateEthAddress(value){
+    let regex = new RegExp('0x[0-9a-fA-F]{40}$');
+    return regex.test(value)
+  }
 
 
 } 
