@@ -29,6 +29,7 @@ export class InboxComponent implements OnInit {
 
   public currentAccount: string;
   public currentNetwork: string;
+  public currentProtocol: string = "ethereum"
   public currentMail: any;
   public currentMessage: any;
 
