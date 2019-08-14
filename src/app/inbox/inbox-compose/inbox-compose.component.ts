@@ -1,11 +1,14 @@
 import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { Mail } from 'src/app/models/mail';
 import { OutboundMail } from 'src/app/models/outbound-mail';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { SendService } from 'src/app/services/mailchain/messages/send.service';
 import { PublicKeyService } from 'src/app/services/mailchain/public-key/public-key.service';
 import { AddressesService } from 'src/app/services/mailchain/addresses/addresses.service';
+import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
+import { Subject, of, Observable } from 'rxjs';
+
+import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
 
 @Component({
   selector: '[inbox-compose]',
@@ -16,6 +19,7 @@ import { AddressesService } from 'src/app/services/mailchain/addresses/addresses
 export class InboxComposeComponent implements OnInit {
   @Input() currentAccount: string;
   @Input() currentNetwork: string;
+  @Input() currentProtocol: string;
   @Input() currentMessage: any;
   
   @Output() openMessage = new EventEmitter();
@@ -24,12 +28,20 @@ export class InboxComposeComponent implements OnInit {
   public model = new Mail()
   public fromAddresses: Array<any> = []
   public sendMessagesDisabled: boolean = false;
+  private subscription
+  public currentRecipientValue
+
+  private recipientAddressChanged = new Subject<string>();
+  public recipientLoadingIcon = ""
+  public recipientLoadingText = ""
+  public messageToField = ""
 
   constructor(
     private mailchainService: MailchainService,
     private sendService : SendService,
     private publicKeyService: PublicKeyService,
     private addressesService: AddressesService,
+    private nameserviceService: NameserviceService,
   ) { }
 
   /**
@@ -40,15 +52,148 @@ export class InboxComposeComponent implements OnInit {
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
+
   }
 
   /**
    * Sets the available from addresses
    */
   private async setFromAddressList(){
-    this.fromAddresses = await this.addressesService.getAddresses();    
+    this.fromAddresses = await this.addressesService.getAddresses();
+  }
+
+  /**
+   * Returns the identicon for the an address
+   * @param address the address 
+   */
+  public generateIdenticon(address) {    
+    let icon = this.mailchainService.generateIdenticon(address);
+    
+    return icon == "" ? "assets/question-circle-regular.svg" : icon
+  }
+
+  /**
+   * Resolves the recipient field to ENS address
+   * (or validates public address).
+   * Leverages debounce (in case of user still typing).
+   *  
+   * @param event the event from keyup
+   */
+  public recipientResolve(event){
+    if (event.target.value == "") {
+      this.setRecipientLoadingIcon("clear")
+      this.setRecipientLoadingText()
+      this.resetModelToField()
+    } else if (this.currentRecipientValue != event.target.value) {
+      this.setRecipientLoadingIcon("loading")
+      this.setRecipientLoadingText()
+      this.resetModelToField()
+    }
+    this.currentRecipientValue = event.target.value
+    this.recipientAddressChanged.next(event.target.value);
+  }
+
+  /**
+   * Sets the recipientLoadingIcon to the following:
+   * loading: spinner
+   * valid:   tick
+   * invalid: cross
+   * clear:   blank
+   * @param status ['loading' | 'valid' | 'invalid' | 'clear' ]
+   */
+  public setRecipientLoadingIcon(status) {
+    switch (status) {
+      case 'loading':
+        this.recipientLoadingIcon = "fa fa-spinner fa-pulse"
+        break;
+      case 'valid':
+        this.recipientLoadingIcon = "fa fa-check-circle text-success"
+        break;
+      case 'invalid':
+        this.recipientLoadingIcon = "fa fa-times-circle text-danger"
+        break;        
+      case 'clear':
+        this.recipientLoadingIcon = ""
+        break;
+    }
   }
   
+  /**
+   * Sets the recipientLoadingText to the input text
+   * @param text the text to display; if blank, clears text
+   */
+  public setRecipientLoadingText(text: string = "") {
+    this.recipientLoadingText = text
+  }
+
+  /**
+   * Sets up a subscription to handle user entering an ENS name or Ethereum address in the To field.
+   * Includes debounce handling and will validate a name or address.
+   */
+  private setupRecipientAddressLookupSubscription(){
+    this.subscription = this.recipientAddressChanged.pipe(
+      debounceTime(1500),
+      distinctUntilChanged(),
+      mergeMap(searchVal => {
+        return this.resolveAddress(searchVal)
+      } )
+    ).subscribe((res) => {
+      res.subscribe(val => {
+        let address = val['body']['address']
+        if ( this.mailchainService.validateEthAddress(address) ) {
+          this.model.to = address
+          this.setRecipientLoadingIcon('valid')
+          this.setRecipientLoadingText('valid address')
+        } else {
+          this.setRecipientLoadingIcon('invalid')
+          this.setRecipientLoadingText('invalid address')
+        }
+        
+      }, err => {
+        this.setRecipientLoadingIcon('invalid')
+        this.setRecipientLoadingText(err['error']['message'])
+      })
+    })
+  };
+
+  /**
+   * resetModelToField resets the to field in the model
+   */
+  public resetModelToField() {
+    this.model.to = ""
+  }
+
+  /**
+   * Determines whether an address is:
+   * * a public address,
+   * * an ENS address
+   * 
+   * Returns observable with body containing address, e,g.
+   * {body: {address: "0x1234567891234567891234567891234567891234"} }
+   */
+  public async resolveAddress(value){
+    let returnObs
+    
+    if ( this.mailchainService.validateEnsName(value) ) {
+      returnObs = this.nameserviceService.resolveName(
+        this.currentProtocol,
+        this.currentNetwork,
+        value
+      )
+    } else if ( this.mailchainService.validateEthAddress(value) ) {
+      returnObs = of(
+        { body: { address: value} }
+      )
+    } else {
+      returnObs = of(
+        { body: { address: ''} }
+      )
+    }
+
+    return returnObs
+
+  }
+
   /**
    * Go back to the inbox-messages view
    */
@@ -96,7 +241,7 @@ export class InboxComposeComponent implements OnInit {
     this.initMail()
     this.setCurrentAccountInFromAddressDropdown()
     this.handleReplyFields()
-    
+    this.setupRecipientAddressLookupSubscription()
   }
 
   /**
@@ -143,6 +288,8 @@ export class InboxComposeComponent implements OnInit {
         messageBody
       
       this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
+      this.messageToField = this.currentRecipientValue = this.model.to
+
       this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["to"])
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
     } 

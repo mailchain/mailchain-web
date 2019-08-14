@@ -33,6 +33,7 @@ describe('InboxComponent', () => {
   let currentWebProtocolsList: any
   let inboundMessage: any
   
+  const currentProtocol: string = "ethereum"
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
   const currentNetwork = 'testnet';
@@ -46,6 +47,7 @@ describe('InboxComponent', () => {
   let localStorageCurrentHost: string
   let localStorageCurrentAccount: string
   let localStorageCurrentNetwork: string
+  let localStorageCurrentProtocol: string
 
   class LocalStorageAccountServiceStub {
     getCurrentAccount(){
@@ -189,6 +191,7 @@ describe('InboxComponent', () => {
     localStorageCurrentHost = currentHost
     localStorageCurrentAccount = currentAccount
     localStorageCurrentNetwork = currentNetwork
+    localStorageCurrentProtocol = currentProtocol
     
     /* End Set Values */
 

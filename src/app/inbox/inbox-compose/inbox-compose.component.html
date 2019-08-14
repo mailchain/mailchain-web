@@ -10,46 +10,107 @@
     
     <form #mailForm="ngForm" id="message-compose" (ngSubmit)="onSubmit()" autocomplete="off">
       
-      <div class="form-group">
-        <label for="from">From:</label>
-        <select class="form-control" [(ngModel)]="model.from" name="from">
-          <option *ngFor="let address of fromAddresses; let i = index" [value]="address">
-              {{address}}
-          </option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="to">To:</label>
-        <input type="text" id="messageTo" placeholder="To" [(ngModel)]="model.to" name="to" class="input-transparent form-control" placeholder="e.g. 0x0000000...">
-      </div>
-
-      <div class="form-group">
-        <label for="subject">Subject:</label>
-        <input type="text" id="messageSubject" placeholder="Subject" [(ngModel)]="model.subject"  name="subject" class="input-transparent form-control">
-      </div>
-
-      <div class="form-group">
-          <textarea class="form-control courier" id="messageBody"
-            [(ngModel)]="model.body"
-            (keydown.enter)="supressEnterPropagation($event)"
-            name="body"
-            rows="18"
-          ></textarea>
-      </div>
-
-      <div class="clearfix">
-        <div class="btn-toolbar pull-right">
-          <div class="btn-group mr-2">
-            <button type="reset" class="btn btn-outline-secondary" (click)="returnToMessage()">Discard</button>
+      <!-- From Field -->
+      <div class="form-group row">
+        <label for="from" class="col-form-label col-sm-2 col-md- col-lg-2">From:</label>
+        <div class="col-md-10 col-lg-9">
+          <div class="input-group mb-2 row">
+            <div class="input-group-prepend">
+              <div class="input-group-text p-0">
+                <img class="rounded-circle addressIcon" src={{generateIdenticon(model.from)}} alt="">
+              </div>
+            </div>
+            <select class="form-control" [(ngModel)]="model.from" name="from">
+              <option *ngFor="let address of fromAddresses; let i = index" [value]="address">
+                {{address}}
+              </option>
+            </select>
           </div>
-          <div class="btn-group mr-2">
-            <button
-              type="submit"
-              class="btn btn-danger"
-              [disabled]="sendMessagesDisabled"
-            >&nbsp;&nbsp;&nbsp;Send&nbsp;&nbsp;&nbsp;</button>
+        </div>
+      </div>
+
+      <!-- ./From Field -->
+
+
+      <!-- To Field -->
+      <div class="form-group">
+        <div class="row">
+          <label for="to" class="col-form-label col-sm-2 col-md- col-lg-2">To:</label>
+          <div class="col-md-10 col-lg-9">
+            <div class="input-group row">
+              <div class="input-group-prepend">
+                <div class="input-group-text p-0">
+                  <img class="rounded-circle addressIcon" src={{generateIdenticon(model.to)}} alt="">
+                </div>
+              </div>
+              <input type="text" id="messageTo" placeholder="To" name="to" class="form-control " placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField" (keyup)="recipientResolve($event)">
+            </div>
           </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+            <div class="row pl-2">
+              <p>
+                <i class="{{recipientLoadingIcon}}"></i>&nbsp;
+                <span>{{recipientLoadingText | titlecase}}</span>&nbsp;
+                <span *ngIf="currentRecipientValue != model.to">{{model.to}}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- ./To Field -->
+
+      <!-- Subject Field -->
+      <div class="form-group row">
+
+        <label for="subject" class="col-form-label col-sm-2 col-md- col-lg-2">Subject:</label>
+        
+        <div class="col-md-10 col-lg-9">
+          <div class="input-group mb-2 row">
+            <input type="text" id="messageSubject" placeholder="Subject" [(ngModel)]="model.subject"  name="subject" class="form-control">
+          </div>
+        </div>
+
+      </div>
+      <!-- ./Subject Field -->
+
+      <!-- Body Field -->
+      <div class="form-group row">
+        <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+          <div class="input-group mb-2 row">
+  
+            <textarea class="form-control courier" id="messageBody"
+              [(ngModel)]="model.body"
+              (keydown.enter)="supressEnterPropagation($event)"
+              name="body"
+              rows="18"
+            ></textarea>
+
+          </div>
+        </div>
+      </div>
+      <!-- ./Body Field -->
+
+      <!-- <div class="clearfix"> -->
+      <div class="form-group row">
+        <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+
+          <div class="float-right mt-2 mr-3">
+            <div class="btn-group mr-2">
+              <button type="reset" class="btn btn-outline-secondary" (click)="returnToMessage()">Discard</button>
+            </div>
+            <div class="btn-group">
+              <button
+                type="submit"
+                class="btn btn-danger"
+                [disabled]="sendMessagesDisabled"
+              >&nbsp;&nbsp;&nbsp;Send&nbsp;&nbsp;&nbsp;</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </form>
