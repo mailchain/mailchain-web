@@ -4,7 +4,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/mailchain/mailchain-web/badge.svg?branch=master)](https://coveralls.io/github/mailchain/mailchain-web?branch=master)
  [![Join the chat at https://gitter.im/Mailchain/community](https://badges.gitter.im/Mailchain/mailchain.svg)](https://gitter.im/Mailchain/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
 <!-- code_chunk_output -->

@@ -146,8 +146,14 @@ describe('InboxComposeComponent', () => {
           expect(component.model.subject).toBe('Re: Mailchain Test!')
         })  
 
+        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async() => {
+          component.currentMessage.subject = "Re: Mailchain Test!"
+          await component.ngOnInit();
+          expect(component.model.subject).toBe('Re: Mailchain Test!')
+        })  
+
         it('should initialize the model "body" field with the original message field', async() => {
-        let response = "\r\n\r\n>From: <0x0123456789012345678901234567890123456789@testnet.ethereum>\r\n>Date: 2019-06-07T14:53:36Z\r\n>To: <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum>\r\n>Subject: Re: Mailchain Test!\r\n>\r\n>A body"
+        let response = "\r\n\r\n>From: <0x0123456789012345678901234567890123456789@testnet.ethereum>\r\n>Date: 2019-06-07T14:53:36Z\r\n>To: <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum>\r\n>Subject: Mailchain Test!\r\n>\r\n>A body"
 
           await component.ngOnInit();
           expect(JSON.stringify(component.model.body)).toBe(JSON.stringify(response))
