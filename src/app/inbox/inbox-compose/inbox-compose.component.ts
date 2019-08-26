@@ -299,7 +299,7 @@ export class InboxComposeComponent implements OnInit {
    * Checks for 'Re: ' on the subject and adds it if it is not there already.
    * @param subject the message subject
    */
-  private addRePrefixToSubject(subject: string) {
+  private addRePrefixToSubject(subject: string) {    
     if (subject.startsWith("Re: ") ) {
       return subject
     } else {

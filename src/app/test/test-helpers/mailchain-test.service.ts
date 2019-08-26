@@ -101,7 +101,7 @@ export class MailchainTestService {
         "message-id": "0020c"
       },
       "body": "A body",
-      "subject": "Re: Mailchain Test!",
+      "subject": "Mailchain Test!",
       "status": "ok",
       "status-code": "",
       "read": true,
