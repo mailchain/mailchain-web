@@ -19,6 +19,7 @@ import { AddressesService } from '../services/mailchain/addresses/addresses.serv
 import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
+import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -28,6 +29,7 @@ describe('InboxComponent', () => {
   let localStorageAccountService: LocalStorageAccountService
   let localStorageServerService: LocalStorageServerService
   let mailchainService: MailchainService
+  let nameserviceService: NameserviceService
   let activatedRoute: any
   let networkList: any
   let currentWebProtocolsList: any
@@ -36,6 +38,9 @@ describe('InboxComponent', () => {
   const currentProtocol: string = "ethereum"
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
+  const currentAccountNameLookup = 'myaddress.eth';
+  const currentAccount2NameLookup = 'someaddress.myaddress.eth';
+
   const currentNetwork = 'testnet';
   const currentWebProtocol = 'https';
   const currentHost = 'example.com';
@@ -109,6 +114,20 @@ describe('InboxComponent', () => {
       return of(mailchainTestService.protocolsServerResponse())
     }
   }
+  class NameserviceServiceStub {
+    resolveAddress(protocol,network,value) {      
+      let returnVals = {}
+      returnVals[currentAccount]  = currentAccountNameLookup,
+      returnVals[currentAccount2] = currentAccount2NameLookup
+
+      return of(
+        {
+          "body": { name: returnVals[value] },
+          "ok": true
+        }
+      )
+    }
+  }
 
   class ActivatedRouteStub {
     //Observable that contains a map of the parameters
@@ -145,9 +164,6 @@ describe('InboxComponent', () => {
     }
   }
 
-
-
-
   beforeEach(async(() => {
 
     TestBed.configureTestingModule({
@@ -164,7 +180,8 @@ describe('InboxComponent', () => {
         { provide: AddressesService, useClass: AddressesServiceStub },
         { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: MessagesService, useClass: MessagesServiceStub },
-        { provide: ActivatedRoute, useClass: ActivatedRouteStub }
+        { provide: ActivatedRoute, useClass: ActivatedRouteStub },
+        { provide: NameserviceService, useClass: NameserviceServiceStub }
 
       ],
       imports: [
@@ -181,6 +198,7 @@ describe('InboxComponent', () => {
     localStorageAccountService = TestBed.get(LocalStorageAccountService);
     localStorageServerService = TestBed.get(LocalStorageServerService);
     mailchainService = TestBed.get(MailchainService);
+    nameserviceService = TestBed.get(NameserviceService);
     
   }));
   
@@ -603,6 +621,20 @@ describe('InboxComponent', () => {
 
       expect(component.accountIdenticons[currentAccount2]).toEqual(mailchainService.generateIdenticon(currentAccount2))
       component.fromAddresses
+    });
+  });
+
+  describe('setAccountNameRecords', () => {
+    it('should lookup a name each fromAddress', () => {
+      component.fromAddressesKeys = [currentAccount,currentAccount2]
+      component.setAccountNameRecords()
+      
+      console.log("xx",component.accountNameRecord);
+      
+      expect(component.accountNameRecord[currentAccount]).toEqual(currentAccountNameLookup)
+
+      expect(component.accountNameRecord[currentAccount2]).toEqual(currentAccount2NameLookup)
+
     });
   });
   

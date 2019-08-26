@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
 import { throwError } from 'rxjs';
+import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
 
 @Component({
   selector: 'app-inbox',
@@ -39,6 +40,7 @@ export class InboxComponent implements OnInit {
   public serverSettings: any = {};
   
   public accountIdenticons: any = {};
+  public accountNameRecord: any = {};
 
 
   constructor(
@@ -49,6 +51,7 @@ export class InboxComponent implements OnInit {
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
     private activatedRoute: ActivatedRoute,
+    private nameserviceService: NameserviceService,
   ) {}
 
   /**
@@ -281,6 +284,19 @@ export class InboxComponent implements OnInit {
       this.accountIdenticons[address] = this.mailchainService.generateIdenticon(address)
     });    
   }
+
+  /**
+   * Lookup name records for addresses
+   */
+  setAccountNameRecords() {
+    this.fromAddressesKeys.forEach(address => {
+      this.nameserviceService.resolveAddress(this.currentProtocol,this.currentNetwork,address).subscribe(res =>{        
+        if ( res['ok'] ) {
+          this.accountNameRecord[address] = res['body']['name']
+        }
+      })
+    }); 
+  }
   
   /**
    * Initiates the server settings form with default values. Default values are retrieved from local storage
@@ -339,12 +355,13 @@ export class InboxComponent implements OnInit {
     await this.setFromAddressList()
     this.getMails()
     this.setAccountIdenticons()
+    this.setAccountNameRecords()
   }
   
 
   /**
    * Fetch mails from the server
-   * @param 
+   * @param quietMode (default: false) when true, messages are quietly loaded
    */
   public getMails(quietMode: boolean = false){
 
@@ -355,7 +372,7 @@ export class InboxComponent implements OnInit {
     this.fromAddressesKeys.forEach(address => {
       var self = this
       this.messagesService.getMessages(address, this.currentNetwork).subscribe(function(res){
-
+        
         self.processUnreadMessagesInboxCounter(address, res["messages"])
         self.processInboxMessages(res["messages"])
         
@@ -395,7 +412,7 @@ export class InboxComponent implements OnInit {
       messages,
       {status: "ok"}
     )
-    validMessages.forEach(msg => this.addMailToInboxMessages(msg));
+    validMessages.forEach(msg => this.addMailToInboxMessages(msg));    
   }
   
 

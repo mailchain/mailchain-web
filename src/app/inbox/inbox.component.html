@@ -46,6 +46,7 @@
             </div>
             <div class="col-9 p-0 my-auto">
               <a class="nav-link" (click)="changeAccount(address)">{{address}}</a>
+              <span class="nav-link accountNameRecord" *ngIf="accountNameRecord[address] != undefined">({{accountNameRecord[address]}})</span>
             </div>
             <div class="col-1 p-0 my-auto">
               <a class="nav-link" (click)="changeAccount(address)">
