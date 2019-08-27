@@ -41,7 +41,29 @@
           </div>
         </td>
         <td class="d-none d-md-block" (click)="openMail(mail,messagesTable.attributes['data-value'].value)">
-          {{mail.headers.from}}</td>
+          
+          <!-- Name defined -->
+          <span *ngIf="messagesNameRecords[parseAddressFromMailchain(mail.headers.from)] != undefined">
+
+            <span class="resolved-name">{{messagesNameRecords[parseAddressFromMailchain(mail.headers.from)]}}</span>
+            
+            <br>
+            
+            <span class="resolved-address text-muted">{{mail.headers.from}}</span>
+
+          </span>
+          <!-- ./ Name defined -->
+
+          <!-- Name not defined -->
+          <span class="unresolved-address"
+            *ngIf="messagesNameRecords[parseAddressFromMailchain(mail.headers.from)] == undefined" 
+            >
+            <br>
+            {{mail.headers.from}}
+          </span>
+          <!-- ./ Name not defined -->
+
+        </td>
         <td class="subject" (click)="openMail(mail)">{{mail.subject}}</td>
         <td class="">{{mail.headers.date}}</td>
       </tr>

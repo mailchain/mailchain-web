@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { OutboundMail } from 'src/app/models/outbound-mail';
 import makeBlockie from 'ethereum-blockies-base64';
 import { applicationApiConfig } from 'src/environments/environment';
+import { NameserviceService } from './nameservice/nameservice.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import { applicationApiConfig } from 'src/environments/environment';
 export class MailchainService {
 
   constructor(
+    private nameserviceService: NameserviceService
   ) { }
 
     /**
@@ -79,6 +81,53 @@ export class MailchainService {
         output.push(msg)  
       }
     });
+    return output
+  }
+
+  /**
+   * Returns the deduplicated message senders
+   * @param messages an array of Mailchain messages
+   */
+  dedupeMessagesBySender(messages:Array<any> = []): Array<any>{
+    let output = [];
+    
+    messages.forEach(msg => {
+      var sender = this.parseAddressFromMailchain(msg["headers"]["from"])
+      if (!output.includes(sender) ) {
+        output.push(sender)  
+      }
+    });
+    return output
+  }
+
+  /**
+   * Resolves names of uniq message senders from an array of messages
+   * @param protocol e.g. Ethereum
+   * @param network e.g. mainnet
+   * @param messagesArray the message array
+   */
+  resolveSendersFromMessages(protocol, network, messagesArray){
+    let uniqSenders
+    let validMsgs
+    let output = {}
+
+    validMsgs = this.filterMessages(
+      messagesArray,
+      {
+        status: "ok",
+      }
+    )
+    
+    uniqSenders = this.dedupeMessagesBySender(validMsgs);
+    
+    uniqSenders.forEach(address => {
+      this.nameserviceService.resolveAddress(protocol,network,address).subscribe(res =>{        
+        if ( res['ok'] ) {
+          output[address] = res['body']['name']
+        }
+      })
+    });
+
     return output
   }
 
