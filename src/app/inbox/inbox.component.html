@@ -81,6 +81,8 @@
   <div *ngIf="inboxPartial == 'message'" inbox-message class="col-lg-8 col-xl-9 col-12"
     [currentMessage]="currentMessage"
     [inboxMessages]="inboxMessages"
+    [currentProtocol]="currentProtocol"
+    [currentNetwork]="currentNetwork"
 
     (replyToMessage)="composeMessage($event)"
     (goToInboxMessages)="changeView('messages')"

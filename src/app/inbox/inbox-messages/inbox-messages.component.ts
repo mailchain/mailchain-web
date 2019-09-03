@@ -63,7 +63,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   }
 
   /**
-   * resolveSendersFromMessages of messages by name according to the currentNetowkr and currentProtocol
+   * resolveSendersFromMessages of messages by name according to the currentNetwork and currentProtocol
    * @param messagesArray the array of messages
    */
   resolveSendersFromMessages(messagesArray) {

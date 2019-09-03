@@ -35,7 +35,7 @@ export class MailchainService {
    * Parses an address in Mailchain form and returns public address
    * @param address an address in format '<0x00000000000000000@network.chainname>'
    */
-  parseAddressFromMailchain(address) {
+  parseAddressFromMailchain(address) {    
     var regexMailAddr = new RegExp('<0x[0-9a-fA-Z]{40}[@].+>$');
     if ( regexMailAddr.test(address) ) {
       return address.substr(1, address.indexOf('@')-1 );
