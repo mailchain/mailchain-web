@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AddressPipe } from './address-pipe.pipe';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpHelpersService } from 'src/app/services/helpers/http-helpers/http-helpers.service';
 
 let pipe: AddressPipe
 
@@ -41,9 +43,12 @@ describe('AddressPipe', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        AddressPipe
+        AddressPipe,
+        HttpHelpersService,
       ],
-      imports: []
+      imports: [
+        HttpClientTestingModule,
+      ]
     });
     
     pipe = TestBed.get(AddressPipe);

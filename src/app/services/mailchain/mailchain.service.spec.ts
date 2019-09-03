@@ -5,14 +5,40 @@ import { of } from 'rxjs';
 import { OutboundMail } from 'src/app/models/outbound-mail';
 import { Mail } from 'src/app/models/mail';
 import { HttpClientModule } from '@angular/common/http';
+import { NameserviceService } from './nameservice/nameservice.service';
 
 describe('MailchainService', () => {
   let mailchainService: MailchainService;
+  let nameserviceService: NameserviceService
   
+  const address1 = "0x0000000000000000000000000000000000000001"
+  const address2 = "0x0000000000000000000000000000000000000002"
+
+  /**
+   * Resolves address1: myname.eth
+   * Throws 404 error for address2
+   */
+  class NameserviceServiceStub {
+    resolveAddress(protocol,network,value) {      
+      if (value == address1) {
+        return of(
+          {
+            "body": { "name": "myname.eth" },
+            "ok": true
+          }
+        )
+      }
+      if (value == address2) {
+        return of({"status": 404})
+      }
+    }
+  }
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         MailchainService,
+        { provide: NameserviceService, useClass: NameserviceServiceStub },
       ]
     });
 
@@ -140,6 +166,46 @@ describe('MailchainService', () => {
       expect(response.length).toEqual(2)
       expect(response).toEqual(messagesResponse)
     });
+  })
+
+  describe('dedupeMessagesBySender', () => {
+    let address1 = "<0x0000000000000000000000000000000000000001@ropsten.ethereum>"
+    let address2 = "<0x0000000000000000000000000000000000000002@ropsten.ethereum>"
+
+    let messages = [
+      { "headers": { "from": address1 } },
+      { "headers": { "from": address2 } },
+      { "headers": { "from": address1 } },
+      { "headers": { "from": address2 } },
+      { "headers": { "from": address1 } },
+    ]
+
+    it('should dedupe the senders of messages', ()=>{
+      let res = mailchainService.dedupeMessagesBySender(messages)
+      expect(res.length).toEqual(2)
+      expect(res).toEqual([
+        "0x0000000000000000000000000000000000000001",
+        "0x0000000000000000000000000000000000000002"
+      ])
+    })
+  })
+
+  describe('resolveSendersFromMessages', () => {
+    let address1 = "<0x0000000000000000000000000000000000000001@ropsten.ethereum>"
+    let address2 = "<0x0000000000000000000000000000000000000002@ropsten.ethereum>"
+
+    let messages = [
+      { "headers": { "from": address1 }, "status": "ok" },
+      { "headers": { "from": address2 }, "status": "ok" },
+    ]
+
+    it('should handle multiple messages', ()=>{
+      let res = mailchainService.resolveSendersFromMessages("ethereum","testnet",messages)
+      
+      expect(res["0x0000000000000000000000000000000000000001"]).toEqual('myname.eth')
+      expect(res["0x0000000000000000000000000000000000000002"]).toEqual(undefined)
+      
+    })
   })
 
   describe('generateMail', () => {

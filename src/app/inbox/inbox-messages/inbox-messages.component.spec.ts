@@ -7,13 +7,18 @@ import { HttpHelpersService } from 'src/app/services/helpers/http-helpers/http-h
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { ReadService } from 'src/app/services/mailchain/messages/read.service';
 import { of } from 'rxjs';
+import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 
 describe('InboxMessagesComponent', () => {
   let component: InboxMessagesComponent;
   let fixture: ComponentFixture<InboxMessagesComponent>;
   let mailchainService: MailchainService
   let readService: ReadService;
+  let nameserviceService: NameserviceService
 
+  const address1 = "0x0000000000000000000000000000000000000001"
+  const address2 = "0x0000000000000000000000000000000000000002"
+  const addresses = [address1,address2]
 
   class ReadServiceStub {
     markRead(msgId){
@@ -23,6 +28,26 @@ describe('InboxMessagesComponent', () => {
       return of(["ok"])
     }
   }
+  /**
+   * Resolves address1: myname.eth
+   * Throws 404 error for address2
+   */
+  class NameserviceServiceStub {
+    resolveAddress(protocol,network,value) {      
+      if (value == address1) {
+        return of(
+          {
+            "body": { name: "myname.eth" },
+            "ok": true
+          }
+        )
+      }
+      if (value == address2) {
+        return of({"status": 404})
+      }
+    }
+  }
+
   // id 00: unread & status ok;
   //        from: address 2
   //        to:   address 1
@@ -103,9 +128,7 @@ describe('InboxMessagesComponent', () => {
       "subject": "Message 05"
     }
   ]
-  const address1 = "0x0000000000000000000000000000000000000001"
-  const address2 = "0x0000000000000000000000000000000000000002"
-  const addresses = [address1,address2]
+
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -116,6 +139,7 @@ describe('InboxMessagesComponent', () => {
         HttpHelpersService,
         MailchainService,
         { provide: ReadService, useClass: ReadServiceStub },
+        { provide: NameserviceService, useClass: NameserviceServiceStub },
 
       ],
       imports: [
@@ -126,6 +150,7 @@ describe('InboxMessagesComponent', () => {
     .compileComponents();
     mailchainService = TestBed.get(MailchainService);
     readService = TestBed.get(ReadService);
+    nameserviceService = TestBed.get(NameserviceService);
 
   }));
 
@@ -164,6 +189,17 @@ describe('InboxMessagesComponent', () => {
       ])
     })
   });
+
+  describe('resolveSendersFromMessages', () => {
+    it('should include resolved names in messagesNameRecords', ()=>{
+      component.resolveSendersFromMessages(messages)
+      expect(component.messagesNameRecords[address1]).toEqual("myname.eth")
+    })
+    it('should not include unresolved names in messagesNameRecords', ()=>{
+      component.resolveSendersFromMessages(messages)
+      expect(component.messagesNameRecords[address2]).toEqual(undefined)
+    })
+  })
 
   describe('addMailToInboxMessages', () => {
     

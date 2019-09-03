@@ -14,6 +14,8 @@ import { AddressPipe } from 'src/app/pipes/address-pipe/address-pipe.pipe';
 export class InboxMessagesComponent implements OnInit, OnChanges {
   @Input() messagesLoaded: boolean;
   @Input() currentAccount: string;
+  @Input() currentProtocol: string;
+  @Input() currentNetwork: string;
   @Input() inboxMessages: Array<any>;
   
   @Output() openMessage = new EventEmitter();
@@ -21,6 +23,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   
   public currentAccountInboxMessages: Array<any> = [];
   public searchText: string = '';
+  public messagesNameRecords = {}
 
   constructor(
     private mailchainService: MailchainService,
@@ -57,6 +60,18 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
       
       this.inboxCounter.emit([address,inboxCount]);  
     });    
+  }
+
+  /**
+   * resolveSendersFromMessages of messages by name according to the currentNetwork and currentProtocol
+   * @param messagesArray the array of messages
+   */
+  resolveSendersFromMessages(messagesArray) {
+    this.messagesNameRecords = this.mailchainService.resolveSendersFromMessages(
+      this.currentProtocol,
+      this.currentNetwork,
+      messagesArray
+    )
   }
 
   /**
@@ -196,7 +211,10 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
     this.currentAccountInboxMessages = []
     // Dedupe messages
     this.currentAccountInboxMessages = this.mailchainService.dedupeMessagesByIds(inboxMessagesFilteredByAddressSearch)
-
+    
+    // fetch names for senders
+    this.resolveSendersFromMessages(this.currentAccountInboxMessages)
+    
   }
 
   async ngOnChanges(event): Promise<void> {

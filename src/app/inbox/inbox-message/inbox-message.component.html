@@ -1,64 +1,94 @@
 <div class="clearfix mb-xs">
-    <a class="btn btn-outline-secondary btn-sm float-left" id="back-btn" (click)="returnToInboxMessages()">
-      <i class="fa fa-angle-left fa-lg"></i> Back To Messages
-    </a>
-  </div>
-  <hr>
-  <div>
-    <h4>{{currentMessage.subject}}</h4>
-    <div class="message-actions float-right">
-      <div class="message-action">
-        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="modalWindowMailInfo.show()"><i class="fa fa-info-circle"></i></button>
-      </div>
-      
-      <div class="message-action">
-        <div class="btn-group">
-          <button id="reply" class="btn btn-sm btn-outline-secondary" (click)="replyToMsg()">
-            <i class="fa fa-reply"></i> Reply
-          </button>
-        </div>
+  <a class="btn btn-outline-secondary btn-sm float-left" id="back-btn" (click)="returnToInboxMessages()">
+    <i class="fa fa-angle-left fa-lg"></i> Back To Messages
+  </a>
+</div>
+<hr>
+<div>
+  <h4>{{currentMessage.subject}}</h4>
+  <div class="message-actions float-right">
+    <div class="message-action">
+      <button class="btn btn-sm btn-outline-secondary" type="button" (click)="modalWindowMailInfo.show()"><i
+          class="fa fa-info-circle"></i></button>
+    </div>
+
+    <div class="message-action">
+      <div class="btn-group">
+        <button id="reply" class="btn btn-sm btn-outline-secondary" (click)="replyToMsg()">
+          <i class="fa fa-reply"></i> Reply
+        </button>
       </div>
     </div>
   </div>
-  <div id="message" class="clearfix">
-    <div id="message-header">
-      <span class="float-left">
-        <img class="rounded-circle message-identicon" src="{{currentMessage.senderIdenticon}}" alt="">
+</div>
+<div id="message" class="clearfix">
+  <div id="message-header">
+    <span class="float-left">
+      <img class="rounded-circle message-identicon" src="{{currentMessage.senderIdenticon}}" alt="">
+    </span>
+    <div class="float-left">
+      <!-- From name defined -->
+      <span *ngIf="messageNameRecords[parseAddressFromMailchain(currentMessage.headers.from)] != undefined">
+        <span>
+            From:&nbsp;{{messageNameRecords[parseAddressFromMailchain(currentMessage.headers.from)]}}
+        </span>
+        <br>
+        <span>{{currentMessage.headers.from}}</span>
       </span>
-      <div class="float-left">
-        From: <strong>{{currentMessage.headers.from}}</strong>
-        <span class="message-to">To: {{currentMessage.headers.to}}</span>
+      <!-- ./ From name defined -->
+      <!-- From name not defined -->
+      <span *ngIf="messageNameRecords[parseAddressFromMailchain(currentMessage.headers.from)] == undefined">
+        <span>From:&nbsp;{{currentMessage.headers.from}}</span>
+      </span>
+      <!-- ./ From name not defined -->
+      <br>
+      <!-- To name defined -->
+      <span class="message-to"
+        *ngIf="messageNameRecords[parseAddressFromMailchain(currentMessage.headers.to)] != undefined">
+        <span>
+            To:&nbsp;{{messageNameRecords[parseAddressFromMailchain(currentMessage.headers.to)]}}
+        </span>
+        <br>
+        <span>{{currentMessage.headers.to}}</span>
+      </span>
+      <!-- ./ To name defined -->
+      <!-- To name not defined -->
+      <span class="message-to"
+        *ngIf="messageNameRecords[parseAddressFromMailchain(currentMessage.headers.to)] == undefined">
+        <span>To:&nbsp;{{currentMessage.headers.to}}</span>
+      </span>
+      <!-- ./ To name not defined -->
+    </div>
+    <div class="float-right">
+      {{currentMessage.headers.date}}
+    </div>
+  </div>
+</div>
+<hr>
+<div class="message-body">
+  <pre class="pre-inherit" [innerText]="currentMessage.body"></pre>
+</div>
+
+
+<!-- modalWindowMailInfo -->
+<div bsModal #modalWindowMailInfo="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header flex-column">
+        <button (click)="modalWindowMailInfo.hide()" aria-label="Close" class="close ml-auto" type="button">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="col-12 text-center">
+          <h3 class="modal-title" id="mailModal">Raw Message Details</h3>
+        </div>
       </div>
-      <div class="float-right">
-        {{currentMessage.headers.date}}
+      <div class="modal-body">
+        <pre>{{currentMessage | json}}</pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" (click)="modalWindowMailInfo.hide()">Close</button>
       </div>
     </div>
   </div>
-  <hr>
-  <div class="message-body">
-    <pre class="pre-inherit" [innerText]="currentMessage.body"></pre> 
-  </div>
-  
-  
-  <!-- modalWindowMailInfo -->
-  <div bsModal #modalWindowMailInfo="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header flex-column">
-          <button (click)="modalWindowMailInfo.hide()" aria-label="Close" class="close ml-auto" type="button">
-            <span aria-hidden="true">×</span>
-          </button>
-          <div class="col-12 text-center">
-            <h3 class="modal-title" id="mailModal">Raw Message Details</h3>
-          </div>
-        </div>
-        <div class="modal-body">
-          <pre>{{currentMessage | json}}</pre>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" (click)="modalWindowMailInfo.hide()">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- end modalWindowMailInfo -->
+</div>
+<!-- end modalWindowMailInfo -->
