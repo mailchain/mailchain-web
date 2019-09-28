@@ -134,6 +134,12 @@ export class MailchainTestService {
     }
   }
 
+  public versionServerResponse(): any {
+    return {
+      "version":"0.0.34","commit":"none","time":"unknown"
+    }
+  }
+
   public networkList(): any {
     return [
       { label: "goerli", value: "goerli"}, 
