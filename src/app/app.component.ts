@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { VersionService } from './services/mailchain/version/version.service';
 
 @Component({
   selector: 'app-root',
