@@ -12,6 +12,7 @@ const mailchainNodeBasePort = "8080"
 export const applicationApiConfig = {
   "webProtocols": ["http","https"],
   "networks": [
+    "mainnet",
     "ropsten", 
     "rinkeby", 
     "kovan", 
