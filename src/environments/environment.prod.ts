@@ -1,5 +1,8 @@
+import { version } from '../../package.json';
+
 export const environment = {
-  production: true
+  production: true,
+  version: version,
 };
 
 const mailchainNodeBaseWebProtocol = "http"
@@ -9,6 +12,7 @@ const mailchainNodeBasePort = "8080"
 export const applicationApiConfig = {
   "webProtocols": ["http","https"],
   "networks": [
+    "mainnet",
     "ropsten", 
     "rinkeby", 
     "kovan", 
