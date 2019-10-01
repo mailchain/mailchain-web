@@ -45,7 +45,7 @@ describe('SendService', () => {
     });
   });
 
-  fdescribe('SendMail', () => {
+  describe('SendMail', () => {
     it('should send an outbound mail to the right url', () => {
 
       let outboundMailObject = mailchainTestService.outboundMailObject()
