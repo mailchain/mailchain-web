@@ -52,7 +52,7 @@ describe('SendService', () => {
       let resResponse = mailchainTestService.sendMailResponse()
 
       let response = sendService.sendMail(outboundMailObject,'ropsten')
-      
+
       response.subscribe(res => { 
         expect(res["url"]).toEqual(resResponse["url"])
       })      
@@ -101,10 +101,10 @@ describe('SendService', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let network = "mytestnet"
       let response = sendService.sendMail(outboundMailObject,network)
-      let url = `http://127.0.0.1:8080/api/ethereum/${network}/messages/send`
+      let url = `http://127.0.0.1:8080/api/messages?protocol=ethereum&network=${network}`
       let body = null
 
-      response.subscribe(res => {        
+      response.subscribe(res => {                
         expect(res["url"]).toEqual(url)
       })
 

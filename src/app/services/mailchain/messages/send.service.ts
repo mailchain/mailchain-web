@@ -35,9 +35,13 @@ export class SendService {
    * @param network the network to send to (e.g. ropsten, mainnet etc.)
    */
   sendMail(outboundMail: OutboundMail, network: string){
-    var url = `${this.url}/${this.protocol}/${network}/messages/send`
+
+    var url = `${this.url}/messages`
     var body = outboundMail
-    var httpOptions = this.httpHelpersService.getHttpOptions()
+    var httpOptions = this.httpHelpersService.getHttpOptions([
+      ['protocol',this.protocol],
+      ['network',network]
+    ])
     
     return this.http.post(url, body, httpOptions);
   }

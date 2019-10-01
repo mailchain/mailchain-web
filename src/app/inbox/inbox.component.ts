@@ -373,8 +373,8 @@ export class InboxComponent implements OnInit {
       var self = this
       this.messagesService.getMessages(address, this.currentNetwork).subscribe(function(res){
         
-        self.processUnreadMessagesInboxCounter(address, res["messages"])
-        self.processInboxMessages(res["messages"])
+        self.processUnreadMessagesInboxCounter(address, res["body"]["messages"])
+        self.processInboxMessages(res["body"]["messages"])
         
         --fetchCount // decrement fetchCount
         
@@ -392,7 +392,7 @@ export class InboxComponent implements OnInit {
    * @param address: (string) the address of the messages
    * @param messages: array of messages
    */
-  public processUnreadMessagesInboxCounter(address, messages) {
+  public processUnreadMessagesInboxCounter(address, messages) {    
     let unreadMsgs = this.mailchainService.filterMessages(
       messages,
       {status: "ok", readState: false}
