@@ -384,7 +384,9 @@ describe('InboxComposeComponent', () => {
       component.currentNetwork = 'testnet'
 
       spyOn(publicKeyService,"getPublicKeyFromAddress").and.callFake( ()=>{
-        return of({"public_key": '1234567890abcd'})
+        return of({"body":{
+          "public_key": '1234567890abcd'}
+        })
       });      
       spyOn(sendService,"sendMail").and.callFake( ()=>{
         return of(['ok'])
