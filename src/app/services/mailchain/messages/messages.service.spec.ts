@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { MessagesService } from './messages.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MessagesService', () => {
   let messagesService: MessagesService;
@@ -10,8 +11,9 @@ describe('MessagesService', () => {
     TestBed.configureTestingModule({
       providers: [
         MessagesService,
+        HttpHelpersService
       ],
-      imports: [HttpClientModule]
+      imports: [HttpClientTestingModule]
     });
 
     messagesService = TestBed.get(MessagesService);
