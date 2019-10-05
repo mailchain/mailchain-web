@@ -34,7 +34,7 @@ export class MailchainTestService {
       },
       "status": 200,
       "statusText": "OK",
-      "url": "http://127.0.0.1:8080/api/ethereum/ropsten/messages/send",
+      "url": "http://127.0.0.1:8080/api/messages?protocol=ethereum&network=ropsten",
       "ok": true,
       "type": 4,
       "body": null
