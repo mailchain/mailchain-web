@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment, applicationApiConfig } from 'src/environments/environment';
+import { environment } from 'src/environments/environment';
 import { VersionService } from '../version/version.service';
 import { AddressesService } from '../addresses/addresses.service';
-import { clean as semverClean, lt as semverLt } from 'semver'
+import { clean as semverClean, lt as semverLt, coerce as semverCoerce } from 'semver'
 
 @Injectable({
   providedIn: 'root'
@@ -30,28 +30,72 @@ export class ConnectivityService {
   public async getVersionStatus() {
     let result: any = {
       "status": "unknown",
+      "errors": 0,
+
       "release-version": "unknown",
-      "client-version": "unknown"
+      "release-error-message": "",
+      "release-error-status": undefined,
+      
+      "client-version": "unknown",
+      "client-error-message": "",
+      "client-error-status": undefined
     }
-
-    let resReleaseReq = this.http.get(environment.repositoryVersionLatestEndpoint).toPromise()    
-    let clientReleaseReq = this.versionService.getVersion().toPromise()
+    let resRelease = this.getResRelease();
+    let clientRelease = this.getClientRelease();
     
-    let resRelease = await resReleaseReq
-    let clientRelease = await clientReleaseReq
+    result = {...result, ...resRelease, ...clientRelease}
     
-    if (resRelease["tag_name"]) {
-      result["release-version"] = semverClean(resRelease["tag_name"])
-    }
-    if (clientRelease["version"]) {
-      result["client-version"] = semverClean(clientRelease["version"])
-    }    
-
     result["status"] = this.checkVersionStatus(
       result["release-version"],
       result["client-version"]
     )
+      
+    return result
+  }
 
+  /**
+   * Get the latest release version from release api endpoint.
+   * If something doesn't return semantic version, return soft error
+   */
+  public async getResRelease(){
+    let result = {}
+    let resReleaseReq = this.http.get(environment.repositoryVersionLatestEndpoint).toPromise()
+    
+    try {
+      let resRelease = await resReleaseReq
+      if (resRelease && resRelease != null && resRelease["tag_name"]) {
+        result["release-version"] = semverCoerce(resRelease["tag_name"]).version
+      }
+
+    } catch (error) {
+      result["release-error-status"] = error["status"]
+      result["release-error-message"] = error["message"]
+      result["errors"]++
+    }
+    
+    return result
+  }
+
+  /**
+   * Get the client release version from local env.
+   * If something doesn't return semantic version, return soft error
+   */
+  public async getClientRelease() {
+    let result = {}
+    let clientReleaseReq = this.versionService.getVersion().toPromise()
+    
+    try {
+      let clientRelease = await clientReleaseReq
+      
+      if (clientRelease && clientRelease != null && clientRelease["version"]) {
+        result["client-version"] = semverCoerce(clientRelease["version"]).version
+      }    
+
+    } catch (error) {
+      result["client-error-status"] = error["status"]
+      result["client-error-message"] = error["message"]
+      result["errors"]++
+    }
     return result
   }
 
@@ -61,15 +105,17 @@ export class ConnectivityService {
    * @param releaseVersion 
    * @param clientVersion
    */
-  private checkVersionStatus(releaseVersion,clientVersion){
-    let rel = semverClean(releaseVersion)
-    let client = semverClean(clientVersion)
+  private checkVersionStatus(releaseVersion,clientVersion){    
     let status = "unknown"
-        
-    if ( rel == client) {
-      status = "ok"
-    } else if ( semverLt(client, rel) ) {
-      status = "outdated"
+    if ( releaseVersion != null && clientVersion != null ) {
+      let rel = semverCoerce(releaseVersion).version
+      let client = semverCoerce(clientVersion).version
+          
+      if ( rel == client) {
+        status = "ok"
+      } else if ( semverLt(client, rel) ) {
+        status = "outdated"
+      }
     }
 
     return status
@@ -92,7 +138,7 @@ export class ConnectivityService {
       status["code"] = err.status,
       status["message"] = err.message
     });
-
+    
     if (res && res["status"] == 200 ) {
       status["status"] = "ok",
       status["code"] = res["status"],
