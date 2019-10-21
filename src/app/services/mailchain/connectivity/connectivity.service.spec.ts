@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 import { AddressesService } from '../addresses/addresses.service';
 
-fdescribe('ConnectivityService', () => {
+describe('ConnectivityService', () => {
   let mailchainTestService: MailchainTestService
   let connectivityService: ConnectivityService;
   let versionService: VersionService;

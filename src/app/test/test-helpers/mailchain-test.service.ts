@@ -114,7 +114,7 @@ export class MailchainTestService {
       "addresses":[
         "92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
         "d5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
-      ]
+      ]      
     }
   };
 
@@ -124,6 +124,44 @@ export class MailchainTestService {
       "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
     ]
   }
+
+  public senderAddressesObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "addresses": [
+          "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
+          "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+        ]
+      }
+    }
+  }
+
+  public senderAddressesObserveResponseNoAddress() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "addresses": [ ]
+      }
+    }
+  }
+
 
   public protocolsServerResponse(): any {
     return {
