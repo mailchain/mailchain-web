@@ -119,17 +119,19 @@ export class ConnectivityService {
    */
   private checkVersionStatus(releaseVersion,clientVersion){   
     let status = "unknown"
-    if ( ![clientVersion, releaseVersion].includes(null) ) {
-      let rel = semverCoerce(releaseVersion["version"])
-      let client = semverCoerce(clientVersion["version"])
-      
-      let versionsDefined = ( 
-        ![rel,client].includes(undefined) && [rel,client].includes(null)
-      )
+    
+    let versionsDefined = ( 
+      ![clientVersion,releaseVersion].includes(undefined) &&
+      ![clientVersion,releaseVersion].includes(null)
+    )
 
-      if ( versionsDefined && rel == client ) {
+    if ( versionsDefined ) {
+      let rel = semverCoerce(releaseVersion)["version"]
+      let client = semverCoerce(clientVersion)["version"]
+      
+      if ( rel == client ) {
         status = "ok"
-      } else if ( versionsDefined && semverLt(client, rel) ) {
+      } else if ( semverLt(client, rel) ) {
         status = "outdated"
       }
     }
