@@ -162,6 +162,85 @@ export class MailchainTestService {
     }
   }
 
+  public getApiAvailabilitySuccess() {
+    return {
+      "addresses": 2,
+      "status": "ok",
+      "code": 200,
+      "message": "OK"
+    }
+  }
+
+  public getApiAvailabilitySuccessNoAddresses() {
+    return {
+      "addresses": 0,
+      "status": "ok",
+      "code": 200,
+      "message": "OK"
+    }
+  }
+
+  public getApiAvailabilityConnectionRefused() {
+    return {
+      "addresses": 0,
+      "status": "error",
+      "code": 0,
+      "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 0 Unknown Error"
+    }
+  }
+  public getApiAvailabilityErrorUnknown() {
+    return {
+      "addresses": 0,
+      "status": "error",
+      "code": 62,
+      "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 62 Unknown Error"
+    }
+  }
+
+  public apiVersionInfoOutdated(){
+    return {
+      "status": "outdated",
+      "errors": 0,
+      "release-error": 0,
+      "release-error-message": "",
+      "release-error-status": undefined,
+      "release-version": "1.4.2",
+      "client-error": 0,
+      "client-error-message": "",
+      "client-error-status": undefined,
+      "client-version": "1.4.1",
+    }
+  }
+
+  public apiVersionInfoReleaseError(){
+    return {
+      "status": "ok",
+      "errors": 1,
+      "release-error": 1,
+      "release-error-message": "5 Some Release Error",
+      "release-error-status": 5,
+      "release-version": "unknown",
+      "client-version": "0.0.35",
+      "client-error": 0,
+      "client-error-message": "",
+      "client-error-status": undefined,
+    }
+  }
+
+  public apiVersionInfoClientError(){
+    return {
+      "status": "ok",
+      "errors": 1,
+      "release-error": 0,
+      "release-error-message": "",
+      "release-error-status": undefined,
+      "release-version": "1.4.2",
+      "client-error": 1,
+      "client-error-message": "7 Some Client Error",
+      "client-error-status": 7,
+      "client-version": "unknown",
+    }
+  }
 
   public protocolsServerResponse(): any {
     return {

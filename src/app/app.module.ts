@@ -33,7 +33,11 @@ import { ModalConnectivityErrorComponent } from './modals/modal-connectivity-err
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: HashLocationStrategy }
   ],
-  entryComponents: [ModalConnectivityErrorComponent],
+  entryComponents: [
+    ModalConnectivityErrorComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+

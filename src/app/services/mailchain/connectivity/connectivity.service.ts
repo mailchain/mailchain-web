@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { VersionService } from '../version/version.service';
 import { AddressesService } from '../addresses/addresses.service';
-import { clean as semverClean, lt as semverLt, coerce as semverCoerce } from 'semver'
+import { lt as semverLt, coerce as semverCoerce } from 'semver'
 
 @Injectable({
   providedIn: 'root'
@@ -31,25 +31,28 @@ export class ConnectivityService {
     let result: any = {
       "status": "unknown",
       "errors": 0,
-
-      "release-version": "unknown",
-      "release-error-message": "",
-      "release-error-status": undefined,
-      
-      "client-version": "unknown",
-      "client-error-message": "",
-      "client-error-status": undefined
     }
-    let resRelease = this.getResRelease();
-    let clientRelease = this.getClientRelease();
+
+    let resRelease: any = await this.getResRelease();
+    let clientRelease: any = await this.getClientRelease();
     
-    result = {...result, ...resRelease, ...clientRelease}
+    result = {
+      ...result,
+      ...resRelease,
+      ...clientRelease
+    }
+    
+    result["errors"] = (
+      result["errors"] +
+      result["release-error"] +
+      result["client-error"]
+    )
     
     result["status"] = this.checkVersionStatus(
       result["release-version"],
       result["client-version"]
     )
-      
+    
     return result
   }
 
@@ -58,7 +61,12 @@ export class ConnectivityService {
    * If something doesn't return semantic version, return soft error
    */
   public async getResRelease(){
-    let result = {}
+    let result = {
+      "release-version": "unknown",
+      "release-error-message": "",
+      "release-error-status": undefined,
+      "release-error": 0
+    }
     let resReleaseReq = this.http.get(environment.repositoryVersionLatestEndpoint).toPromise()
     
     try {
@@ -66,13 +74,12 @@ export class ConnectivityService {
       if (resRelease && resRelease != null && resRelease["tag_name"]) {
         result["release-version"] = semverCoerce(resRelease["tag_name"]).version
       }
-
     } catch (error) {
       result["release-error-status"] = error["status"]
       result["release-error-message"] = error["message"]
-      result["errors"]++
+      result["release-error"] = 1
+
     }
-    
     return result
   }
 
@@ -81,7 +88,12 @@ export class ConnectivityService {
    * If something doesn't return semantic version, return soft error
    */
   public async getClientRelease() {
-    let result = {}
+    let result = {
+      "client-version": "unknown",
+      "client-error-message": "",
+      "client-error-status": undefined,
+      "client-error": 0
+    }
     let clientReleaseReq = this.versionService.getVersion().toPromise()
     
     try {
@@ -94,7 +106,7 @@ export class ConnectivityService {
     } catch (error) {
       result["client-error-status"] = error["status"]
       result["client-error-message"] = error["message"]
-      result["errors"]++
+      result["client-error"] = 1
     }
     return result
   }
@@ -105,15 +117,19 @@ export class ConnectivityService {
    * @param releaseVersion 
    * @param clientVersion
    */
-  private checkVersionStatus(releaseVersion,clientVersion){    
+  private checkVersionStatus(releaseVersion,clientVersion){   
     let status = "unknown"
-    if ( releaseVersion != null && clientVersion != null ) {
-      let rel = semverCoerce(releaseVersion).version
-      let client = semverCoerce(clientVersion).version
-          
-      if ( rel == client) {
+    if ( ![clientVersion, releaseVersion].includes(null) ) {
+      let rel = semverCoerce(releaseVersion["version"])
+      let client = semverCoerce(clientVersion["version"])
+      
+      let versionsDefined = ( 
+        ![rel,client].includes(undefined) && [rel,client].includes(null)
+      )
+
+      if ( versionsDefined && rel == client ) {
         status = "ok"
-      } else if ( semverLt(client, rel) ) {
+      } else if ( versionsDefined && semverLt(client, rel) ) {
         status = "outdated"
       }
     }

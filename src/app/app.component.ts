@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   public errorTitle: string = ""
   public errorMessage: string = ""
   public apiVersion = "";
-  private modalConnectivityError: BsModalRef;
+  public modalConnectivityError: BsModalRef;
 
   constructor(
     private connectivityService: ConnectivityService,
@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
     
   }
 
-  public setApiVersion() {        
+  public setApiVersion() {
     this.apiVersion = this.apiVersionInfo["client-version"]
   }
 
@@ -72,8 +72,9 @@ export class AppComponent implements OnInit {
           errorMessages.accountConfigurationErrorMessage
         )
       } else {
-        console.log(this.apiConnectivityInfo);
-        this.modalConnectivityError.hide()
+        if (this.modalConnectivityError) {
+          this.modalConnectivityError.hide()
+        }
       }
     }
   }
@@ -85,13 +86,14 @@ export class AppComponent implements OnInit {
     
     try {
       this.apiVersionInfo = await this.connectivityService.getVersionStatus();
-    } catch (error) {
+    } catch (error) {      
       this.handleErrorOnPage(
         errorMessages.connectionErrorTitle,
         error["message"]
       )
-    }
+    }    
     if ( this.apiVersionInfo["errors"] > 0 ) {
+
       let errorStatusFields = [
         "client",
         "release"
@@ -109,8 +111,7 @@ export class AppComponent implements OnInit {
     if ( this.apiVersionInfo["status"] == "outdated" ) {
       this.handleErrorOnPage(
         errorMessages.updateAvailableTitle, 
-        `<p>Your Mailchain client version is ${this.apiVersionInfo["client-version"]}.</p>
-        <p>Please upgrade it to ${this.apiVersionInfo["release-version"]} to ensure things work as expected.</p>`
+        `<p>Your Mailchain client version is ${this.apiVersionInfo["client-version"]}.</p><p>Please upgrade it to ${this.apiVersionInfo["release-version"]} to ensure things work as expected.</p>`
       )
     }
   }
@@ -120,7 +121,7 @@ export class AppComponent implements OnInit {
    */
   public handleErrorOnPage(errorTitle, errorMessage) {
 
-    if (this.errorTitle.length == 0) {
+    if (this.errorTitle.length == 0 && this.errorMessage.length == 0 ) {
       this.errorTitle = errorTitle
       this.errorMessage = errorMessage
       

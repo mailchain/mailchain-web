@@ -12,6 +12,4 @@ export class ModalConnectivityErrorComponent {
 
   constructor(public bsModalRef: BsModalRef) {}
 
-
-
 }
