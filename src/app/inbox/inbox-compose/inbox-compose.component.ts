@@ -9,6 +9,8 @@ import { NameserviceService } from 'src/app/services/mailchain/nameservice/names
 import { Subject, of, Observable } from 'rxjs';
 
 import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivity-error/modal-connectivity-error.component';
 
 @Component({
   selector: '[inbox-compose]',
@@ -36,12 +38,18 @@ export class InboxComposeComponent implements OnInit {
   public recipientLoadingText = ""
   public messageToField = ""
 
+  public errorTitle: string = ""
+  public errorMessage: string = ""
+  public modalConnectivityError: BsModalRef;
+
+
   constructor(
     private mailchainService: MailchainService,
     private sendService : SendService,
     private publicKeyService: PublicKeyService,
     private addressesService: AddressesService,
     private nameserviceService: NameserviceService,
+    private modalService: BsModalService,
   ) { }
 
   /**
@@ -325,6 +333,12 @@ export class InboxComposeComponent implements OnInit {
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
         self.returnToInboxMessages();
+      },
+      err => {
+        this.handleErrorOnPage(
+          `Error Code: ${err["error"]["code"]}`,
+          `<p>${err["error"]["message"]}</p><p>Please visit <a href="https://docs.mailchain.xyz/troubleshooting/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>`,
+        )
       });
     })
   }
@@ -345,6 +359,25 @@ export class InboxComposeComponent implements OnInit {
     let network = this.currentNetwork
     
     return this.sendService.sendMail(outboundMail, network)    
+  }
+
+    /**
+   * handleErrorOnPage
+   */
+  public handleErrorOnPage(errorTitle, errorMessage) {
+
+    if (this.errorTitle.length == 0 && this.errorMessage.length == 0 ) {
+      this.errorTitle = errorTitle
+      this.errorMessage = errorMessage
+      
+      const initialState = {
+        errorTitle: errorTitle,
+        errorMessage: errorMessage,
+      };
+      
+      this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, {initialState});
+      this.modalConnectivityError.content.closeBtnName = 'Close'
+    }
   }
 }
 
