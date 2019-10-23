@@ -4,7 +4,7 @@ export const errorMessages = {
   "accountConfigurationErrorMessage": "<p>There are no addresses configured in the Mailchain client.</p><p>Run 'mailchain account help' in the console for further details or visit 'https://docs.mailchain.xyz/getting-started'",
 
   // client not running
-  "clientNotRunningErrorMessage": "<p>The Mailchain client does not seem to be running.</p><p>Please visit <a href=\"https://docs.mailchain.xyz/common-connectivity-errors\" target=\"_blank\">Docs: common connectivity errors</a> to see how to fix this.</p>",
+  "clientNotRunningErrorMessage": "<p>The Mailchain client does not seem to be running.</p><p>Please visit <a href=\"https://docs.mailchain.xyz/common-inbox-errors\" target=\"_blank\">Docs: common inbox errors</a> to see how to fix this.</p>",
   "clientNotRunningErrorTitle": "Error connecting to Mailchain client",
 
   // connection error

@@ -111,7 +111,7 @@ export class AppComponent implements OnInit {
     if ( this.apiVersionInfo["status"] == "outdated" ) {
       this.handleErrorOnPage(
         errorMessages.updateAvailableTitle, 
-        `<p>Your Mailchain client version is ${this.apiVersionInfo["client-version"]}.</p><p>Please upgrade it to ${this.apiVersionInfo["release-version"]} to ensure things work as expected.</p>`
+        `<p>Your Mailchain client version is ${this.apiVersionInfo["client-version"]}. Please upgrade it to version ${this.apiVersionInfo["release-version"]} to ensure things work as expected.</p><p>Please visit <a href=\"https://docs.mailchain.xyz/common-inbox-errors\" target=\"_blank\">Docs: common inbox errors</a> to see how to fix this.</p>`
       )
     }
   }
