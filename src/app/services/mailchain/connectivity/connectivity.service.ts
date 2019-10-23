@@ -71,7 +71,8 @@ export class ConnectivityService {
     
     try {
       let resRelease = await resReleaseReq
-      if (resRelease && resRelease != null && resRelease["tag_name"]) {
+      
+      if (resRelease && resRelease["tag_name"] && semverCoerce(resRelease["tag_name"]) != null ) {
         result["release-version"] = semverCoerce(resRelease["tag_name"]).version
       }
     } catch (error) {
@@ -99,7 +100,7 @@ export class ConnectivityService {
     try {
       let clientRelease = await clientReleaseReq
       
-      if (clientRelease && clientRelease != null && clientRelease["version"]) {
+      if (clientRelease && clientRelease["version"] && semverCoerce(clientRelease["version"]) != null ) {
         result["client-version"] = semverCoerce(clientRelease["version"]).version
       }    
 
@@ -124,8 +125,8 @@ export class ConnectivityService {
       ![clientVersion,releaseVersion].includes(undefined) &&
       ![clientVersion,releaseVersion].includes(null)
     )
-
-    if ( versionsDefined ) {
+      
+    if ( versionsDefined && semverCoerce(releaseVersion) != null && semverCoerce(clientVersion) != null ) {
       let rel = semverCoerce(releaseVersion)["version"]
       let client = semverCoerce(clientVersion)["version"]
       
