@@ -15,6 +15,20 @@ import { OutboundMail } from 'src/app/models/outbound-mail';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 
+import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
+import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity-error/modal-connectivity-error.component';
+import { NgModule } from '@angular/core';
+
+
+// Workaround:
+// Error from entryComponents not present in TestBed. Fix ref: https://stackoverflow.com/a/42399718
+@NgModule({
+  declarations: [ModalConnectivityErrorComponent],
+  entryComponents: [ModalConnectivityErrorComponent]
+})
+export class FakeModalConnectivityErrorModule {}
+// End workaround
+
 describe('InboxComposeComponent', () => {
   let component: InboxComposeComponent;
   let fixture: ComponentFixture<InboxComposeComponent>;
@@ -70,7 +84,9 @@ describe('InboxComposeComponent', () => {
       imports: [
         FormsModule,
         HttpClientModule,
-        RouterTestingModule
+        RouterTestingModule,
+        ModalModule.forRoot(),
+        FakeModalConnectivityErrorModule,
       ] 
     })
     .compileComponents();
@@ -432,6 +448,41 @@ describe('InboxComposeComponent', () => {
     xit('should handle public key lookup failure', () => {
       // expect()
     })  
+  });
+
+  describe('handleErrorOnPage', () => {
+    it('should show error on page', () => {
+      expect(component.errorTitle).toEqual("")
+      expect(component.errorMessage).toEqual("")
+
+      let title = "Error Title"
+      let msg = "Error Message"
+
+      component.handleErrorOnPage(title, msg)      
+      
+      expect(component.errorTitle).toEqual(title)
+      expect(component.errorMessage).toEqual(msg)
+
+      expect(component.modalConnectivityError.content["errorTitle"]).toEqual(title)
+      expect(component.modalConnectivityError.content["errorMessage"]).toEqual(msg)
+
+    });
+
+    it('should only show error on page if no other error is present', () => {
+      let origTitle = "Existing error"
+      let origMsg = "Error is already in view"
+      let title = "Error Title"
+      let msg = "Error Message"
+      
+      component.errorTitle = origTitle
+      component.errorMessage = origMsg
+      
+      component.handleErrorOnPage(title, msg)
+            
+      expect(component.errorTitle).toEqual(origTitle)
+      expect(component.errorMessage).toEqual(origMsg)
+      
+    });
   });
 
 
