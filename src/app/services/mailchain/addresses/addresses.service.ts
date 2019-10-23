@@ -47,4 +47,14 @@ export class AddressesService {
     }
   }
 
+  /**
+   * Returns the addresses response with status codes
+   */
+  public getAddressesResponse(){
+    return this.http.get(
+      this.url + `/addresses`,
+      {observe: 'response'}
+    )
+  }
+
 }

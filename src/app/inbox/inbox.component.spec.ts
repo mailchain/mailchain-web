@@ -221,8 +221,6 @@ describe('InboxComponent', () => {
 
   afterEach(() => {
     fixture.destroy();
-
-    
   })
   
   it('should create the component', () => {

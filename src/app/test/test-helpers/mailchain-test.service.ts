@@ -114,7 +114,7 @@ export class MailchainTestService {
       "addresses":[
         "92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
         "d5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
-      ]
+      ]      
     }
   };
 
@@ -123,6 +123,123 @@ export class MailchainTestService {
       "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
       "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
     ]
+  }
+
+  public senderAddressesObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "addresses": [
+          "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
+          "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+        ]
+      }
+    }
+  }
+
+  public senderAddressesObserveResponseNoAddress() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "addresses": [ ]
+      }
+    }
+  }
+
+  public getApiAvailabilitySuccess() {
+    return {
+      "addresses": 2,
+      "status": "ok",
+      "code": 200,
+      "message": "OK"
+    }
+  }
+
+  public getApiAvailabilitySuccessNoAddresses() {
+    return {
+      "addresses": 0,
+      "status": "ok",
+      "code": 200,
+      "message": "OK"
+    }
+  }
+
+  public getApiAvailabilityConnectionRefused() {
+    return {
+      "addresses": 0,
+      "status": "error",
+      "code": 0,
+      "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 0 Unknown Error"
+    }
+  }
+  public getApiAvailabilityErrorUnknown() {
+    return {
+      "addresses": 0,
+      "status": "error",
+      "code": 62,
+      "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 62 Unknown Error"
+    }
+  }
+
+  public apiVersionInfoOutdated(){
+    return {
+      "status": "outdated",
+      "errors": 0,
+      "release-error": 0,
+      "release-error-message": "",
+      "release-error-status": undefined,
+      "release-version": "1.4.2",
+      "client-error": 0,
+      "client-error-message": "",
+      "client-error-status": undefined,
+      "client-version": "1.4.1",
+    }
+  }
+
+  public apiVersionInfoReleaseError(){
+    return {
+      "status": "ok",
+      "errors": 1,
+      "release-error": 1,
+      "release-error-message": "5 Some Release Error",
+      "release-error-status": 5,
+      "release-version": "unknown",
+      "client-version": "0.0.35",
+      "client-error": 0,
+      "client-error-message": "",
+      "client-error-status": undefined,
+    }
+  }
+
+  public apiVersionInfoClientError(){
+    return {
+      "status": "ok",
+      "errors": 1,
+      "release-error": 0,
+      "release-error-message": "",
+      "release-error-status": undefined,
+      "release-version": "1.4.2",
+      "client-error": 1,
+      "client-error-message": "7 Some Client Error",
+      "client-error-status": 7,
+      "client-version": "unknown",
+    }
   }
 
   public protocolsServerResponse(): any {
