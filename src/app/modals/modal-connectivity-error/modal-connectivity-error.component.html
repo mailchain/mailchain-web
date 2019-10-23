@@ -1,0 +1,18 @@
+<!-- modalConnectivityError -->
+  <div class="modal-header flex-column">
+    <button (click)="bsModalRef.hide()" aria-label="Close" class="close ml-auto" type="button">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div class="col-12 text-center">
+      <h3 class="modal-title" id="connectivityModal">{{errorTitle}}</h3>
+    </div>
+  </div>
+  <div class="modal-body">
+    <p class="text-center text-danger icon-large"><i class="fa fa-exclamation-triangle"></i></p>
+    <p [innerHTML]="errorMessage"></p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-success" onClick="window.location.reload()">Reload</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="bsModalRef.hide()">Close</button>
+  </div>
+<!-- end modalConnectivityError -->

@@ -23,7 +23,6 @@ describe('AddressesService', () => {
       ],
       imports: [HttpClientTestingModule]
     });
-    mailchainTestService = TestBed.get(MailchainTestService);
     
     addressesService = TestBed.get(AddressesService);
     mailchainTestService = TestBed.get(MailchainTestService);
@@ -40,7 +39,6 @@ describe('AddressesService', () => {
 
   describe('initUrl', () => {
     it('should initialize the url', () => {    
-      let addressesService: AddressesService = TestBed.get(AddressesService)
       expect(addressesService['url']).toEqual('http://127.0.0.1:8080/api')
     });
   })

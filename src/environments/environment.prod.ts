@@ -3,6 +3,7 @@ import { version } from '../../package.json';
 export const environment = {
   production: true,
   version: version,
+  repositoryVersionLatestEndpoint: "https://api.github.com/repos/mailchain/mailchain/releases/latest",
 };
 
 const mailchainNodeBaseWebProtocol = "http"
