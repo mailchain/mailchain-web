@@ -160,7 +160,7 @@ describe('AppComponent', () => {
       await component.handleWebConnectivity()
 
       expect(component.errorTitle).toEqual(errorMessages.updateAvailableTitle)
-      expect(component.errorMessage).toEqual('<p>Your Mailchain client version is 1.4.1.</p><p>Please upgrade it to 1.4.2 to ensure things work as expected.</p>')
+      expect(component.errorMessage).toEqual('<p>Your Mailchain client version is 1.4.1. Please upgrade it to version 1.4.2 to ensure things work as expected.</p><p>Please visit <a href="https://docs.mailchain.xyz/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>')
     });  
     
   });
