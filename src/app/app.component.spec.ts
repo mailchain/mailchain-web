@@ -8,6 +8,8 @@ import { MailchainTestService } from './test/test-helpers/mailchain-test.service
 import { ModalConnectivityErrorComponent } from './modals/modal-connectivity-error/modal-connectivity-error.component';
 import { NgModule } from '@angular/core';
 import { errorMessages } from './services/helpers/error-messages/error-messages'
+import { HttpHelpersService } from './services/helpers/http-helpers/http-helpers.service';
+
 
 // Workaround:
 // Error from entryComponents not present in TestBed. Fix ref: https://stackoverflow.com/a/42399718
@@ -34,6 +36,9 @@ describe('AppComponent', () => {
       ],
       declarations: [
         AppComponent,
+      ],
+      providers: [
+        HttpHelpersService,
       ]
     }).compileComponents();
   }));
