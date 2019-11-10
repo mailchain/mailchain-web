@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { AddressesService } from './addresses.service';
 import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
+import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 
 describe('AddressesService', () => {
@@ -13,13 +14,14 @@ describe('AddressesService', () => {
   let serverResponse
   let expectedAddresses
 
-  const desiredUrl = `http://127.0.0.1:8080/api/addresses`
+  const desiredUrl = `http://127.0.0.1:8080/api/addresses?protocol=ethereum&network=mainnet`
   
   
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         AddressesService,
+        HttpHelpersService,
       ],
       imports: [HttpClientTestingModule]
     });
@@ -51,7 +53,7 @@ describe('AddressesService', () => {
     addressesService.getAddresses().then(res => {
       expect(res).toEqual(expectedAddresses)
     });
-
+    
     // handle open connections
     const req = httpTestingController.expectOne(desiredUrl);
     expect(req.request.method).toBe("GET");
