@@ -1,10 +1,14 @@
 @import "../scss/variables";
 
 .footer {
-  position: fixed;
+  position: relative;
   bottom: 0;
   width: 100%;
-  height: $footer-height; 
+  height: $footer-height;
   line-height: $footer-height;
   background-color: #f5f5f5;
+}
+
+#main-content {
+  padding-bottom: 10px;
 }
