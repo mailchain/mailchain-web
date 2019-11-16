@@ -114,8 +114,11 @@ currentHost: | The current selected host (e.g. `127.0.0.1`, `localhost`, etc.) f
 ### Message Storage
 The Mailchain web application does not store message contents.
 
-
 ## Development Info
+
+### Requirements
+
+node_js version 13
 
 ### Development server
 
@@ -128,10 +131,6 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 ### Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-### Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web?ref=badge_large)
