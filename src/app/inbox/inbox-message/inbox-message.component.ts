@@ -76,7 +76,7 @@ export class InboxMessageComponent implements OnInit {
    * Returns the extracted public address from mailchain formatted address
    * @param address formatted <0x...@network.protocol> address
    */
-  private parseAddressFromMailchain(address){
+  public parseAddressFromMailchain(address){
     return this.mailchainService.parseAddressFromMailchain(address)
   }
 
