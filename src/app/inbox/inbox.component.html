@@ -1,6 +1,8 @@
 <div class="row">
   <div class="col-md-6">
-    <h1 class="page-title"><img src="../../assets/logo.png"> Mailchain</h1>
+      <h1 class="page-title text-primary">
+        <img src="../../assets/mailchain_logo_text.png" alt="Mailchain" class="header-logo">
+      </h1>
   </div>
   <div class="col-md-6">
     <div class="row">
@@ -27,7 +29,7 @@
     <div id="actionButtons" class="mb-4">
       <button class="btn btn-secondary btn-block" type="button" id="fetch-messages-btn" (click)="getMails(false)"
         [disabled]="fetchMessagesDisabled">{{fetchMessagesText}}</button>
-      <a class="btn btn-danger btn-block" href="#" id="compose" (click)="composeMessage()">Compose</a>
+      <a class="btn btn-primary btn-block" href="#" id="compose" (click)="composeMessage()">Compose</a>
     </div>
 
     <div class="card">
