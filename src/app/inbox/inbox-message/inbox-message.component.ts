@@ -17,6 +17,7 @@ export class InboxMessageComponent implements OnInit {
   @Output() replyToMessage = new EventEmitter();
   
   public messageNameRecords = {}
+  public viewForContentType = "plaintext"
 
   constructor(
     private nameserviceService: NameserviceService,
@@ -31,6 +32,7 @@ export class InboxMessageComponent implements OnInit {
 
   ngOnInit() {
     this.resolveNamesFromMessage()
+    this.viewForContentType = this.getViewForContentType()
   }
 
   /**
@@ -78,6 +80,27 @@ export class InboxMessageComponent implements OnInit {
    */
   public parseAddressFromMailchain(address){
     return this.mailchainService.parseAddressFromMailchain(address)
+  }
+
+  /**
+   * getViewForContentType: Returns correct view for content-type
+   */
+  private getViewForContentType() {
+    let ct = this.currentMessage.headers["content-type"]
+    switch (ct) {
+      case "text/html; charset=\"UTF-8\"":
+      case "text/html; charset='UTF-8'":
+        return "html"
+
+      case "text/plain; charset=\"UTF-8\"":
+      case "text/plain; charset='UTF-8'":
+        return "plaintext"
+
+      default:
+        return "plaintext"
+    }
+    
+  
   }
 
 }

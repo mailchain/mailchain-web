@@ -12,6 +12,8 @@ import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivity-error/modal-connectivity-error.component';
 
+import * as Editor from '@ckeditor/ckeditor5-build-classic';
+
 @Component({
   selector: '[inbox-compose]',
   templateUrl: './inbox-compose.component.html',
@@ -42,6 +44,7 @@ export class InboxComposeComponent implements OnInit {
   public errorMessage: string = ""
   public modalConnectivityError: BsModalRef;
 
+  public Editor = Editor;
 
   constructor(
     private mailchainService: MailchainService,
@@ -59,7 +62,7 @@ export class InboxComposeComponent implements OnInit {
     this.model.to = ""
     this.model.from = ""
     this.model.subject = ""
-    this.model.body = ""
+    this.model.body = `<h2>Heading 1</h2><h3>Heading 2</h3><h4>Heading 3</h4><p>Paragraph</p><p>Some bold text: <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit saepe voluptatibus cum numquam ex facere pariatur temporibus vitae quis obcaecati praesentium optio id minima magnam, libero possimus nihil vel expedita.</strong></p><p>Some italic text: <i>Lorem ipsum dolor sit amet consectetur adipisicing elit.</i></p><p>Some linked text: Lorem ipsum dolor sit amet consectetur adipisicing elit.</p><p>3 Bullets:</p><ul><li>Lorem</li><li>ipsum dolor sit</li><li>amet consectetur adipisicing elit.</li></ul><p>3 numbers:</p><ol><li>Lorem</li><li>ipsum dolor sit</li><li>amet consectetur adipisicing elit.</li></ol><blockquote><p>Quoted text: Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit saepe voluptatibus cum numquam ex facere pariatur temporibus vitae quis obcaecati praesentium optio id minima magnam, libero possimus nihil vel expedita.</p></blockquote><p>&nbsp;</p><p><strong>Table</strong>:</p><figure class=\"table\"><table><tbody><tr><td>Row1</td><td>col2</td><td>col3</td></tr><tr><td>Row2</td><td>col2 Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit saepe voluptatibus cum numquam ex facere pariatur temporibus vitae quis obcaecati praesentium optio id minima magnam, libero possimus nihil vel expedita.&nbsp;</td><td>col3</td></tr><tr><td>Row3</td><td>col2</td><td>col3</td></tr></tbody></table></figure>`
 
   }
 

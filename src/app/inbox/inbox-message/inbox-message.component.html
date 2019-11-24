@@ -66,9 +66,18 @@
   </div>
 </div>
 <hr>
-<div class="message-body">
+
+<!-- plaintext message body -->
+<div class="message-body" *ngIf=" viewForContentType == 'plaintext' ">
   <pre class="pre-inherit" [innerText]="currentMessage.body"></pre>
 </div>
+<!-- ./ plaintext message body -->
+
+<!-- html message body -->
+<div class="" *ngIf=" viewForContentType == 'html' ">
+  <div class="" [innerHTML]="currentMessage.body"></div>
+</div>
+<!-- ./ html message body -->
 
 
 <!-- modalWindowMailInfo -->
