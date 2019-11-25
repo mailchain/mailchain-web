@@ -107,9 +107,9 @@ Key | Value
 currentNetwork: | The current selected network (e.g. `ropsten`, `mainnet`)
 currentAccount: | The current selected account for this network
 currentProtocol: | The current selected blockchain protocol
-currentWebProtocol: | The current selected web protocol (e.g. `https` or `http`) for contacting the mailchian application
-currentPort: | The current selected port (e.g. `8080`) for contacting the mailchian application
-currentHost: | The current selected host (e.g. `127.0.0.1`, `localhost`, etc.) for contacting the mailchian application
+currentWebProtocol: | The current selected web protocol (e.g. `https` or `http`) for contacting the mailchain application
+currentPort: | The current selected port (e.g. `8080`) for contacting the mailchain application
+currentHost: | The current selected host (e.g. `127.0.0.1`, `localhost`, etc.) for contacting the mailchain application
 
 ### Message Storage
 The Mailchain web application does not store message contents.
