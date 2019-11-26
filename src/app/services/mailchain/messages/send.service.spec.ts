@@ -113,5 +113,27 @@ describe('SendService', () => {
       expect(req.request.method).toBe("POST");
       req.flush(body);
     })
+
+    it('should specify envelope type "0x01" in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObject()
+      expect(outboundMailObject.envelope).toBe("0x01")
+    })
+
+    it('should error on send if envelope type is empty in the outbound mail', () => {
+      // TODO add test for: should error on send if envelope type is empty in the outbound mail
+      // let outboundMailObject = mailchainTestService.outboundMailObject()
+      // outboundMailObject.envelope = ""
+    })
+
+    it('should specify encryption-method-name as "aes256cbc" in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObject()
+      expect(outboundMailObject["encryption-method-name"]).toBe("aes256cbc")
+    })
+
+    it('should error on send if encryption-method-name is empty in the outbound mail', () => {
+      // TODO add test for: should error on send if encryption-method-name is empty in the outbound mail
+      // let outboundMailObject = mailchainTestService.outboundMailObject()
+      // outboundMailObject["encryption-method-name"] = ""
+    })
   })
 });
