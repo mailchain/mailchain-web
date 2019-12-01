@@ -135,5 +135,21 @@ describe('SendService', () => {
       // let outboundMailObject = mailchainTestService.outboundMailObject()
       // outboundMailObject["encryption-method-name"] = ""
     })
+
+    it('should specify content-type as "text/plain; charset=\"UTF-8\"" by default in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObject()
+      expect(outboundMailObject["content-type"]).toBe("text/plain; charset=\"UTF-8\"")
+    })
+
+    it('should specify content-type as "text/plain; charset=\"UTF-8\"" when messageType = "plaintext" in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObjectPlainText()
+      expect(outboundMailObject["content-type"]).toBe("text/plain; charset=\"UTF-8\"")
+    })
+
+    it('should specify content-type as "text/html; charset=\"UTF-8\"" when messageType = "html" in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObjectHtml()      
+      expect(outboundMailObject["content-type"]).toBe("text/html; charset=\"UTF-8\"")
+    })
+
   })
 });

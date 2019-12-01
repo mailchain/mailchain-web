@@ -7,7 +7,7 @@ import { OutboundMail } from 'src/app/models/outbound-mail';
 export class MailchainTestService {
 
   constructor() { }
-
+  
   public outboundMailObject(): OutboundMail {
     
     let outboundMailObject = new OutboundMail
@@ -22,6 +22,18 @@ export class MailchainTestService {
       "subject": "Test message",
     }
 
+    return outboundMailObject
+  }
+  
+  public outboundMailObjectPlainText(): OutboundMail {
+    let outboundMailObject = this.outboundMailObject()
+    outboundMailObject["content-type"] = "text/plain; charset=\"UTF-8\""
+    return outboundMailObject
+  }
+
+  public outboundMailObjectHtml(): OutboundMail {
+    let outboundMailObject = this.outboundMailObject()
+    outboundMailObject["content-type"] = "text/html; charset=\"UTF-8\""
     return outboundMailObject
   }
 
