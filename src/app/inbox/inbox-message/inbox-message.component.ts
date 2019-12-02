@@ -86,6 +86,8 @@ export class InboxMessageComponent implements OnInit {
    * getViewForContentType: Returns correct view for content-type
    */
   private getViewForContentType() {
+    console.log(this.currentMessage);
+    
     let ct = this.currentMessage.headers["content-type"]
     switch (ct) {
       case "text/html; charset=\"UTF-8\"":

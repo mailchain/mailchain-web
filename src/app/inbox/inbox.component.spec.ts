@@ -20,6 +20,7 @@ import { ProtocolsService } from '../services/mailchain/protocols/protocols.serv
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular/dist';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -185,9 +186,10 @@ describe('InboxComponent', () => {
 
       ],
       imports: [
+        CKEditorModule,
+        FormsModule,
         HttpClientModule,
         ModalModule.forRoot(),
-        FormsModule,
         RouterTestingModule
       ]
 

@@ -16,8 +16,9 @@ export class MailchainService {
     /**
    * Generate an outbound message ready to send
    * @param mailObj the Mail object
+   * @param contentType the content type [ 'text/plain; charset=\"UTF-8\"' | 'text/html; charset=\"UTF-8\"' ]
    */
-  generateMail(mailObj): OutboundMail {
+  generateMail(mailObj,contentType): OutboundMail {
     
     var envelope = new OutboundMail
     envelope.message["body"] = mailObj["body"]
@@ -26,6 +27,16 @@ export class MailchainService {
     envelope.message["headers"]["to"] = mailObj["to"]
     envelope.message["public-key"] = mailObj["publicKey"]
     envelope.message["subject"] = mailObj["subject"]
+    
+    switch (contentType) {
+      case "html":
+        envelope["content-type"] = 'text/html; charset=\"UTF-8\"'
+        break;
+
+      default:
+        envelope["content-type"] = 'text/text; charset=\"UTF-8\"'
+        break;
+    }
     
     return envelope
     

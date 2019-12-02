@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, Input, EventEmitter, ViewChild } from '@angular/core';
 import { Mail } from 'src/app/models/mail';
 import { OutboundMail } from 'src/app/models/outbound-mail';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
@@ -12,7 +12,8 @@ import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivity-error/modal-connectivity-error.component';
 
-import * as Editor from '@ckeditor/ckeditor5-build-classic';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CKEditorComponent } from '@ckeditor/ckeditor5-angular/dist';
 
 @Component({
   selector: '[inbox-compose]',
@@ -44,7 +45,11 @@ export class InboxComposeComponent implements OnInit {
   public errorMessage: string = ""
   public modalConnectivityError: BsModalRef;
 
-  public Editor = Editor;
+  public Editor = ClassicEditor;
+  public inputContentType = "html"
+  public contentTypeSwitchLabel: string = "Convert to Plain Text"
+
+  @ViewChild( 'editor', {static: false} ) editorComponent: CKEditorComponent;
 
   constructor(
     private mailchainService: MailchainService,
@@ -331,7 +336,7 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe(res => {
 
       this.model.publicKey = res["body"]["public_key"]
-      var outboundMail = this.generateMessage(this.model)
+      var outboundMail = this.generateMessage(this.model, this.inputContentType)
 
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
@@ -350,8 +355,8 @@ export class InboxComposeComponent implements OnInit {
    * Builds the OutboundMail object for sending
    * @param mailObj The form Mail object
    */
-  private generateMessage(mailObj: Mail): OutboundMail {
-    return this.mailchainService.generateMail(mailObj)    
+  private generateMessage(mailObj: Mail, inputContentType: string): OutboundMail {
+    return this.mailchainService.generateMail(mailObj, inputContentType)    
   }
 
   /**
@@ -382,5 +387,18 @@ export class InboxComposeComponent implements OnInit {
       this.modalConnectivityError.content.closeBtnName = 'Close'
     }
   }
+
+  public convertToPlainText(event) {
+    let res = confirm("Are you sure? This will remove formatting and cannot be changed back to HTML.")
+    
+    if (res == true) {
+      let text = document.getElementsByClassName('ck-content')[0]["innerText"]
+      this.model.body = text
+      this.inputContentType = "plaintext"   
+      this.contentTypeSwitchLabel = "Plain Text" 
+    } else {
+      document.getElementById('contentTypeSwitch')["checked"] = false
+    }
+  };
 }
 

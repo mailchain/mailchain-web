@@ -18,6 +18,7 @@ import { NameserviceService } from 'src/app/services/mailchain/nameservice/names
 import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity-error/modal-connectivity-error.component';
 import { NgModule } from '@angular/core';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular/dist';
 
 
 // Workaround:
@@ -82,11 +83,12 @@ describe('InboxComposeComponent', () => {
 
       ],
       imports: [
+        CKEditorModule,
+        FakeModalConnectivityErrorModule,
         FormsModule,
         HttpClientModule,
-        RouterTestingModule,
         ModalModule.forRoot(),
-        FakeModalConnectivityErrorModule,
+        RouterTestingModule,
       ] 
     })
     .compileComponents();
