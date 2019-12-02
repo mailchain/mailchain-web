@@ -302,6 +302,11 @@ describe('MailchainService', () => {
       expect(mailchainService.filterMessages(messages, {status: "error", readState: true, headersTo: address2})).toEqual([ messages[1] ])
       expect(mailchainService.filterMessages(messages, {status: "error", readState: false, headersTo: address2})).toEqual([ messages[3] ])
     })
+    it('should handle messages returned as null', () => {      
+      expect(mailchainService.filterMessages(null, { status: "ok" })).toEqual([])
+      expect(mailchainService.filterMessages(null, { readState: true })).toEqual([])
+      expect(mailchainService.filterMessages(null, { headersTo: address1 })).toEqual([])
+    })
   })
 
   describe('validateEnsName', () => {

@@ -144,14 +144,14 @@ export class MailchainService {
     let readState = options.readState
     let headersTo = options.headersTo
     let output = msgsArray
-    if (status != undefined ) {
-      output = output.filter(msg => msg.status === status)
+    if (status != undefined) {
+      output = output == null ? [] : output.filter(msg => msg.status === status)
     }
     if (readState != undefined) {
-      output = output.filter(msg => msg.read === readState)
+      output = output == null ? [] : output.filter(msg => msg.read === readState)
     }
     if (headersTo != undefined) {
-      output = output.filter(msg => 
+      output = output == null ? [] : output.filter(msg => 
         this.parseAddressFromMailchain(msg["headers"]["to"]) == headersTo
       )      
     }
