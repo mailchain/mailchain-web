@@ -252,12 +252,14 @@ export class InboxComponent implements OnInit {
       protocols = res["protocols"]
       if (protocols.length > 0) {
         protocols.forEach(protocol => {
-          protocol["networks"].forEach(network => {
-            this.networks.push({
-              label: network,
-              value: network,
-            })
-          });
+          if (protocol["name"] == "ethereum" ) {
+            protocol["networks"].forEach(network => {
+              this.networks.push({
+                label: network["name"],
+                value: network["name"],
+              })
+            });
+          }
         });
       }
     });
