@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@ckeditor/ckeditor5-angular": "github:mailchain/ckeditor5-angular",
-    "@ckeditor/ckeditor5-build-classic": "github:mailchain/ckeditor5-build-classic#stable",
+    "@ckeditor/ckeditor5-build-classic": "github:mailchain/ckeditor5-build-classic#mailchain_stable",
     "bootstrap": "^4.3.1",
     "core-js": "^2.5.4",
     "ethereum-blockies-base64": "^1.0.2",
