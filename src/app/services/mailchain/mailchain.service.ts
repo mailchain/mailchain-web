@@ -190,5 +190,24 @@ export class MailchainService {
     return regex.test(value)
   }
 
+  /**
+   * getContentTypeForView: determines how the application should handle various content types in messages.
+   * Returns `html` or `plaintext` based on the contentType provided.
+   */
+  public getContentTypeForView(contentType) {
+    switch (contentType) {
+      case "text/html; charset=\"UTF-8\"":
+      case "text/html; charset='UTF-8'":
+        return "html"
+
+      case "text/plain; charset=\"UTF-8\"":
+      case "text/plain; charset='UTF-8'":
+        return "plaintext"
+
+      default:
+        return "plaintext"
+    }
+  }
+
 
 } 

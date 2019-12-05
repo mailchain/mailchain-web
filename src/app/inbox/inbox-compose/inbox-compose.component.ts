@@ -47,7 +47,7 @@ export class InboxComposeComponent implements OnInit {
 
   public Editor = ClassicEditor;
   public inputContentType = "html"
-  public contentTypeSwitchLabel: string = "Convert to Plain Text"
+  public contentTypeSwitchLabel: string = ""
 
   @ViewChild( 'editor', {static: false} ) editorComponent: CKEditorComponent;
 
@@ -67,7 +67,24 @@ export class InboxComposeComponent implements OnInit {
     this.model.to = ""
     this.model.from = ""
     this.model.subject = ""
-    this.model.body = `<h2>Heading 1</h2><h3>Heading 2</h3><h4>Heading 3</h4><p>Paragraph</p><p>Some bold text: <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit saepe voluptatibus cum numquam ex facere pariatur temporibus vitae quis obcaecati praesentium optio id minima magnam, libero possimus nihil vel expedita.</strong></p><p>Some italic text: <i>Lorem ipsum dolor sit amet consectetur adipisicing elit.</i></p><p>Some linked text: Lorem ipsum dolor sit amet consectetur adipisicing elit.</p><p>3 Bullets:</p><ul><li>Lorem</li><li>ipsum dolor sit</li><li>amet consectetur adipisicing elit.</li></ul><p>3 numbers:</p><ol><li>Lorem</li><li>ipsum dolor sit</li><li>amet consectetur adipisicing elit.</li></ol><blockquote><p>Quoted text: Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit saepe voluptatibus cum numquam ex facere pariatur temporibus vitae quis obcaecati praesentium optio id minima magnam, libero possimus nihil vel expedita.</p></blockquote><p>&nbsp;</p><p><strong>Table</strong>:</p><figure class=\"table\"><table><tbody><tr><td>Row1</td><td>col2</td><td>col3</td></tr><tr><td>Row2</td><td>col2 Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit saepe voluptatibus cum numquam ex facere pariatur temporibus vitae quis obcaecati praesentium optio id minima magnam, libero possimus nihil vel expedita.&nbsp;</td><td>col3</td></tr><tr><td>Row3</td><td>col2</td><td>col3</td></tr></tbody></table></figure>`
+    this.model.body = ""
+    
+    let editor = this.editorComponent.editorInstance
+    editor.model.schema.on( 'checkChild', ( evt, args ) => {
+      const context = args[ 0 ];
+      const childDefinition = args[ 1 ];
+      if ( context.endsWith( 'blockQuote' ) && childDefinition.name == 'blockQuote' ) {
+        // Prevent next listeners from being called.
+        evt.stop();
+        // Set the checkChild()'s return value.
+        evt.return = true;
+      }
+    }, { priority: 'highest' } );
+    editor.config.resize_enabled = true
+    ;
+
+
+    editor.editing.view.focus()
 
   }
 
@@ -254,10 +271,107 @@ export class InboxComposeComponent implements OnInit {
    */
   async ngOnInit(): Promise<void> {
     await this.setFromAddressList()
+    this.setContentTypeForView()
     this.initMail()
     this.setCurrentAccountInFromAddressDropdown()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
+  }
+
+  /**
+   * Handles content-type in the view
+   */
+  private setContentTypeForView() {
+    if ( this.currentMessage ) {
+      let ct = this.currentMessage.headers["content-type"]
+      this.inputContentType = this.mailchainService.getContentTypeForView(ct)
+    }
+
+    this.contentTypeSwitchLabel = this.setContentTypeSwitchLabel()
+  }
+
+  /**
+   * handleReplyInPlaintext prepares message fields for a plaintext reply based on the currentMessage
+   */
+  private handleReplyInPlaintext(){
+    var messageFrom:  string = "",
+    messageReplyTo:   string = "",
+    messageDate:      string = "",
+    messageTo:        string = "",
+    messageSubject:   string = "",
+    messageBody:      string = ""
+
+    if (this.currentMessage.headers["from"]) {
+      messageFrom = '\r\n\r\n>From: ' + this.currentMessage.headers["from"] + "\r\n"
+    }
+    if (this.currentMessage.headers["reply-to"]){
+      messageReplyTo = '>Reply To: ' + this.currentMessage.headers["reply-to"] + "\r\n"
+    }
+    if (this.currentMessage.headers["date"]){
+      messageDate = '>Date: ' + this.currentMessage.headers["date"] + "\r\n"
+    }
+    if (this.currentMessage.headers["to"]){
+      messageTo = '>To: ' + this.currentMessage.headers["to"] + "\r\n"
+    }
+    if (this.currentMessage["subject"]){
+      messageSubject = '>Subject: ' + this.currentMessage["subject"] + "\r\n" + ">" + "\r\n"
+    } else {
+      messageSubject = ""
+    }
+    if (this.currentMessage["body"]){
+      messageBody = '>' + this.currentMessage["body"] 
+    }
+    
+    messageBody = messageBody.replace(/\r\n/g, '\r\n>');
+    
+    this.model.body =  messageFrom +
+      messageReplyTo +
+      messageDate +
+      messageTo +
+      messageSubject +
+      messageBody
+  }
+
+  /**
+   * handleReplyInHtml prepares message fields for a html reply based on the currentMessage
+   */
+  private handleReplyInHtml(){
+    var messageFrom:  string = "",
+    messageReplyTo:   string = "",
+    messageDate:      string = "",
+    messageTo:        string = "",
+    messageSubject:   string = "",
+    messageBody:      string = ""
+
+    if (this.currentMessage.headers["from"]) {
+      messageFrom = '<strong>From:</strong> ' + this.currentMessage.headers["from"] + "<br>"
+    }
+    if (this.currentMessage.headers["reply-to"]){
+      messageReplyTo = '<strong>Reply To:</strong> ' + this.currentMessage.headers["reply-to"] + "<br>"
+    }
+    if (this.currentMessage.headers["date"]){
+      messageDate = '<strong>Date:</strong> ' + this.currentMessage.headers["date"] + "<br>"
+    }
+    if (this.currentMessage.headers["to"]){
+      messageTo = '<strong>To:</strong> ' + this.currentMessage.headers["to"] + "<br>"
+    }
+    if (this.currentMessage["subject"]){
+      messageSubject = '<strong>Subject:</strong> ' + this.currentMessage["subject"]
+    } else {
+      messageSubject = ""
+    }
+    if (this.currentMessage["body"]){
+      messageBody = '<blockquote>' + this.currentMessage["body"] + '<br></blockquote>'
+    }
+        
+    this.model.body = "<p></p><p>" +
+      messageFrom +
+      messageReplyTo +
+      messageDate +
+      messageTo +
+      messageSubject +
+      "</p>" +
+      messageBody
   }
 
   /**
@@ -266,42 +380,14 @@ export class InboxComposeComponent implements OnInit {
   private handleReplyFields(){
     if ( this.currentMessage && this.currentMessage.headers ) {
 
-      var messageFrom:  string = "",
-      messageReplyTo:   string = "",
-      messageDate:      string = "",
-      messageTo:        string = "",
-      messageSubject:   string = "",
-      messageBody:      string = ""
+      if ( this.inputContentType == "html" ) {
+        this.handleReplyInHtml()
+      } else if ( this.inputContentType == "plaintext" ) {
+        this.handleReplyInPlaintext()
+      }
 
-      if (this.currentMessage.headers["from"]) {
-        messageFrom = '\r\n\r\n>From: ' + this.currentMessage.headers["from"] + "\r\n"
-      }
-      if (this.currentMessage.headers["reply-to"]){
-        messageReplyTo = '>Reply To: ' + this.currentMessage.headers["reply-to"] + "\r\n"
-      }
-      if (this.currentMessage.headers["date"]){
-        messageDate = '>Date: ' + this.currentMessage.headers["date"] + "\r\n"
-      }
-      if (this.currentMessage.headers["to"]){
-        messageTo = '>To: ' + this.currentMessage.headers["to"] + "\r\n"
-      }
-      if (this.currentMessage["subject"]){
-        messageSubject = '>Subject: ' + this.currentMessage["subject"] + "\r\n" + ">" + "\r\n"
-      } else {
-        messageSubject = ""
-      }
-      if (this.currentMessage["body"]){
-        messageBody = '>' + this.currentMessage["body"] 
-      }
-      
-      var messageBody = messageBody.replace(/\r\n/g, '\r\n>');
-      
-      this.model.body =  messageFrom +
-        messageReplyTo +
-        messageDate +
-        messageTo +
-        messageSubject +
-        messageBody
+
+
       
       this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to
@@ -394,11 +480,22 @@ export class InboxComposeComponent implements OnInit {
     if (res == true) {
       let text = document.getElementsByClassName('ck-content')[0]["innerText"]
       this.model.body = text
-      this.inputContentType = "plaintext"   
-      this.contentTypeSwitchLabel = "Plain Text" 
+      this.inputContentType = "plaintext"
+      this.setContentTypeSwitchLabel()
     } else {
       document.getElementById('contentTypeSwitch')["checked"] = false
     }
   };
+
+  /**
+   * Sets the contentTypeSwitch label
+   */
+  private setContentTypeSwitchLabel(){
+    if ( this.inputContentType == "plaintext" ) {
+      return this.contentTypeSwitchLabel = "Plain Text"
+    } else {
+      return this.contentTypeSwitchLabel = "Convert to Plain Text"
+    }
+  }
 }
 
