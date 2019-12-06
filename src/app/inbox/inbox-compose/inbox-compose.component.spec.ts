@@ -149,7 +149,7 @@ describe('InboxComposeComponent', () => {
         })  
       });
 
-      describe('when composing a reply', () => {
+      describe('when composing a plaintext reply', () => {
         beforeEach(()=>{
           component.currentMessage = mailchainTestService.inboundMessage();
         })
@@ -178,6 +178,37 @@ describe('InboxComposeComponent', () => {
         })  
       });
       
+      describe('when composing an html reply', () => {
+        beforeEach(()=>{
+          component.currentMessage = mailchainTestService.inboundMessage();
+          component.currentMessage.headers["content-type"] = "text/html; charset=\"UTF-8\""
+        })
+
+        it('should initialize the model "from" field with the recipient address', async() => {
+          await component.ngOnInit();
+          expect(component.model.from).toBe('0x0123456789abcdef0123456789abcdef01234567')
+        })  
+
+        it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async() => {
+          await component.ngOnInit();
+          expect(component.model.subject).toBe('Re: Mailchain Test!')
+        })  
+
+        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async() => {
+          component.currentMessage.subject = "Re: Mailchain Test!"
+          await component.ngOnInit();
+          expect(component.model.subject).toBe('Re: Mailchain Test!')
+        })  
+
+        it('should initialize the model "body" field with the original message field and wrap the body in a `blockquote`', async() => {
+        let response = "<p></p><p><strong>From:</strong> <0x0123456789012345678901234567890123456789@testnet.ethereum><br><strong>Date:</strong> 2019-06-07T14:53:36Z<br><strong>To:</strong> <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum><br><strong>Subject:</strong> Mailchain Test!</p><blockquote>A body<br></blockquote>"
+
+          await component.ngOnInit();
+          expect(JSON.stringify(component.model.body)).toBe(JSON.stringify(response))
+        })
+
+      });
+      
       describe('setFromAddressList', () => {
         it('should set the fromAddresses', async() => {
           expect(component.fromAddresses).toEqual([])
@@ -186,6 +217,13 @@ describe('InboxComposeComponent', () => {
 
         })  
       });
+    });
+
+    describe('initEditor', () => {
+      it('should initialize the editor', async()=> {
+        await component.ngOnInit();
+        expect(component.editorComponent).toBeTruthy();
+      })
     });
   });
 
@@ -487,5 +525,16 @@ describe('InboxComposeComponent', () => {
     });
   });
 
+  describe('convertToPlainText', () => {
+    it('should convert html to plain text', () => {
+      spyOn(window, 'confirm').and.returnValue(true);
+      spyOn(document, 'getElementsByClassName').and.returnValue([ {"innerText": "Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message"} ]);
+      
+      component.convertToPlainText()
+
+      expect(component.model.body).toBe("Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message")
+
+    })
+  });
 
 });

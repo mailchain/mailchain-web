@@ -281,6 +281,7 @@ export class InboxComposeComponent implements OnInit {
     await this.setFromAddressList()
     this.setContentTypeForView()
     this.initMail()
+    this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
@@ -479,17 +480,19 @@ export class InboxComposeComponent implements OnInit {
     }
   }
 
-  public convertToPlainText(event) {
+  public convertToPlainText() {
     let res = confirm("Are you sure? This will remove formatting and cannot be changed back to HTML.")
     
-    if (res == true) {
+    if (res == true) {      
       let text = document.getElementsByClassName('ck-content')[0]["innerText"]
+      
       this.model.body = text
       this.inputContentType = "plaintext"
       this.setContentTypeSwitchLabel()
     } else {
       document.getElementById('contentTypeSwitch')["checked"] = false
     }
+    
   };
 
   /**
