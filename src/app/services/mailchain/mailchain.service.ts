@@ -34,7 +34,7 @@ export class MailchainService {
         break;
 
       default:
-        envelope["content-type"] = 'text/text; charset=\"UTF-8\"'
+        envelope["content-type"] = 'text/plain; charset=\"UTF-8\"'
         break;
     }
     

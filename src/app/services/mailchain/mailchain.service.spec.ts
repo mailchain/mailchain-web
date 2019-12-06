@@ -230,7 +230,7 @@ describe('MailchainService', () => {
 
     
     it('should return valid outputs when given a valid Mail object', () => {
-      let response = mailchainService.generateMail(mailObject)
+      let response = mailchainService.generateMail(mailObject,"plaintext")
 
       expect(response).toEqual(outboundMailObject)
     })

@@ -49,7 +49,7 @@ export class InboxComposeComponent implements OnInit {
   public inputContentType = "html"
   public contentTypeSwitchLabel: string = ""
 
-  @ViewChild( 'editor', {static: false} ) editorComponent: CKEditorComponent;
+  @ViewChild( 'editor', {static: false} ) public editorComponent: CKEditorComponent;
 
   constructor(
     private mailchainService: MailchainService,
@@ -63,29 +63,37 @@ export class InboxComposeComponent implements OnInit {
   /**
    * Initialize empty values for the message model
    */
-  private initMail() {
+  private initMail() {    
     this.model.to = ""
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
-    
+  }
+  
+  /**
+   * initEditor - initiates CKeditor
+   */
+  private initEditor() {
     let editor = this.editorComponent.editorInstance
-    editor.model.schema.on( 'checkChild', ( evt, args ) => {
-      const context = args[ 0 ];
-      const childDefinition = args[ 1 ];
-      if ( context.endsWith( 'blockQuote' ) && childDefinition.name == 'blockQuote' ) {
-        // Prevent next listeners from being called.
-        evt.stop();
-        // Set the checkChild()'s return value.
-        evt.return = true;
-      }
-    }, { priority: 'highest' } );
-    editor.config.resize_enabled = true
-    ;
 
+    // Enable nested blockquotes
+    if ( editor && editor.model && editor.model.schema ) {
+      editor.model.schema.on( 'checkChild', ( evt, args ) => {
+        const context = args[ 0 ];
+        const childDefinition = args[ 1 ];
+        if ( context.endsWith( 'blockQuote' ) && childDefinition.name == 'blockQuote' ) {
+          // Prevent next listeners from being called.
+          evt.stop();
+          // Set the checkChild()'s return value.
+          evt.return = true;
+        }
+      }, { priority: 'highest' } );
+    };
 
-    editor.editing.view.focus()
-
+    // Put CKeditor in focus 
+    if (editor && editor.editing ) {
+      editor.editing.view.focus()
+    }
   }
 
   /**
@@ -385,9 +393,6 @@ export class InboxComposeComponent implements OnInit {
       } else if ( this.inputContentType == "plaintext" ) {
         this.handleReplyInPlaintext()
       }
-
-
-
       
       this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to

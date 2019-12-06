@@ -430,7 +430,7 @@ describe('InboxComposeComponent', () => {
     it('should generate a message', () => {
       
       component.onSubmit();
-      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail)
+      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html')
 
     })  
     
