@@ -18,6 +18,7 @@ import { NameserviceService } from 'src/app/services/mailchain/nameservice/names
 import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity-error/modal-connectivity-error.component';
 import { NgModule } from '@angular/core';
+import { CKEditorModule, CKEditorComponent } from '@ckeditor/ckeditor5-angular';
 
 
 // Workaround:
@@ -82,11 +83,12 @@ describe('InboxComposeComponent', () => {
 
       ],
       imports: [
+        CKEditorModule,
+        FakeModalConnectivityErrorModule,
         FormsModule,
         HttpClientModule,
-        RouterTestingModule,
         ModalModule.forRoot(),
-        FakeModalConnectivityErrorModule,
+        RouterTestingModule,
       ] 
     })
     .compileComponents();
@@ -147,7 +149,7 @@ describe('InboxComposeComponent', () => {
         })  
       });
 
-      describe('when composing a reply', () => {
+      describe('when composing a plaintext reply', () => {
         beforeEach(()=>{
           component.currentMessage = mailchainTestService.inboundMessage();
         })
@@ -176,6 +178,37 @@ describe('InboxComposeComponent', () => {
         })  
       });
       
+      describe('when composing an html reply', () => {
+        beforeEach(()=>{
+          component.currentMessage = mailchainTestService.inboundMessage();
+          component.currentMessage.headers["content-type"] = "text/html; charset=\"UTF-8\""
+        })
+
+        it('should initialize the model "from" field with the recipient address', async() => {
+          await component.ngOnInit();
+          expect(component.model.from).toBe('0x0123456789abcdef0123456789abcdef01234567')
+        })  
+
+        it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async() => {
+          await component.ngOnInit();
+          expect(component.model.subject).toBe('Re: Mailchain Test!')
+        })  
+
+        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async() => {
+          component.currentMessage.subject = "Re: Mailchain Test!"
+          await component.ngOnInit();
+          expect(component.model.subject).toBe('Re: Mailchain Test!')
+        })  
+
+        it('should initialize the model "body" field with the original message field and wrap the body in a `blockquote`', async() => {
+        let response = "<p></p><p><strong>From:</strong> <0x0123456789012345678901234567890123456789@testnet.ethereum><br><strong>Date:</strong> 2019-06-07T14:53:36Z<br><strong>To:</strong> <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum><br><strong>Subject:</strong> Mailchain Test!</p><blockquote>A body<br></blockquote>"
+
+          await component.ngOnInit();
+          expect(JSON.stringify(component.model.body)).toBe(JSON.stringify(response))
+        })
+
+      });
+      
       describe('setFromAddressList', () => {
         it('should set the fromAddresses', async() => {
           expect(component.fromAddresses).toEqual([])
@@ -184,6 +217,13 @@ describe('InboxComposeComponent', () => {
 
         })  
       });
+    });
+
+    describe('initEditor', () => {
+      it('should initialize the editor', async()=> {
+        await component.ngOnInit();
+        expect(component.editorComponent).toBeTruthy();
+      })
     });
   });
 
@@ -428,7 +468,7 @@ describe('InboxComposeComponent', () => {
     it('should generate a message', () => {
       
       component.onSubmit();
-      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail)
+      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html')
 
     })  
     
@@ -485,5 +525,26 @@ describe('InboxComposeComponent', () => {
     });
   });
 
+  describe('convertToPlainText', () => {
+    it('should convert html to plain text when confirm box is OK', () => {
+      spyOn(window, 'confirm').and.returnValue(true);
+      spyOn(document, 'getElementsByClassName').and.returnValue([ {"innerText": "Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message"} ]);
+      
+      component.convertToPlainText()
+
+      expect(window.confirm).toHaveBeenCalled()
+      expect(component.inputContentType).toEqual('plaintext')
+      expect(component.model.body).toBe("Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message")
+
+    })
+    it('should not convert html to plain text when confirm box is cancel', () => {
+      spyOn(window, 'confirm').and.returnValue(false);
+
+      component.convertToPlainText()
+
+      expect(window.confirm).toHaveBeenCalled()
+      expect(component.inputContentType).toEqual('html')
+    })
+  });
 
 });

@@ -15,3 +15,21 @@
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
+.content-type-switch {
+  text-align: right;
+  width: 100%;
+}
+
+:host ::ng-deep .ck-editor__editable_inline {
+  min-height: 500px;
+}
+
+#messageBody {
+  width: 100%;
+}
+
+:host ::ng-deep .ck-editor blockquote {
+  font-style: inherit;
+}
+

@@ -20,6 +20,7 @@ import { ProtocolsService } from '../services/mailchain/protocols/protocols.serv
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -185,9 +186,10 @@ describe('InboxComponent', () => {
 
       ],
       imports: [
+        CKEditorModule,
+        FormsModule,
         HttpClientModule,
         ModalModule.forRoot(),
-        FormsModule,
         RouterTestingModule
       ]
 
@@ -375,15 +377,32 @@ describe('InboxComponent', () => {
   });
 
   describe('serverSettingsFormSubmit', () => {
-    xit('should set the webProtocol value from the form', () => {
+    beforeEach(() => {
+      spyOn(component, 'windowReload').and.callFake(function(){});
     });
-    xit('should set the host value from the form', () => {
+
+    it('should set the webProtocol value from the form', async() => {
+      await component.ngOnInit()
+      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('https')
+      expect(component.serverSettings["webProtocol"]).toEqual('https')
+
+      component.serverSettings["webProtocol"] = 'http'
+      component.serverSettingsFormSubmit()
+
+      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('http')
+      
     });
-    xit('should set the port value from the form', () => {
+    xit('should set the host value from the form', async() => {
+      
     });
-    xit('should NOT set the values that are not defined in the form', () => {
+    xit('should set the port value from the form', async() => {
+
     });
-    xit('should call updateServerSettings with the settingsHash', () => {
+    xit('should NOT set the values that are not defined in the form', async() => {
+
+    });
+    xit('should call updateServerSettings with the settingsHash', async() => {
+
     });
 
   });
@@ -398,7 +417,7 @@ describe('InboxComponent', () => {
       }
       component.updateServerSettings(settingsHash)
       
-      expect(await localStorageServerService.getCurrentWebProtocol()).toEqual('customproto')
+      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('customproto')
 
       expect(component.windowReload).toHaveBeenCalled();
     });

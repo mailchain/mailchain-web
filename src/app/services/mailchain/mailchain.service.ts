@@ -16,8 +16,9 @@ export class MailchainService {
     /**
    * Generate an outbound message ready to send
    * @param mailObj the Mail object
+   * @param contentType the content type [ 'text/plain; charset=\"UTF-8\"' | 'text/html; charset=\"UTF-8\"' ]
    */
-  generateMail(mailObj): OutboundMail {
+  generateMail(mailObj,contentType): OutboundMail {
     
     var envelope = new OutboundMail
     envelope.message["body"] = mailObj["body"]
@@ -26,6 +27,16 @@ export class MailchainService {
     envelope.message["headers"]["to"] = mailObj["to"]
     envelope.message["public-key"] = mailObj["publicKey"]
     envelope.message["subject"] = mailObj["subject"]
+    
+    switch (contentType) {
+      case "html":
+        envelope["content-type"] = 'text/html; charset=\"UTF-8\"'
+        break;
+
+      default:
+        envelope["content-type"] = 'text/plain; charset=\"UTF-8\"'
+        break;
+    }
     
     return envelope
     
@@ -177,6 +188,25 @@ export class MailchainService {
   public validateEthAddress(value){
     let regex = new RegExp('0x[0-9a-fA-F]{40}$');
     return regex.test(value)
+  }
+
+  /**
+   * getContentTypeForView: determines how the application should handle various content types in messages.
+   * Returns `html` or `plaintext` based on the contentType provided.
+   */
+  public getContentTypeForView(contentType) {
+    switch (contentType) {
+      case "text/html; charset=\"UTF-8\"":
+      case "text/html; charset='UTF-8'":
+        return "html"
+
+      case "text/plain; charset=\"UTF-8\"":
+      case "text/plain; charset='UTF-8'":
+        return "plaintext"
+
+      default:
+        return "plaintext"
+    }
   }
 
 

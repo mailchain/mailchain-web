@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, Input, EventEmitter, ViewChild } from '@angular/core';
 import { Mail } from 'src/app/models/mail';
 import { OutboundMail } from 'src/app/models/outbound-mail';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
@@ -11,6 +11,9 @@ import { Subject, of, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivity-error/modal-connectivity-error.component';
+
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
 
 @Component({
   selector: '[inbox-compose]',
@@ -42,6 +45,11 @@ export class InboxComposeComponent implements OnInit {
   public errorMessage: string = ""
   public modalConnectivityError: BsModalRef;
 
+  public Editor = ClassicEditor;
+  public inputContentType = "html"
+  public contentTypeSwitchLabel: string = ""
+
+  @ViewChild( 'editor', {static: false} ) public editorComponent: CKEditorComponent;
 
   constructor(
     private mailchainService: MailchainService,
@@ -55,12 +63,37 @@ export class InboxComposeComponent implements OnInit {
   /**
    * Initialize empty values for the message model
    */
-  private initMail() {
+  private initMail() {    
     this.model.to = ""
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
+  }
+  
+  /**
+   * initEditor - initiates CKeditor
+   */
+  private initEditor() {
+    let editor = this.editorComponent.editorInstance
 
+    // Enable nested blockquotes
+    if ( editor && editor.model && editor.model.schema ) {
+      editor.model.schema.on( 'checkChild', ( evt, args ) => {
+        const context = args[ 0 ];
+        const childDefinition = args[ 1 ];
+        if ( context.endsWith( 'blockQuote' ) && childDefinition.name == 'blockQuote' ) {
+          // Prevent next listeners from being called.
+          evt.stop();
+          // Set the checkChild()'s return value.
+          evt.return = true;
+        }
+      }, { priority: 'highest' } );
+    };
+
+    // Put CKeditor in focus 
+    if (editor && editor.editing ) {
+      editor.editing.view.focus()
+    }
   }
 
   /**
@@ -246,10 +279,108 @@ export class InboxComposeComponent implements OnInit {
    */
   async ngOnInit(): Promise<void> {
     await this.setFromAddressList()
+    this.setContentTypeForView()
     this.initMail()
+    this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
+  }
+
+  /**
+   * Handles content-type in the view
+   */
+  private setContentTypeForView() {
+    if ( this.currentMessage ) {
+      let ct = this.currentMessage.headers["content-type"]
+      this.inputContentType = this.mailchainService.getContentTypeForView(ct)
+    }
+
+    this.contentTypeSwitchLabel = this.setContentTypeSwitchLabel()
+  }
+
+  /**
+   * handleReplyInPlaintext prepares message fields for a plaintext reply based on the currentMessage
+   */
+  private handleReplyInPlaintext(){
+    var messageFrom:  string = "",
+    messageReplyTo:   string = "",
+    messageDate:      string = "",
+    messageTo:        string = "",
+    messageSubject:   string = "",
+    messageBody:      string = ""
+
+    if (this.currentMessage.headers["from"]) {
+      messageFrom = '\r\n\r\n>From: ' + this.currentMessage.headers["from"] + "\r\n"
+    }
+    if (this.currentMessage.headers["reply-to"]){
+      messageReplyTo = '>Reply To: ' + this.currentMessage.headers["reply-to"] + "\r\n"
+    }
+    if (this.currentMessage.headers["date"]){
+      messageDate = '>Date: ' + this.currentMessage.headers["date"] + "\r\n"
+    }
+    if (this.currentMessage.headers["to"]){
+      messageTo = '>To: ' + this.currentMessage.headers["to"] + "\r\n"
+    }
+    if (this.currentMessage["subject"]){
+      messageSubject = '>Subject: ' + this.currentMessage["subject"] + "\r\n" + ">" + "\r\n"
+    } else {
+      messageSubject = ""
+    }
+    if (this.currentMessage["body"]){
+      messageBody = '>' + this.currentMessage["body"] 
+    }
+    
+    messageBody = messageBody.replace(/\r\n/g, '\r\n>');
+    
+    this.model.body =  messageFrom +
+      messageReplyTo +
+      messageDate +
+      messageTo +
+      messageSubject +
+      messageBody
+  }
+
+  /**
+   * handleReplyInHtml prepares message fields for a html reply based on the currentMessage
+   */
+  private handleReplyInHtml(){
+    var messageFrom:  string = "",
+    messageReplyTo:   string = "",
+    messageDate:      string = "",
+    messageTo:        string = "",
+    messageSubject:   string = "",
+    messageBody:      string = ""
+
+    if (this.currentMessage.headers["from"]) {
+      messageFrom = '<strong>From:</strong> ' + this.currentMessage.headers["from"] + "<br>"
+    }
+    if (this.currentMessage.headers["reply-to"]){
+      messageReplyTo = '<strong>Reply To:</strong> ' + this.currentMessage.headers["reply-to"] + "<br>"
+    }
+    if (this.currentMessage.headers["date"]){
+      messageDate = '<strong>Date:</strong> ' + this.currentMessage.headers["date"] + "<br>"
+    }
+    if (this.currentMessage.headers["to"]){
+      messageTo = '<strong>To:</strong> ' + this.currentMessage.headers["to"] + "<br>"
+    }
+    if (this.currentMessage["subject"]){
+      messageSubject = '<strong>Subject:</strong> ' + this.currentMessage["subject"]
+    } else {
+      messageSubject = ""
+    }
+    if (this.currentMessage["body"]){
+      messageBody = '<blockquote>' + this.currentMessage["body"] + '<br></blockquote>'
+    }
+        
+    this.model.body = "<p></p><p>" +
+      messageFrom +
+      messageReplyTo +
+      messageDate +
+      messageTo +
+      messageSubject +
+      "</p>" +
+      messageBody
   }
 
   /**
@@ -258,42 +389,11 @@ export class InboxComposeComponent implements OnInit {
   private handleReplyFields(){
     if ( this.currentMessage && this.currentMessage.headers ) {
 
-      var messageFrom:  string = "",
-      messageReplyTo:   string = "",
-      messageDate:      string = "",
-      messageTo:        string = "",
-      messageSubject:   string = "",
-      messageBody:      string = ""
-
-      if (this.currentMessage.headers["from"]) {
-        messageFrom = '\r\n\r\n>From: ' + this.currentMessage.headers["from"] + "\r\n"
+      if ( this.inputContentType == "html" ) {
+        this.handleReplyInHtml()
+      } else if ( this.inputContentType == "plaintext" ) {
+        this.handleReplyInPlaintext()
       }
-      if (this.currentMessage.headers["reply-to"]){
-        messageReplyTo = '>Reply To: ' + this.currentMessage.headers["reply-to"] + "\r\n"
-      }
-      if (this.currentMessage.headers["date"]){
-        messageDate = '>Date: ' + this.currentMessage.headers["date"] + "\r\n"
-      }
-      if (this.currentMessage.headers["to"]){
-        messageTo = '>To: ' + this.currentMessage.headers["to"] + "\r\n"
-      }
-      if (this.currentMessage["subject"]){
-        messageSubject = '>Subject: ' + this.currentMessage["subject"] + "\r\n" + ">" + "\r\n"
-      } else {
-        messageSubject = ""
-      }
-      if (this.currentMessage["body"]){
-        messageBody = '>' + this.currentMessage["body"] 
-      }
-      
-      var messageBody = messageBody.replace(/\r\n/g, '\r\n>');
-      
-      this.model.body =  messageFrom +
-        messageReplyTo +
-        messageDate +
-        messageTo +
-        messageSubject +
-        messageBody
       
       this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to
@@ -328,7 +428,7 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe(res => {
 
       this.model.publicKey = res["body"]["public_key"]
-      var outboundMail = this.generateMessage(this.model)
+      var outboundMail = this.generateMessage(this.model, this.inputContentType)
 
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
@@ -347,8 +447,8 @@ export class InboxComposeComponent implements OnInit {
    * Builds the OutboundMail object for sending
    * @param mailObj The form Mail object
    */
-  private generateMessage(mailObj: Mail): OutboundMail {
-    return this.mailchainService.generateMail(mailObj)    
+  private generateMessage(mailObj: Mail, inputContentType: string): OutboundMail {
+    return this.mailchainService.generateMail(mailObj, inputContentType)    
   }
 
   /**
@@ -377,6 +477,32 @@ export class InboxComposeComponent implements OnInit {
       
       this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, {initialState});
       this.modalConnectivityError.content.closeBtnName = 'Close'
+    }
+  }
+
+  public convertToPlainText() {
+    let res = confirm("Are you sure? This will remove formatting and cannot be changed back to HTML.")
+    
+    if (res == true) {      
+      let text = document.getElementsByClassName('ck-content')[0]["innerText"]
+      
+      this.model.body = text
+      this.inputContentType = "plaintext"
+      this.setContentTypeSwitchLabel()
+    } else {
+      document.getElementById('contentTypeSwitch')["checked"] = false
+    }
+    
+  };
+
+  /**
+   * Sets the contentTypeSwitch label
+   */
+  private setContentTypeSwitchLabel(){
+    if ( this.inputContentType == "plaintext" ) {
+      return this.contentTypeSwitchLabel = "Plain Text"
+    } else {
+      return this.contentTypeSwitchLabel = "Convert to Plain Text"
     }
   }
 }

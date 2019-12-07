@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { InboundMail } from 'src/app/models/inbound-mail';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
@@ -6,7 +6,8 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 @Component({
   selector: '[inbox-message]',
   templateUrl: './inbox-message.component.html',
-  styleUrls: ['./inbox-message.component.scss']
+  styleUrls: ['./inbox-message.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class InboxMessageComponent implements OnInit {
   @Input() currentMessage: InboundMail = new InboundMail;
@@ -17,6 +18,7 @@ export class InboxMessageComponent implements OnInit {
   @Output() replyToMessage = new EventEmitter();
   
   public messageNameRecords = {}
+  public viewForContentType = "plaintext"
 
   constructor(
     private nameserviceService: NameserviceService,
@@ -31,6 +33,7 @@ export class InboxMessageComponent implements OnInit {
 
   ngOnInit() {
     this.resolveNamesFromMessage()
+    this.viewForContentType = this.getViewForContentType()
   }
 
   /**
@@ -78,6 +81,14 @@ export class InboxMessageComponent implements OnInit {
    */
   public parseAddressFromMailchain(address){
     return this.mailchainService.parseAddressFromMailchain(address)
+  }
+
+  /**
+   * getViewForContentType: Returns correct view for content-type
+   */
+  private getViewForContentType() {
+    let ct = this.currentMessage.headers["content-type"]
+    return this.mailchainService.getContentTypeForView(ct)
   }
 
 }

@@ -77,8 +77,30 @@
       </div>
       <!-- ./Subject Field -->
 
-      <!-- Body Field -->
+
+      <!-- Plain/HTML toggle field -->
       <div class="form-group row">
+        <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+          <div class="input-group mb-2 row">
+
+            <div class="custom-control custom-switch content-type-switch">
+              <input type="checkbox" class="custom-control-input" id="contentTypeSwitch"
+                (click)="convertToPlainText()"
+                [disabled]="inputContentType == 'plaintext'"
+              >
+              <label class="custom-control-label" for="contentTypeSwitch">{{contentTypeSwitchLabel}}</label>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- ./Plain/HTML toggle field -->
+
+      <!-- Body Field -->
+      <!-- Plaintext Field -->
+      <div
+        *ngIf="inputContentType == 'plaintext' "
+        class="form-group row">
         <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
           <div class="input-group mb-2 row">
   
@@ -92,6 +114,28 @@
           </div>
         </div>
       </div>
+      <!-- ./Plaintext Field -->
+
+      <!-- CKeditor Field -->
+      <div
+        *ngIf="inputContentType == 'html' " 
+        class="form-group row">
+        <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+          <div class="input-group mb-2 row">
+  
+            <ckeditor
+              #editor
+              id="messageBody"
+              name="body"
+              [(ngModel)]="model.body"
+              (keydown.enter)="supressEnterPropagation($event)"
+              [editor]="Editor"
+              ></ckeditor>
+
+          </div>
+        </div>
+      </div>
+      <!-- ./CKeditor Field -->
       <!-- ./Body Field -->
 
       <!-- <div class="clearfix"> -->
