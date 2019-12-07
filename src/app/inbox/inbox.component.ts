@@ -138,7 +138,7 @@ export class InboxComponent implements OnInit {
    * Changes the server settings in the client from form data.
    * @param form is the settings form submitted from the view
    */
-  serverSettingsFormSubmit(){ 
+  public serverSettingsFormSubmit(){ 
        
     var webProtocol = this.serverSettings["webProtocol"]
     var host = this.serverSettings["host"]

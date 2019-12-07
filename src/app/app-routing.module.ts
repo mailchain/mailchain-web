@@ -10,7 +10,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { InboxComposeComponent } from './inbox/inbox-compose/inbox-compose.component';
 import { InboxMessageComponent } from './inbox/inbox-message/inbox-message.component';
 import { InboxMessagesComponent } from './inbox/inbox-messages/inbox-messages.component';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular/dist';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 
 const routes: Routes = [

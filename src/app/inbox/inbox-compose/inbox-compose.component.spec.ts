@@ -18,7 +18,7 @@ import { NameserviceService } from 'src/app/services/mailchain/nameservice/names
 import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity-error/modal-connectivity-error.component';
 import { NgModule } from '@angular/core';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular/dist';
+import { CKEditorModule, CKEditorComponent } from '@ckeditor/ckeditor5-angular';
 
 
 // Workaround:
@@ -526,14 +526,24 @@ describe('InboxComposeComponent', () => {
   });
 
   describe('convertToPlainText', () => {
-    it('should convert html to plain text', () => {
+    it('should convert html to plain text when confirm box is OK', () => {
       spyOn(window, 'confirm').and.returnValue(true);
       spyOn(document, 'getElementsByClassName').and.returnValue([ {"innerText": "Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message"} ]);
       
       component.convertToPlainText()
 
+      expect(window.confirm).toHaveBeenCalled()
+      expect(component.inputContentType).toEqual('plaintext')
       expect(component.model.body).toBe("Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message")
 
+    })
+    it('should not convert html to plain text when confirm box is cancel', () => {
+      spyOn(window, 'confirm').and.returnValue(false);
+
+      component.convertToPlainText()
+
+      expect(window.confirm).toHaveBeenCalled()
+      expect(component.inputContentType).toEqual('html')
     })
   });
 

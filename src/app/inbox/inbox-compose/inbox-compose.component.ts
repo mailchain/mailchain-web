@@ -13,7 +13,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivity-error/modal-connectivity-error.component';
 
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { CKEditorComponent } from '@ckeditor/ckeditor5-angular/dist';
+import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
 
 @Component({
   selector: '[inbox-compose]',
