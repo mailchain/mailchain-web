@@ -139,7 +139,7 @@ export class InboxComponent implements OnInit {
    * @param form is the settings form submitted from the view
    */
   public serverSettingsFormSubmit(){ 
-       
+
     var webProtocol = this.serverSettings["webProtocol"]
     var host = this.serverSettings["host"]
     var port = this.serverSettings["port"]
@@ -344,9 +344,9 @@ export class InboxComponent implements OnInit {
     } catch (error) {
       this.getServerSettings()
      // @TODO add error handling for failure to reach server
-     console.warn("error: " + error);
-     console.warn("error: it doesn't look like your application is running. Please check your settings.");
-     
+      console.warn("error: " + error);
+      console.warn("error: it doesn't look like your application is running. Please check your settings.");
+
     }
     await this.checkServerSettingsInQueryParams()
 
@@ -381,7 +381,7 @@ export class InboxComponent implements OnInit {
         --fetchCount // decrement fetchCount
         
         if (fetchCount == 0 ) { // all get requests should be complete
-           self.setFetchingMessagesState(false)
+          self.setFetchingMessagesState(false)
         }
       })
       
