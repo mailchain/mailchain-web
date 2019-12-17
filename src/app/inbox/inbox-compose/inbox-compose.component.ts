@@ -26,10 +26,10 @@ export class InboxComposeComponent implements OnInit {
   @Input() currentNetwork: string;
   @Input() currentProtocol: string;
   @Input() currentMessage: any;
-  
+
   @Output() openMessage = new EventEmitter();
   @Output() goToInboxMessages = new EventEmitter();
-  
+
   public model = new Mail()
   public fromAddresses: Array<any> = []
   public sendMessagesDisabled: boolean = false;
@@ -49,11 +49,11 @@ export class InboxComposeComponent implements OnInit {
   public inputContentType = "html"
   public contentTypeSwitchLabel: string = ""
 
-  @ViewChild( 'editor', {static: false} ) public editorComponent: CKEditorComponent;
+  @ViewChild('editor', { static: false }) public editorComponent: CKEditorComponent;
 
   constructor(
     private mailchainService: MailchainService,
-    private sendService : SendService,
+    private sendService: SendService,
     private publicKeyService: PublicKeyService,
     private addressesService: AddressesService,
     private nameserviceService: NameserviceService,
@@ -63,13 +63,13 @@ export class InboxComposeComponent implements OnInit {
   /**
    * Initialize empty values for the message model
    */
-  private initMail() {    
+  private initMail() {
     this.model.to = ""
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
   }
-  
+
   /**
    * initEditor - initiates CKeditor
    */
@@ -77,21 +77,21 @@ export class InboxComposeComponent implements OnInit {
     let editor = this.editorComponent.editorInstance
 
     // Enable nested blockquotes
-    if ( editor && editor.model && editor.model.schema ) {
-      editor.model.schema.on( 'checkChild', ( evt, args ) => {
-        const context = args[ 0 ];
-        const childDefinition = args[ 1 ];
-        if ( context.endsWith( 'blockQuote' ) && childDefinition.name == 'blockQuote' ) {
+    if (editor && editor.model && editor.model.schema) {
+      editor.model.schema.on('checkChild', (evt, args) => {
+        const context = args[0];
+        const childDefinition = args[1];
+        if (context.endsWith('blockQuote') && childDefinition.name == 'blockQuote') {
           // Prevent next listeners from being called.
           evt.stop();
           // Set the checkChild()'s return value.
           evt.return = true;
         }
-      }, { priority: 'highest' } );
+      }, { priority: 'highest' });
     };
 
     // Put CKeditor in focus 
-    if (editor && editor.editing ) {
+    if (editor && editor.editing) {
       editor.editing.view.focus()
     }
   }
@@ -99,7 +99,7 @@ export class InboxComposeComponent implements OnInit {
   /**
    * Sets the available from addresses
    */
-  private async setFromAddressList(){
+  private async setFromAddressList() {
     this.fromAddresses = await this.addressesService.getAddresses();
   }
 
@@ -107,9 +107,9 @@ export class InboxComposeComponent implements OnInit {
    * Returns the identicon for the an address
    * @param address the address 
    */
-  public generateIdenticon(address) {    
+  public generateIdenticon(address) {
     let icon = this.mailchainService.generateIdenticon(address);
-    
+
     return icon == "" ? "assets/question-circle-regular.svg" : icon
   }
 
@@ -120,7 +120,7 @@ export class InboxComposeComponent implements OnInit {
    *  
    * @param event the event from keyup
    */
-  public recipientResolve(event){
+  public recipientResolve(event) {
     if (event.target.value == "") {
       this.setRecipientLoadingIcon("clear")
       this.setRecipientLoadingText()
@@ -152,13 +152,13 @@ export class InboxComposeComponent implements OnInit {
         break;
       case 'invalid':
         this.recipientLoadingIcon = "fa fa-times-circle text-danger"
-        break;        
+        break;
       case 'clear':
         this.recipientLoadingIcon = ""
         break;
     }
   }
-  
+
   /**
    * Sets the recipientLoadingText to the input text
    * @param text the text to display; if blank, clears text
@@ -171,17 +171,17 @@ export class InboxComposeComponent implements OnInit {
    * Sets up a subscription to handle user entering an ENS name or Ethereum address in the To field.
    * Includes debounce handling and will validate a name or address.
    */
-  private setupRecipientAddressLookupSubscription(){
+  private setupRecipientAddressLookupSubscription() {
     this.subscription = this.recipientAddressChanged.pipe(
       debounceTime(1500),
       distinctUntilChanged(),
       mergeMap(searchVal => {
         return this.resolveAddress(searchVal)
-      } )
+      })
     ).subscribe((res) => {
       res.subscribe(val => {
         let address = val['body']['address']
-        if ( this.mailchainService.validateEthAddress(address) ) {
+        if (this.mailchainService.validateEthAddress(address)) {
           this.model.to = address
           this.setRecipientLoadingIcon('valid')
           this.setRecipientLoadingText('valid address')
@@ -189,7 +189,7 @@ export class InboxComposeComponent implements OnInit {
           this.setRecipientLoadingIcon('invalid')
           this.setRecipientLoadingText('invalid address')
         }
-        
+
       }, err => {
         this.setRecipientLoadingIcon('invalid')
         this.setRecipientLoadingText(err['error']['message'])
@@ -212,22 +212,22 @@ export class InboxComposeComponent implements OnInit {
    * Returns observable with body containing address, e,g.
    * {body: {address: "0x1234567891234567891234567891234567891234"} }
    */
-  public async resolveAddress(value){
+  public async resolveAddress(value) {
     let returnObs
-    
-    if ( this.mailchainService.validateEnsName(value) ) {
+
+    if (this.mailchainService.validateEnsName(value)) {
       returnObs = this.nameserviceService.resolveName(
         this.currentProtocol,
         this.currentNetwork,
         value
       )
-    } else if ( this.mailchainService.validateEthAddress(value) ) {
+    } else if (this.mailchainService.validateEthAddress(value)) {
       returnObs = of(
-        { body: { address: value} }
+        { body: { address: value } }
       )
     } else {
       returnObs = of(
-        { body: { address: ''} }
+        { body: { address: '' } }
       )
     }
 
@@ -259,16 +259,16 @@ export class InboxComposeComponent implements OnInit {
   public supressEnterPropagation($event: KeyboardEvent): void {
     $event.stopPropagation()
   }
-  
+
   /**
    * Sets the currentAccount as the address in the `from` dropdown
    * -or-
    * When replying, sets the from address as the address the message was sent to
    */
-  private setCurrentAccountInFromAddressDropdown(){
-    if ( this.currentAccount != undefined ) {
+  private setCurrentAccountInFromAddressDropdown() {
+    if (this.currentAccount != undefined) {
       this.model.from = this.currentAccount
-    } 
+    }
   }
 
   /**
@@ -291,7 +291,7 @@ export class InboxComposeComponent implements OnInit {
    * Handles content-type in the view
    */
   private setContentTypeForView() {
-    if ( this.currentMessage ) {
+    if (this.currentMessage) {
       let ct = this.currentMessage.headers["content-type"]
       this.inputContentType = this.mailchainService.getContentTypeForView(ct)
     }
@@ -302,38 +302,38 @@ export class InboxComposeComponent implements OnInit {
   /**
    * handleReplyInPlaintext prepares message fields for a plaintext reply based on the currentMessage
    */
-  private handleReplyInPlaintext(){
-    var messageFrom:  string = "",
-    messageReplyTo:   string = "",
-    messageDate:      string = "",
-    messageTo:        string = "",
-    messageSubject:   string = "",
-    messageBody:      string = ""
+  private handleReplyInPlaintext() {
+    var messageFrom: string = "",
+      messageReplyTo: string = "",
+      messageDate: string = "",
+      messageTo: string = "",
+      messageSubject: string = "",
+      messageBody: string = ""
 
     if (this.currentMessage.headers["from"]) {
       messageFrom = '\r\n\r\n>From: ' + this.currentMessage.headers["from"] + "\r\n"
     }
-    if (this.currentMessage.headers["reply-to"]){
+    if (this.currentMessage.headers["reply-to"]) {
       messageReplyTo = '>Reply To: ' + this.currentMessage.headers["reply-to"] + "\r\n"
     }
-    if (this.currentMessage.headers["date"]){
+    if (this.currentMessage.headers["date"]) {
       messageDate = '>Date: ' + this.currentMessage.headers["date"] + "\r\n"
     }
-    if (this.currentMessage.headers["to"]){
+    if (this.currentMessage.headers["to"]) {
       messageTo = '>To: ' + this.currentMessage.headers["to"] + "\r\n"
     }
-    if (this.currentMessage["subject"]){
+    if (this.currentMessage["subject"]) {
       messageSubject = '>Subject: ' + this.currentMessage["subject"] + "\r\n" + ">" + "\r\n"
     } else {
       messageSubject = ""
     }
-    if (this.currentMessage["body"]){
-      messageBody = '>' + this.currentMessage["body"] 
+    if (this.currentMessage["body"]) {
+      messageBody = '>' + this.currentMessage["body"]
     }
-    
+
     messageBody = messageBody.replace(/\r\n/g, '\r\n>');
-    
-    this.model.body =  messageFrom +
+
+    this.model.body = messageFrom +
       messageReplyTo +
       messageDate +
       messageTo +
@@ -344,35 +344,35 @@ export class InboxComposeComponent implements OnInit {
   /**
    * handleReplyInHtml prepares message fields for a html reply based on the currentMessage
    */
-  private handleReplyInHtml(){
-    var messageFrom:  string = "",
-    messageReplyTo:   string = "",
-    messageDate:      string = "",
-    messageTo:        string = "",
-    messageSubject:   string = "",
-    messageBody:      string = ""
+  private handleReplyInHtml() {
+    var messageFrom: string = "",
+      messageReplyTo: string = "",
+      messageDate: string = "",
+      messageTo: string = "",
+      messageSubject: string = "",
+      messageBody: string = ""
 
     if (this.currentMessage.headers["from"]) {
       messageFrom = '<strong>From:</strong> ' + this.currentMessage.headers["from"] + "<br>"
     }
-    if (this.currentMessage.headers["reply-to"]){
+    if (this.currentMessage.headers["reply-to"]) {
       messageReplyTo = '<strong>Reply To:</strong> ' + this.currentMessage.headers["reply-to"] + "<br>"
     }
-    if (this.currentMessage.headers["date"]){
+    if (this.currentMessage.headers["date"]) {
       messageDate = '<strong>Date:</strong> ' + this.currentMessage.headers["date"] + "<br>"
     }
-    if (this.currentMessage.headers["to"]){
+    if (this.currentMessage.headers["to"]) {
       messageTo = '<strong>To:</strong> ' + this.currentMessage.headers["to"] + "<br>"
     }
-    if (this.currentMessage["subject"]){
+    if (this.currentMessage["subject"]) {
       messageSubject = '<strong>Subject:</strong> ' + this.currentMessage["subject"]
     } else {
       messageSubject = ""
     }
-    if (this.currentMessage["body"]){
+    if (this.currentMessage["body"]) {
       messageBody = '<blockquote>' + this.currentMessage["body"] + '<br></blockquote>'
     }
-        
+
     this.model.body = "<p></p><p>" +
       messageFrom +
       messageReplyTo +
@@ -386,42 +386,42 @@ export class InboxComposeComponent implements OnInit {
   /**
    * Set the fields for a reply
    */
-  private handleReplyFields(){
-    if ( this.currentMessage && this.currentMessage.headers ) {
+  private handleReplyFields() {
+    if (this.currentMessage && this.currentMessage.headers) {
 
-      if ( this.inputContentType == "html" ) {
+      if (this.inputContentType == "html") {
         this.handleReplyInHtml()
-      } else if ( this.inputContentType == "plaintext" ) {
+      } else if (this.inputContentType == "plaintext") {
         this.handleReplyInPlaintext()
       }
-      
+
       this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to
 
       this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["to"])
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
-    } 
+    }
   }
 
   /**
    * Checks for 'Re: ' on the subject and adds it if it is not there already.
    * @param subject the message subject
    */
-  private addRePrefixToSubject(subject: string) {    
-    if (subject.startsWith("Re: ") ) {
+  private addRePrefixToSubject(subject: string) {
+    if (subject.startsWith("Re: ")) {
       return subject
     } else {
       return "Re: " + subject
     }
   };
-  
+
   /**
   * onSubmit sends email to the local service. It includes the reset form to handle errors and resets.
   */
-  public onSubmit() {  
+  public onSubmit() {
     this.sendMessagesDisabled = true
     var self = this
-    
+
     this.publicKeyService.getPublicKeyFromAddress(
       this.model.to,
       this.currentNetwork
@@ -434,12 +434,14 @@ export class InboxComposeComponent implements OnInit {
         self.initMail();
         self.returnToInboxMessages();
       },
-      err => {
-        this.handleErrorOnPage(
-          `Error Code: ${err["error"]["code"]}`,
-          `<p>${err["error"]["message"]}</p><p>Please visit <a href="https://docs.mailchain.xyz/troubleshooting/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>`,
-        )
-      });
+        err => {
+          this.handleErrorOnPage(
+            `Error Code: ${err["error"]["code"]}`,
+            `<p>${err["error"]["message"]}</p><p>Please visit <a href="https://docs.mailchain.xyz/troubleshooting/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>`,
+          )
+          this.sendMessagesDisabled = false;
+          this.resetErrorOnPage();
+        });
     })
   }
 
@@ -448,58 +450,66 @@ export class InboxComposeComponent implements OnInit {
    * @param mailObj The form Mail object
    */
   private generateMessage(mailObj: Mail, inputContentType: string): OutboundMail {
-    return this.mailchainService.generateMail(mailObj, inputContentType)    
+    return this.mailchainService.generateMail(mailObj, inputContentType)
   }
 
   /**
    * Sends the OutboundMail object on the currently selected network
    * @param outboundMail The OutboundMail object
    */
-  private sendMessage(outboundMail: OutboundMail) {    
+  private sendMessage(outboundMail: OutboundMail) {
     let network = this.currentNetwork
-    
-    return this.sendService.sendMail(outboundMail, network)    
+
+    return this.sendService.sendMail(outboundMail, network)
   }
 
-    /**
-   * handleErrorOnPage
-   */
+  /**
+ * handleErrorOnPage
+ */
   public handleErrorOnPage(errorTitle, errorMessage) {
 
-    if (this.errorTitle.length == 0 && this.errorMessage.length == 0 ) {
+    if (this.errorTitle.length == 0 && this.errorMessage.length == 0) {
       this.errorTitle = errorTitle
       this.errorMessage = errorMessage
-      
+
       const initialState = {
         errorTitle: errorTitle,
         errorMessage: errorMessage,
       };
-      
-      this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, {initialState});
+
+      this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, { initialState });
       this.modalConnectivityError.content.closeBtnName = 'Close'
     }
   }
 
+  /**
+   * resetErrorOnPage
+   */
+  private resetErrorOnPage() {
+    this.errorTitle = ""
+    this.errorMessage = ""
+  }
+
   public convertToPlainText() {
     let res = confirm("Are you sure? This will remove formatting and cannot be changed back to HTML.")
-    
-    if (res == true) {      
+
+    if (res == true) {
       let text = document.getElementsByClassName('ck-content')[0]["innerText"]
-      
+
       this.model.body = text
       this.inputContentType = "plaintext"
       this.setContentTypeSwitchLabel()
     } else {
       document.getElementById('contentTypeSwitch')["checked"] = false
     }
-    
+
   };
 
   /**
    * Sets the contentTypeSwitch label
    */
-  private setContentTypeSwitchLabel(){
-    if ( this.inputContentType == "plaintext" ) {
+  private setContentTypeSwitchLabel() {
+    if (this.inputContentType == "plaintext") {
       return this.contentTypeSwitchLabel = "Plain Text"
     } else {
       return this.contentTypeSwitchLabel = "Convert to Plain Text"

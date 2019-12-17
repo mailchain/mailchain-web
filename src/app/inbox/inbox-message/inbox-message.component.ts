@@ -16,14 +16,14 @@ export class InboxMessageComponent implements OnInit {
   @Input() currentNetwork: Array<any> = [];
   @Output() goToInboxMessages = new EventEmitter();
   @Output() replyToMessage = new EventEmitter();
-  
+
   public messageNameRecords = {}
   public viewForContentType = "plaintext"
 
   constructor(
     private nameserviceService: NameserviceService,
     private mailchainService: MailchainService,
-  ) {}
+  ) { }
   /**
    * Go back to the inbox-messages view
    */
@@ -48,13 +48,13 @@ export class InboxMessageComponent implements OnInit {
    * Sets the name corresponding to messageNameRecords
    * @param addr address in format 0x1234...1234
    */
-  private resolveMessageNameRecords(addr) {    
+  private resolveMessageNameRecords(addr) {
     this.nameserviceService.resolveAddress(
       this.currentProtocol,
       this.currentNetwork,
       addr
-    ).subscribe(res =>{        
-      if ( res['ok'] ) {
+    ).subscribe(res => {
+      if (res['ok']) {
         this.messageNameRecords[addr] = res['body']['name']
       }
     })
@@ -64,7 +64,7 @@ export class InboxMessageComponent implements OnInit {
    * resolveNamesFromMessages looks up the 'to' and 'from' name
    * records according to the currentNetwork and currentProtocol
    */
-  private resolveNamesFromMessage() {    
+  private resolveNamesFromMessage() {
     [
       this.currentMessage["headers"]["to"],
       this.currentMessage["headers"]["from"]
@@ -79,7 +79,7 @@ export class InboxMessageComponent implements OnInit {
    * Returns the extracted public address from mailchain formatted address
    * @param address formatted <0x...@network.protocol> address
    */
-  public parseAddressFromMailchain(address){
+  public parseAddressFromMailchain(address) {
     return this.mailchainService.parseAddressFromMailchain(address)
   }
 
