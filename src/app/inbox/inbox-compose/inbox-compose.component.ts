@@ -439,6 +439,8 @@ export class InboxComposeComponent implements OnInit {
           `Error Code: ${err["error"]["code"]}`,
           `<p>${err["error"]["message"]}</p><p>Please visit <a href="https://docs.mailchain.xyz/troubleshooting/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>`,
         )
+        this.sendMessagesDisabled = false;
+        this.resetErrorOnPage();
       });
     })
   }
@@ -478,6 +480,14 @@ export class InboxComposeComponent implements OnInit {
       this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, {initialState});
       this.modalConnectivityError.content.closeBtnName = 'Close'
     }
+  }
+
+  /**
+   * resetErrorOnPage
+   */
+  private resetErrorOnPage() {
+    this.errorTitle = ""
+    this.errorMessage = ""
   }
 
   public convertToPlainText() {
