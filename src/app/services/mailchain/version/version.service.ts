@@ -12,16 +12,16 @@ export class VersionService {
   constructor(
     private http: HttpClient,
     private localStorageServerService: LocalStorageServerService,
-    ) {
-      this.initUrl()
-    }
-  
-    /**
-     * Initialize URL from local storage
-     */
-    initUrl(){
-      this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
-    }
+  ) {
+    this.initUrl()
+  }
+
+  /**
+   * Initialize URL from local storage
+   */
+  initUrl() {
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
+  }
 
   /**
    * Get and return the protocols configured on the api application

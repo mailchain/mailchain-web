@@ -7,7 +7,7 @@ import { LocalStorageProtocolService } from '../../helpers/local-storage-protoco
 
 describe('PublicKeyService', () => {
   let publicKeyService: PublicKeyService;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [

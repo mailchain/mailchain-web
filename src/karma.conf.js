@@ -25,7 +25,7 @@ module.exports = function (config) {
       type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
       dir: 'coverage/'
     },
-    reporters: ['progress', 'kjhtml','coverage-istanbul','coveralls'],
+    reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,

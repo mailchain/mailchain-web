@@ -35,24 +35,24 @@ export class ConnectivityService {
 
     let resRelease: any = await this.getResRelease();
     let clientRelease: any = await this.getClientRelease();
-    
+
     result = {
       ...result,
       ...resRelease,
       ...clientRelease
     }
-    
+
     result["errors"] = (
       result["errors"] +
       result["release-error"] +
       result["client-error"]
     )
-    
+
     result["status"] = this.checkVersionStatus(
       result["release-version"],
       result["client-version"]
     )
-    
+
     return result
   }
 
@@ -60,7 +60,7 @@ export class ConnectivityService {
    * Get the latest release version from release api endpoint.
    * If something doesn't return semantic version, return soft error
    */
-  public async getResRelease(){
+  public async getResRelease() {
     let result = {
       "release-version": "unknown",
       "release-error-message": "",
@@ -68,11 +68,11 @@ export class ConnectivityService {
       "release-error": 0
     }
     let resReleaseReq = this.http.get(environment.repositoryVersionLatestEndpoint).toPromise()
-    
+
     try {
       let resRelease = await resReleaseReq
-      
-      if (resRelease && resRelease["tag_name"] && semverCoerce(resRelease["tag_name"]) != null ) {
+
+      if (resRelease && resRelease["tag_name"] && semverCoerce(resRelease["tag_name"]) != null) {
         result["release-version"] = semverCoerce(resRelease["tag_name"]).version
       }
     } catch (error) {
@@ -96,13 +96,13 @@ export class ConnectivityService {
       "client-error": 0
     }
     let clientReleaseReq = this.versionService.getVersion().toPromise()
-    
+
     try {
       let clientRelease = await clientReleaseReq
-      
-      if (clientRelease && clientRelease["version"] && semverCoerce(clientRelease["version"]) != null ) {
+
+      if (clientRelease && clientRelease["version"] && semverCoerce(clientRelease["version"]) != null) {
         result["client-version"] = semverCoerce(clientRelease["version"]).version
-      }    
+      }
 
     } catch (error) {
       result["client-error-status"] = error["status"]
@@ -118,21 +118,21 @@ export class ConnectivityService {
    * @param releaseVersion 
    * @param clientVersion
    */
-  private checkVersionStatus(releaseVersion,clientVersion){   
+  private checkVersionStatus(releaseVersion, clientVersion) {
     let status = "unknown"
-    
-    let versionsDefined = ( 
-      ![clientVersion,releaseVersion].includes(undefined) &&
-      ![clientVersion,releaseVersion].includes(null)
+
+    let versionsDefined = (
+      ![clientVersion, releaseVersion].includes(undefined) &&
+      ![clientVersion, releaseVersion].includes(null)
     )
-      
-    if ( versionsDefined && semverCoerce(releaseVersion) != null && semverCoerce(clientVersion) != null ) {
+
+    if (versionsDefined && semverCoerce(releaseVersion) != null && semverCoerce(clientVersion) != null) {
       let rel = semverCoerce(releaseVersion)["version"]
       let client = semverCoerce(clientVersion)["version"]
-      
-      if ( rel == client ) {
+
+      if (rel == client) {
         status = "ok"
-      } else if ( semverLt(client, rel) ) {
+      } else if (semverLt(client, rel)) {
         status = "outdated"
       }
     }
@@ -154,21 +154,21 @@ export class ConnectivityService {
     let status = { "addresses": 0 }
     let res = await this.addressesService.getAddressesResponse().toPromise().catch(err => {
       status["status"] = "error",
-      status["code"] = err.status,
-      status["message"] = err.message
+        status["code"] = err.status,
+        status["message"] = err.message
     });
-    
-    if (res && res["status"] == 200 ) {
+
+    if (res && res["status"] == 200) {
       status["status"] = "ok",
-      status["code"] = res["status"],
-      status["message"] = res["statusText"]
+        status["code"] = res["status"],
+        status["message"] = res["statusText"]
       // Are any addresses configured?
       status["addresses"] = (res["body"] && res["body"]["addresses"]) ? res["body"]["addresses"].length : 0
     }
-    
+
     return status
   }
 
-  
+
 
 }

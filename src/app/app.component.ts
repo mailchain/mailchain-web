@@ -25,17 +25,17 @@ export class AppComponent implements OnInit {
     private connectivityService: ConnectivityService,
     private modalService: BsModalService
   ) {
-    
+
   }
 
   public setApiVersion() {
     this.apiVersion = this.apiVersionInfo["client-version"]
   }
 
-  public async ngOnInit(){
+  public async ngOnInit() {
     await this.handleApiAvailability()
     await this.handleWebConnectivity()
-    this.setApiVersion()    
+    this.setApiVersion()
   }
 
   /**
@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
    */
   public async handleApiAvailability() {
     this.apiConnectivityInfo = await this.connectivityService.getApiAvailability();
-    
+
     if (this.apiConnectivityInfo["status"] == "error") {
       switch (this.apiConnectivityInfo["code"]) {
         case 0:
@@ -54,14 +54,14 @@ export class AppComponent implements OnInit {
             errorMessages.clientNotRunningErrorMessage
           )
           break;
-      
+
         default:
           // Something else happened
           this.handleErrorOnPage(
             errorMessages.unknownErrorTitle,
             errorMessages.unknownErrorMessage
           )
-          console.warn('please add a new error message for this code',this.apiConnectivityInfo["code"]);
+          console.warn('please add a new error message for this code', this.apiConnectivityInfo["code"]);
           break;
       }
     } else if (this.apiConnectivityInfo["status"] == "ok") {
@@ -83,16 +83,16 @@ export class AppComponent implements OnInit {
    * handleWebConnectivity
    */
   public async handleWebConnectivity() {
-    
+
     try {
       this.apiVersionInfo = await this.connectivityService.getVersionStatus();
-    } catch (error) {      
+    } catch (error) {
       this.handleErrorOnPage(
         errorMessages.connectionErrorTitle,
         error["message"]
       )
-    }    
-    if ( this.apiVersionInfo["errors"] > 0 ) {
+    }
+    if (this.apiVersionInfo["errors"] > 0) {
 
       let errorStatusFields = [
         "client",
@@ -100,37 +100,37 @@ export class AppComponent implements OnInit {
       ]
 
       errorStatusFields.forEach(element => {
-        if (this.apiVersionInfo[`${element}-error-status`] != undefined ) {
+        if (this.apiVersionInfo[`${element}-error-status`] != undefined) {
           this.handleErrorOnPage(
-            errorMessages.connectionErrorTitle, 
+            errorMessages.connectionErrorTitle,
             this.apiVersionInfo[`${element}-error-message`]
           )
         }
       });
     }
-    if ( this.apiVersionInfo["status"] == "outdated" ) {
+    if (this.apiVersionInfo["status"] == "outdated") {
       this.handleErrorOnPage(
-        errorMessages.updateAvailableTitle, 
+        errorMessages.updateAvailableTitle,
         `<p>Your Mailchain client version is ${this.apiVersionInfo["client-version"]}. Please upgrade it to version ${this.apiVersionInfo["release-version"]} to ensure things work as expected.</p><p>Please visit <a href="https://docs.mailchain.xyz/troubleshooting/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>`
       )
     }
   }
-    
+
   /**
    * handleErrorOnPage
    */
   public handleErrorOnPage(errorTitle, errorMessage) {
 
-    if (this.errorTitle.length == 0 && this.errorMessage.length == 0 ) {
+    if (this.errorTitle.length == 0 && this.errorMessage.length == 0) {
       this.errorTitle = errorTitle
       this.errorMessage = errorMessage
-      
+
       const initialState = {
         errorTitle: errorTitle,
         errorMessage: errorMessage,
       };
-      
-      this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, {initialState});
+
+      this.modalConnectivityError = this.modalService.show(ModalConnectivityErrorComponent, { initialState });
       this.modalConnectivityError.content.closeBtnName = 'Close'
     }
   }

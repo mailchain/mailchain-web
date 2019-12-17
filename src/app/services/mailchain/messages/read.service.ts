@@ -24,7 +24,7 @@ export class ReadService {
   markRead(message_id) {
     var url = this.urlHelper(message_id)
     var httpOptions = this.httpHelpersService.getHttpOptions()
-    return this.http.put(url, {} ,httpOptions);
+    return this.http.put(url, {}, httpOptions);
   }
 
   /**
@@ -34,14 +34,14 @@ export class ReadService {
   markUnread(message_id) {
     var url = this.urlHelper(message_id)
     var httpOptions = this.httpHelpersService.getHttpOptions()
-    
+
     return this.http.delete(url, httpOptions);
   }
 
-    /**
-   * Initialize URL from local storage
-   */
-  initUrl(){
+  /**
+ * Initialize URL from local storage
+ */
+  initUrl() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
   }
 
@@ -49,7 +49,7 @@ export class ReadService {
    * Inserts the message id into the api url endpoint
    * @param message_id the message id to insert into url
    */
-  urlHelper(message_id){
+  urlHelper(message_id) {
     return `${this.url}/messages/${message_id}/read`
   }
 }

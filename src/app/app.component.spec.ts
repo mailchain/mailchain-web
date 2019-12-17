@@ -17,7 +17,7 @@ import { HttpHelpersService } from './services/helpers/http-helpers/http-helpers
   declarations: [ModalConnectivityErrorComponent],
   entryComponents: [ModalConnectivityErrorComponent]
 })
-export class FakeModalConnectivityErrorModule {}
+export class FakeModalConnectivityErrorModule { }
 // End workaround
 
 describe('AppComponent', () => {
@@ -60,14 +60,14 @@ describe('AppComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    
+
     describe('setApiVersion', () => {
-      it('set the API version as part of ngOnInit (after other calls have been made)', async() => {
+      it('set the API version as part of ngOnInit (after other calls have been made)', async () => {
         expect(component.apiVersion).toEqual("")
         let ver = "1.4.1"
         component.apiVersionInfo["client-version"] = ver
         component.setApiVersion()
-        
+
         expect(component.apiVersion).toEqual(ver)
       });
     });
@@ -75,99 +75,99 @@ describe('AppComponent', () => {
   });
 
   describe('handleApiAvailability', () => {
-    it('should handle connection refused error', async() => {
+    it('should handle connection refused error', async () => {
       spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilityConnectionRefused())
-      
+
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleApiAvailability()
 
       expect(component.errorTitle).toEqual(errorMessages.clientNotRunningErrorTitle)
       expect(component.errorMessage).toEqual(errorMessages.clientNotRunningErrorMessage)
-      
+
     });
-    
-    it('should handle unknown error', async() => {
+
+    it('should handle unknown error', async () => {
       spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilityErrorUnknown())
-      
+
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleApiAvailability()
 
       expect(component.errorTitle).toEqual(errorMessages.unknownErrorTitle)
       expect(component.errorMessage).toEqual(errorMessages.unknownErrorMessage)
-      
+
     });
 
-    it('should handle status ok, with 0 addresses, error', async() => {
+    it('should handle status ok, with 0 addresses, error', async () => {
       spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilitySuccessNoAddresses())
-      
+
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleApiAvailability()
 
       expect(component.errorTitle).toEqual(errorMessages.accountConfigurationErrorTitle)
       expect(component.errorMessage).toEqual(errorMessages.accountConfigurationErrorMessage)
-      
+
     });
 
-    it('should handle status ok, with addresses', async() => {
+    it('should handle status ok, with addresses', async () => {
       spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilitySuccess())
-      
+
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleApiAvailability()
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
     });
   });
 
   describe('handleWebConnectivity', () => {
     xit('should handle an error fetching version info', () => {
       // TODO handle error
-    });  
-    it('should show an error if the client-error-status field is defined', async() => {
+    });
+    it('should show an error if the client-error-status field is defined', async () => {
       spyOn(connectivityService, 'getVersionStatus').and.returnValue(mailchainTestService.apiVersionInfoClientError())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleWebConnectivity()
 
       expect(component.errorTitle).toEqual(errorMessages.connectionErrorTitle)
       expect(component.errorMessage).toEqual("7 Some Client Error")
-      
-    });  
-    it('should show an error if the release-error-status field is defined', async() => {
+
+    });
+    it('should show an error if the release-error-status field is defined', async () => {
       spyOn(connectivityService, 'getVersionStatus').and.returnValue(mailchainTestService.apiVersionInfoReleaseError())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleWebConnectivity()
 
       expect(component.errorTitle).toEqual(errorMessages.connectionErrorTitle)
       expect(component.errorMessage).toEqual("5 Some Release Error")
     });
 
-    it('should show an error if the api version is outdated', async() => {
+    it('should show an error if the api version is outdated', async () => {
       spyOn(connectivityService, 'getVersionStatus').and.returnValue(mailchainTestService.apiVersionInfoOutdated())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
-      
+
       await component.handleWebConnectivity()
 
       expect(component.errorTitle).toEqual(errorMessages.updateAvailableTitle)
       expect(component.errorMessage).toEqual('<p>Your Mailchain client version is 1.4.1. Please upgrade it to version 1.4.2 to ensure things work as expected.</p><p>Please visit <a href="https://docs.mailchain.xyz/troubleshooting/common-inbox-errors" target="_blank">Docs: common inbox errors</a> to see how to fix this.</p>')
-    });  
-    
+    });
+
   });
 
   describe('handleErrorOnPage', () => {
@@ -178,8 +178,8 @@ describe('AppComponent', () => {
       let title = "Error Title"
       let msg = "Error Message"
 
-      component.handleErrorOnPage(title, msg)      
-      
+      component.handleErrorOnPage(title, msg)
+
       expect(component.errorTitle).toEqual(title)
       expect(component.errorMessage).toEqual(msg)
 
@@ -193,16 +193,16 @@ describe('AppComponent', () => {
       let origMsg = "Error is already in view"
       let title = "Error Title"
       let msg = "Error Message"
-      
+
       component.errorTitle = origTitle
       component.errorMessage = origMsg
-      
+
       component.handleErrorOnPage(title, msg)
-            
+
       expect(component.errorTitle).toEqual(origTitle)
       expect(component.errorMessage).toEqual(origMsg)
-      
+
     });
   });
-  
+
 });

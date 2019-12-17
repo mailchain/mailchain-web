@@ -31,7 +31,7 @@
       <!-- From name defined -->
       <span *ngIf="messageNameRecords[parseAddressFromMailchain(currentMessage.headers.from)] != undefined">
         <span>
-            From:&nbsp;{{messageNameRecords[parseAddressFromMailchain(currentMessage.headers.from)]}}
+          From:&nbsp;{{messageNameRecords[parseAddressFromMailchain(currentMessage.headers.from)]}}
         </span>
         <br>
         <span>{{currentMessage.headers.from}}</span>
@@ -47,7 +47,7 @@
       <span class="message-to"
         *ngIf="messageNameRecords[parseAddressFromMailchain(currentMessage.headers.to)] != undefined">
         <span>
-            To:&nbsp;{{messageNameRecords[parseAddressFromMailchain(currentMessage.headers.to)]}}
+          To:&nbsp;{{messageNameRecords[parseAddressFromMailchain(currentMessage.headers.to)]}}
         </span>
         <br>
         <span>{{currentMessage.headers.to}}</span>
