@@ -15,8 +15,8 @@ describe('AddressesService', () => {
   let expectedAddresses
 
   const desiredUrl = `http://127.0.0.1:8080/api/addresses?protocol=ethereum&network=mainnet`
-  
-  
+
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -25,7 +25,7 @@ describe('AddressesService', () => {
       ],
       imports: [HttpClientTestingModule]
     });
-    
+
     addressesService = TestBed.get(AddressesService);
     mailchainTestService = TestBed.get(MailchainTestService);
     httpTestingController = TestBed.get(HttpTestingController);
@@ -33,14 +33,14 @@ describe('AddressesService', () => {
     serverResponse = mailchainTestService.senderAddressServerResponse()
     expectedAddresses = mailchainTestService.senderAddresses()
   });
-  
+
   afterEach(() => {
     httpTestingController.verify();
   });
 
 
   describe('initUrl', () => {
-    it('should initialize the url', () => {    
+    it('should initialize the url', () => {
       expect(addressesService['url']).toEqual('http://127.0.0.1:8080/api')
     });
   })
@@ -49,11 +49,11 @@ describe('AddressesService', () => {
     expect(addressesService).toBeTruthy();
   });
 
-  it('should get an array of sender addresses', () => {    
+  it('should get an array of sender addresses', () => {
     addressesService.getAddresses().then(res => {
       expect(res).toEqual(expectedAddresses)
     });
-    
+
     // handle open connections
     const req = httpTestingController.expectOne(desiredUrl);
     expect(req.request.method).toBe("GET");

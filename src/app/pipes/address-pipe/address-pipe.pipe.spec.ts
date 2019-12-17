@@ -50,7 +50,7 @@ describe('AddressPipe', () => {
         HttpClientTestingModule,
       ]
     });
-    
+
     pipe = TestBed.get(AddressPipe);
   });
 
@@ -66,7 +66,7 @@ describe('AddressPipe', () => {
     expect(pipe.transform(messages, addr1).length).toEqual(1);
     expect(pipe.transform(messages, addr1)).toEqual(result);
   });
-  
+
   it('should return filtered messages when >1 message has been sent to an address', () => {
     let result = [
       messages[0],
@@ -75,7 +75,7 @@ describe('AddressPipe', () => {
     expect(pipe.transform(messages, addr2).length).toEqual(2);
     expect(pipe.transform(messages, addr2)).toEqual(result);
   });
-  
+
   it('should return empty array when no messages exist for address', () => {
     let result = []
     expect(pipe.transform(messages, addr3).length).toEqual(0);

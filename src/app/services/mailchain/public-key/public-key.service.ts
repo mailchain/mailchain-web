@@ -24,7 +24,7 @@ export class PublicKeyService {
   /**
    * Initialize URL from local storage
    */
-  initUrl(){
+  initUrl() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
     this.protocol = this.localStorageProtocolService.getCurrentProtocol()
 
@@ -35,11 +35,11 @@ export class PublicKeyService {
    */
   getPublicKeyFromAddress(public_address, network) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',this.protocol],
-      ['network',network],
-      ['address',public_address],
+      ['protocol', this.protocol],
+      ['network', network],
+      ['address', public_address],
     ])
- 
+
     return this.http.get(
       `${this.url}/public-key`,
       httpOptions

@@ -18,26 +18,26 @@ export class AddressesService {
     private httpHelpersService: HttpHelpersService,
     private localStorageServerService: LocalStorageServerService,
     private localStorageProtocolService: LocalStorageProtocolService,
-    ) {
-      this.initUrl()
-    }
-  
-    /**
-     * Initialize URL from local storage
-     */
-    initUrl(){
-      this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`,
+  ) {
+    this.initUrl()
+  }
+
+  /**
+   * Initialize URL from local storage
+   */
+  initUrl() {
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`,
       this.protocol = this.localStorageProtocolService.getCurrentProtocol()
-      this.network = this.localStorageServerService.getCurrentNetwork()
-    }
+    this.network = this.localStorageServerService.getCurrentNetwork()
+  }
 
   /**
    * Get and return the public addresses from my wallet to send from
    */
   async getAddresses() {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',this.protocol],
-      ['network',this.network]
+      ['protocol', this.protocol],
+      ['network', this.network]
     ])
 
     var addresses = []
@@ -45,14 +45,14 @@ export class AddressesService {
       this.url + `/addresses`,
       httpOptions
       // TODO handle failure
-    ).toPromise();      
+    ).toPromise();
     res["body"]["addresses"].forEach(address => {
-      addresses.push(this.handleAddressFormatting(address,'ethereum'))
+      addresses.push(this.handleAddressFormatting(address, 'ethereum'))
     });
     return addresses
   }
 
-  handleAddressFormatting(address,chain){
+  handleAddressFormatting(address, chain) {
     switch (chain) {
       case 'ethereum':
         return '0x' + address.toLowerCase()
@@ -64,10 +64,10 @@ export class AddressesService {
   /**
    * Returns the addresses response with status codes
    */
-  public getAddressesResponse(){
+  public getAddressesResponse() {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',this.protocol],
-      ['network',this.network]
+      ['protocol', this.protocol],
+      ['network', this.network]
     ])
 
     return this.http.get(

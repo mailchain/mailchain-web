@@ -28,13 +28,13 @@ describe('NameserviceService', () => {
         HttpHelpersService,
         MailchainTestService,
       ],
-      imports: [ HttpClientTestingModule ]
+      imports: [HttpClientTestingModule]
     });
 
     nameserviceService = TestBed.get(NameserviceService);
     httpTestingController = TestBed.get(HttpTestingController);
     mailchainTestService = TestBed.get(MailchainTestService);
-    
+
   });
 
   afterEach(() => {
@@ -46,31 +46,31 @@ describe('NameserviceService', () => {
   });
 
   describe('initUrl', () => {
-    it('should initialize the url', () => {    
+    it('should initialize the url', () => {
       expect(nameserviceService['url']).toEqual('http://127.0.0.1:8080/api')
     });
   });
 
-  describe('resolveName', ()=> {    
-    it('should add the right params to the request', ()=> {
+  describe('resolveName', () => {
+    it('should add the right params to the request', () => {
 
       let resResponse = mailchainTestService.resolveNameResponse()
       let response = nameserviceService.resolveName(protocol, network, name)
 
       response.subscribe()
-      
+
       // handle open connections      
       const req = httpTestingController.expectOne(expectedResolveNameUrlWithParams);
-      
+
       expect(req.request.method).toBe("GET");
-      
+
       expect(req.request.params.get('protocol')).toEqual(protocol);
       expect(req.request.params.get('network')).toEqual(network);
-      
+
       req.flush(resResponse);
     });
-    
-    it('should resolve a public address from a name', ()=> {
+
+    it('should resolve a public address from a name', () => {
 
       let resResponse = mailchainTestService.resolveNameResponse()
       let response = nameserviceService.resolveName(protocol, network, name)
@@ -79,36 +79,36 @@ describe('NameserviceService', () => {
         expect(res['url']).toEqual(expectedResolveNameUrlWithParams)
         expect(res['body']['address']).toEqual(address)
       })
-      
+
       // handle open connections      
       const req = httpTestingController.expectOne(expectedResolveNameUrlWithParams);
       expect(req.request.method).toBe("GET");
-      
+
       req.flush(resResponse);
     });
 
   });
-  
-  describe('resolveAddress', ()=> {    
-    it('should add the right params to the request', ()=> {
+
+  describe('resolveAddress', () => {
+    it('should add the right params to the request', () => {
 
       let resResponse = mailchainTestService.resolveAddressResponse()
       let response = nameserviceService.resolveAddress(protocol, network, address)
 
       response.subscribe()
-      
+
       // handle open connections      
       const req = httpTestingController.expectOne(expectedResolveAddressUrlWithParams);
-      
+
       expect(req.request.method).toBe("GET");
-      
+
       expect(req.request.params.get('protocol')).toEqual(protocol);
       expect(req.request.params.get('network')).toEqual(network);
-      
+
       req.flush(resResponse);
     });
-    
-    it('should resolve a name from a public address', ()=> {
+
+    it('should resolve a name from a public address', () => {
 
       let resResponse = mailchainTestService.resolveAddressResponse()
       let response = nameserviceService.resolveAddress(protocol, network, address)
@@ -117,15 +117,15 @@ describe('NameserviceService', () => {
         expect(res['url']).toEqual(expectedResolveAddressUrlWithParams)
         expect(res['body']['name']).toEqual(name)
       })
-      
+
       // handle open connections      
       const req = httpTestingController.expectOne(expectedResolveAddressUrlWithParams);
       // const req = httpTestingController.expectOne({method: "GET"});
       expect(req.request.method).toBe("GET");
-      
+
       req.flush(resResponse);
     });
 
   });
-      
+
 });

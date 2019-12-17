@@ -12,14 +12,14 @@ describe('ModalConnectivityErrorComponent', () => {
       declarations: [
         ModalConnectivityErrorComponent
       ],
-      providers:[
+      providers: [
         BsModalRef
       ],
       imports: [
         ModalModule.forRoot(),
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

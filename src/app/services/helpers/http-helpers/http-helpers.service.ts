@@ -12,7 +12,7 @@ export class HttpHelpersService {
    * @param queryParams (optional) as array of arrays containing [['key', 'value']]
    */
   public getHttpOptions(queryParams?) {
-     let httpOptions = {
+    let httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
@@ -30,10 +30,10 @@ export class HttpHelpersService {
    * e.g. [['status', 'open']] >> ?status=open
    */
   setParams(httpOptions, queryParams?) {
-    httpOptions.params = new HttpParams() 
-    if ( queryParams != undefined ) {
+    httpOptions.params = new HttpParams()
+    if (queryParams != undefined) {
       queryParams.forEach(param => {
-        httpOptions.params = httpOptions.params.append( param[0], param[1] );
+        httpOptions.params = httpOptions.params.append(param[0], param[1]);
       });
     } else {
       httpOptions.params = new HttpParams() // need to make sure params are not cached as strange things can happen

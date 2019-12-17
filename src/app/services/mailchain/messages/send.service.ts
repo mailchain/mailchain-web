@@ -24,25 +24,25 @@ export class SendService {
   /**
    * Initialize URL from local storage
    */
-  initUrl(){
+  initUrl() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
     this.protocol = this.localStorageProtocolService.getCurrentProtocol()
   }
 
-    /**
-   * Sends a mail via the api
-   * @param outboundMail an outbound mail object
-   * @param network the network to send to (e.g. ropsten, mainnet etc.)
-   */
-  sendMail(outboundMail: OutboundMail, network: string){
+  /**
+ * Sends a mail via the api
+ * @param outboundMail an outbound mail object
+ * @param network the network to send to (e.g. ropsten, mainnet etc.)
+ */
+  sendMail(outboundMail: OutboundMail, network: string) {
 
     var url = `${this.url}/messages`
     var body = outboundMail
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',this.protocol],
-      ['network',network]
+      ['protocol', this.protocol],
+      ['network', network]
     ])
-    
+
     return this.http.post(url, body, httpOptions);
   }
 

@@ -11,7 +11,7 @@ import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.serv
 export class MessagesService {
   private url: string
   private protocol: string
-  
+
   constructor(
     private http: HttpClient,
     private httpHelpersService: HttpHelpersService,
@@ -24,19 +24,19 @@ export class MessagesService {
   /**
    * Initialize URL from local storage
    */
-  initServerDetails(){
+  initServerDetails() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
     this.protocol = this.localStorageProtocolService.getCurrentProtocol()
   }
 
-    /**
-   * Gets decrypted messages from api
-   */
+  /**
+ * Gets decrypted messages from api
+ */
   getMessages(rcptAddress: string, network: string): Observable<any> {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',this.protocol],
-      ['network',network],
-      ['address',rcptAddress],
+      ['protocol', this.protocol],
+      ['network', network],
+      ['address', rcptAddress],
     ])
 
     return this.http.get(
