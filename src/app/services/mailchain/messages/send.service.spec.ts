@@ -18,29 +18,29 @@ describe('SendService', () => {
         HttpHelpersService,
         MailchainTestService,
       ],
-      imports: [ HttpClientTestingModule ]
+      imports: [HttpClientTestingModule]
     });
 
     sendService = TestBed.get(SendService);
     httpTestingController = TestBed.get(HttpTestingController);
     mailchainTestService = TestBed.get(MailchainTestService);
-    
+
   });
 
   afterEach(() => {
     httpTestingController.verify();
   });
-  
+
   it('should be created', () => {
     expect(sendService).toBeTruthy();
   });
 
   describe('initUrl', () => {
-    it('should initialize the url', () => {    
+    it('should initialize the url', () => {
       expect(sendService['url']).toEqual('http://127.0.0.1:8080/api')
     });
-    
-    it('should initialize the protocol', () => {    
+
+    it('should initialize the protocol', () => {
       expect(sendService['protocol']).toEqual('ethereum')
     });
   });
@@ -51,23 +51,23 @@ describe('SendService', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let resResponse = mailchainTestService.sendMailResponse()
 
-      let response = sendService.sendMail(outboundMailObject,'ropsten')
+      let response = sendService.sendMail(outboundMailObject, 'ropsten')
 
-      response.subscribe(res => { 
+      response.subscribe(res => {
         expect(res["url"]).toEqual(resResponse["url"])
-      })      
+      })
       // handle open connections      
       const req = httpTestingController.expectOne(resResponse["url"]);
       expect(req.request.method).toBe("POST");
       req.flush(resResponse);
-      
+
     })
     it('should send an outbound mail and return the right body', () => {
 
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let resResponse = mailchainTestService.sendMailResponse()
 
-      let response = sendService.sendMail(outboundMailObject,'ropsten')
+      let response = sendService.sendMail(outboundMailObject, 'ropsten')
 
       response.subscribe(res => {
         expect(res["body"]["body"]).toEqual(resResponse["body"])
@@ -77,16 +77,16 @@ describe('SendService', () => {
       const req = httpTestingController.expectOne(resResponse["url"]);
       expect(req.request.method).toBe("POST");
       req.flush(resResponse);
-      
+
     })
     it('should send an outbound mail and get a 200 response', () => {
 
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let resResponse = mailchainTestService.sendMailResponse()
 
-      let response = sendService.sendMail(outboundMailObject,'ropsten')
+      let response = sendService.sendMail(outboundMailObject, 'ropsten')
 
-      response.subscribe(res => { 
+      response.subscribe(res => {
         expect(res["status"]).toEqual(resResponse["status"])
       })
 
@@ -94,17 +94,17 @@ describe('SendService', () => {
       const req = httpTestingController.expectOne(resResponse["url"]);
       expect(req.request.method).toBe("POST");
       req.flush(resResponse);
-      
+
     })
 
     it('should send an outbound mail to the right network', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let network = "mytestnet"
-      let response = sendService.sendMail(outboundMailObject,network)
+      let response = sendService.sendMail(outboundMailObject, network)
       let url = `http://127.0.0.1:8080/api/messages?protocol=ethereum&network=${network}`
       let body = null
 
-      response.subscribe(res => {                
+      response.subscribe(res => {
         expect(res["url"]).toEqual(url)
       })
 
@@ -147,7 +147,7 @@ describe('SendService', () => {
     })
 
     it('should specify content-type as "text/html; charset=\"UTF-8\"" when messageType = "html" in the outbound mail', () => {
-      let outboundMailObject = mailchainTestService.outboundMailObjectHtml()      
+      let outboundMailObject = mailchainTestService.outboundMailObjectHtml()
       expect(outboundMailObject["content-type"]).toBe("text/html; charset=\"UTF-8\"")
     })
 

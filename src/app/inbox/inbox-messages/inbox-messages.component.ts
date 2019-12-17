@@ -9,7 +9,7 @@ import { AddressPipe } from 'src/app/pipes/address-pipe/address-pipe.pipe';
   selector: '[inbox-messages]',
   templateUrl: './inbox-messages.component.html',
   styleUrls: ['./inbox-messages.component.scss'],
-  providers: [ SearchPipe, AddressPipe ]
+  providers: [SearchPipe, AddressPipe]
 })
 export class InboxMessagesComponent implements OnInit, OnChanges {
   @Input() messagesLoaded: boolean;
@@ -17,10 +17,10 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   @Input() currentProtocol: string;
   @Input() currentNetwork: string;
   @Input() inboxMessages: Array<any>;
-  
+
   @Output() openMessage = new EventEmitter();
   @Output() inboxCounter = new EventEmitter<any>();
-  
+
   public currentAccountInboxMessages: Array<any> = [];
   public searchText: string = '';
   public messagesNameRecords = {}
@@ -37,8 +37,8 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * Emits an array with [address, inboxCount] for each of the addresses inputs
    * @param addresses an array of addresses
    */
-  emitInboxCount(addresses: Array<any>){
-    
+  emitInboxCount(addresses: Array<any>) {
+
     addresses.forEach(address => {
       // emit message count for inbox component
       let inboxCount
@@ -53,13 +53,13 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
           headersTo: address,
         }
       )
-      
+
       uniqUnreadMsgs = this.mailchainService.dedupeMessagesByIds(unreadMsgs)
 
       inboxCount = uniqUnreadMsgs.length
-      
-      this.inboxCounter.emit([address,inboxCount]);  
-    });    
+
+      this.inboxCounter.emit([address, inboxCount]);
+    });
   }
 
   /**
@@ -78,7 +78,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * addMailToInboxMessages adds a decrypted message object to the inboxMessages array with the correct attributes
    * @param decryptedMsg the decrypted message object
    */
-  addMailToInboxMessages(decryptedMsg){  
+  addMailToInboxMessages(decryptedMsg) {
     decryptedMsg.senderIdenticon = this.generateIdenticon(decryptedMsg.headers.from)
 
     var msg = {
@@ -107,15 +107,15 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * Returns the identicon for the mailchain formatted address
    * @param address formatted <0x...@network.protocol> address
    */
-  private generateIdenticon(address){
+  private generateIdenticon(address) {
     return this.mailchainService.generateIdenticon(address)
   }
-  
+
   /**
    * Returns the extracted public address from mailchain formatted address
    * @param address formatted <0x...@network.protocol> address
    */
-  private parseAddressFromMailchain(address){
+  private parseAddressFromMailchain(address) {
     return this.mailchainService.parseAddressFromMailchain(address)
   }
 
@@ -135,7 +135,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
       mail.selected = true;
     }
   }
-  
+
   /**
    * Selects no messages
    * NOTE: This de-selects all inbox messages, not just the current selected address.
@@ -165,7 +165,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
   /**
    * Marks the currently selected messages as `read`.
    */
-  public markSelectedAsRead(): void {    
+  public markSelectedAsRead(): void {
     this.currentAccountInboxMessages.filter(message => message.selected).forEach(msg => {
       var rcpt = this.parseAddressFromMailchain(msg["headers"]["to"])
       // @TODO Add error handling
@@ -199,27 +199,27 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * Get the inbox messages, filtered by 'currently selected account' > 'searchtext'.
    * Dedupe message array - workaround for dupe messages @TODO: waiting on dupe bugfix in mailchain
    */
-  getCurrentAccountInboxMessages(){    
+  getCurrentAccountInboxMessages() {
     var inboxMessagesFilteredByAddress = this.addressPipe.transform(
       this.inboxMessages,
       this.currentAccount
     )
-    var inboxMessagesFilteredByAddressSearch:Array<any> = this.searchPipe.transform(
+    var inboxMessagesFilteredByAddressSearch: Array<any> = this.searchPipe.transform(
       inboxMessagesFilteredByAddress,
       this.searchText
     )
     this.currentAccountInboxMessages = []
     // Dedupe messages
     this.currentAccountInboxMessages = this.mailchainService.dedupeMessagesByIds(inboxMessagesFilteredByAddressSearch)
-    
+
     // fetch names for senders
     this.resolveSendersFromMessages(this.currentAccountInboxMessages)
-    
+
   }
 
   async ngOnChanges(event): Promise<void> {
     // Handle resetting the selected mails
-    if ( 'currentAccount' in event) {
+    if ('currentAccount' in event) {
       this.selectNone()
     }
     this.getCurrentAccountInboxMessages()

@@ -6,5 +6,5 @@ export class InboundMail {
   public selected: boolean = false;
   public senderIdenticon: string = "";
   public status: string = "";
-  public 'status-code': string ="";
+  public 'status-code': string = "";
 }

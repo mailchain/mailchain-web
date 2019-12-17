@@ -6,7 +6,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MessagesService', () => {
   let messagesService: MessagesService;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -24,12 +24,12 @@ describe('MessagesService', () => {
   });
 
   describe('initServerDetails', () => {
-    it('should initialize the url', () => {    
+    it('should initialize the url', () => {
       let messagesService: MessagesService = TestBed.get(MessagesService)
       expect(messagesService['url']).toEqual('http://127.0.0.1:8080/api')
     });
-    
-    it('should initialize the protocol', () => {    
+
+    it('should initialize the protocol', () => {
       let messagesService: MessagesService = TestBed.get(MessagesService)
       expect(messagesService['protocol']).toEqual('ethereum')
     });

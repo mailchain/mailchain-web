@@ -6,7 +6,7 @@ import { applicationApiConfig } from 'src/environments/environment';
 
 describe('LocalStorageServerService', () => {
   let localStorageServerService: LocalStorageServerService;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -102,5 +102,5 @@ describe('LocalStorageServerService', () => {
 
     });
   });
-  
+
 });

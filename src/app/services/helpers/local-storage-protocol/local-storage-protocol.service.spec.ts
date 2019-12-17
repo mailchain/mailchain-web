@@ -6,7 +6,7 @@ import { applicationApiConfig } from 'src/environments/environment';
 
 describe('LocalStorageProtocolService', () => {
   let localStorageProtocolService: LocalStorageProtocolService;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
