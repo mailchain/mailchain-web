@@ -5,6 +5,7 @@ import { MessagesService } from '../services/mailchain/messages/messages.service
 import { InboundMail } from '../models/inbound-mail';
 import { NgForm } from '@angular/forms';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
+import { LocalStorageProtocolService } from '../services/helpers/local-storage-protocol/local-storage-protocol.service';
 import { ActivatedRoute } from '@angular/router';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
@@ -25,7 +26,7 @@ export class InboxComponent implements OnInit {
   public messagesLoaded: boolean = false;
   public fetchMessagesDisabled: boolean = false;
   public fetchMessagesText: String
-  
+
   public inboxPartial: string = 'messages'
 
   public currentAccount: string;
@@ -38,7 +39,7 @@ export class InboxComponent implements OnInit {
   public currentHost: string;
   public currentPort: string;
   public serverSettings: any = {};
-  
+
   public accountIdenticons: any = {};
   public accountNameRecord: any = {};
 
@@ -46,6 +47,7 @@ export class InboxComponent implements OnInit {
   constructor(
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
+    private LocalStorageProtocolService: LocalStorageProtocolService,
     private addressesService: AddressesService,
     private protocolsService: ProtocolsService,
     private mailchainService: MailchainService,
@@ -71,7 +73,7 @@ export class InboxComponent implements OnInit {
    * @param array [address: string,count: number]
    */
   onInboxCounter(array) {
-    var address: string = array[0] 
+    var address: string = array[0]
     var count: number = array[1]
     this.fromAddresses[address.toLowerCase()]["messageCount"]["inbox"] = count
   }
@@ -99,9 +101,9 @@ export class InboxComponent implements OnInit {
 
   /**
    * Changes the local currentAccount.
-   * @param address is the account/address to set 
+   * @param address is the account/address to set
    */
-  changeAccount(address){    
+  changeAccount(address){
     if (this.inboxPartial != 'messages') {
       this.changeView('messages');
     }
@@ -112,7 +114,7 @@ export class InboxComponent implements OnInit {
   /**
    * Changes the network and fetches mails for that network.
    */
-  changeNetwork(){    
+  changeNetwork(){
     if (this.inboxPartial != 'messages') {
       this.changeView('messages');
     }
@@ -138,20 +140,20 @@ export class InboxComponent implements OnInit {
    * Changes the server settings in the client from form data.
    * @param form is the settings form submitted from the view
    */
-  public serverSettingsFormSubmit(){ 
+  public serverSettingsFormSubmit(){
 
     var webProtocol = this.serverSettings["webProtocol"]
     var host = this.serverSettings["host"]
     var port = this.serverSettings["port"]
     var settingsHash = {}
-    
-    if ( webProtocol != undefined && webProtocol != this.currentWebProtocol ) {      
+
+    if ( webProtocol != undefined && webProtocol != this.currentWebProtocol ) {
       settingsHash["web-protocol"] = webProtocol
     }
     if ( host != undefined && host != this.currentHost ) {
       settingsHash["host"] = host
     }
-    if ( port != undefined && port != this.currentPort ) {      
+    if ( port != undefined && port != this.currentPort ) {
       settingsHash["port"] = port
     }
     this.updateServerSettings(settingsHash)
@@ -164,11 +166,11 @@ export class InboxComponent implements OnInit {
    */
   async updateServerSettings(settingsHash: any){
     let serverSettingsChanged: boolean = false
-    
+
     if (
       settingsHash["web-protocol"] != undefined &&
       settingsHash["web-protocol"] != this.currentWebProtocol
-    ) {      
+    ) {
       this.localStorageServerService.setCurrentWebProtocol(settingsHash["web-protocol"])
       serverSettingsChanged = true
     }
@@ -182,7 +184,7 @@ export class InboxComponent implements OnInit {
     if (
       settingsHash["port"] != undefined &&
       settingsHash["port"] != this.currentPort
-    ) {      
+    ) {
       this.localStorageServerService.setCurrentPort(settingsHash["port"])
       serverSettingsChanged = true
     }
@@ -211,7 +213,7 @@ export class InboxComponent implements OnInit {
   public getServerSettings() {
     this.currentWebProtocol = this.localStorageServerService.getCurrentWebProtocol()
     this.currentHost = this.localStorageServerService.getCurrentHost()
-    this.currentPort = this.localStorageServerService.getCurrentPort()  
+    this.currentPort = this.localStorageServerService.getCurrentPort()
   }
 
   /**
@@ -231,7 +233,7 @@ export class InboxComponent implements OnInit {
    */
   async setFromAddressList(){
     this.fromAddressesKeys = await this.addressesService.getAddresses();
-    
+
     this.fromAddressesKeys.forEach(address => {
       this.fromAddresses[address] = {
         label: address,
@@ -240,7 +242,7 @@ export class InboxComponent implements OnInit {
           inbox: 0,
         }
       }
-    });    
+    });
   }
 
   /**
@@ -248,7 +250,7 @@ export class InboxComponent implements OnInit {
    */
   setNetworkList(){
     let protocols
-    this.protocolsService.getProtocols().subscribe(res => {      
+    this.protocolsService.getProtocols().subscribe(res => {
       protocols = res["protocols"]
       if (protocols.length > 0) {
         protocols.forEach(protocol => {
@@ -284,7 +286,7 @@ export class InboxComponent implements OnInit {
   setAccountIdenticons() {
     this.fromAddressesKeys.forEach(address => {
       this.accountIdenticons[address] = this.mailchainService.generateIdenticon(address)
-    });    
+    });
   }
 
   /**
@@ -292,14 +294,14 @@ export class InboxComponent implements OnInit {
    */
   setAccountNameRecords() {
     this.fromAddressesKeys.forEach(address => {
-      this.nameserviceService.resolveAddress(this.currentProtocol,this.currentNetwork,address).subscribe(res =>{        
+      this.nameserviceService.resolveAddress(this.currentProtocol,this.currentNetwork,address).subscribe(res =>{
         if ( res['ok'] ) {
           this.accountNameRecord[address] = res['body']['name']
         }
       })
-    }); 
+    });
   }
-  
+
   /**
    * Initiates the server settings form with default values. Default values are retrieved from local storage
    */
@@ -340,6 +342,7 @@ export class InboxComponent implements OnInit {
     try {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
+      this.currentProtocol = await this.LocalStorageProtocolService.getCurrentProtocol()
       this.getServerSettings()
     } catch (error) {
       this.getServerSettings()
@@ -359,7 +362,7 @@ export class InboxComponent implements OnInit {
     this.setAccountIdenticons()
     this.setAccountNameRecords()
   }
-  
+
 
   /**
    * Fetch mails from the server
@@ -374,19 +377,19 @@ export class InboxComponent implements OnInit {
     this.fromAddressesKeys.forEach(address => {
       var self = this
       this.messagesService.getMessages(address, this.currentNetwork).subscribe(function(res){
-        
+
         self.processUnreadMessagesInboxCounter(address, res["body"]["messages"])
         self.processInboxMessages(res["body"]["messages"])
-        
+
         --fetchCount // decrement fetchCount
-        
+
         if (fetchCount == 0 ) { // all get requests should be complete
           self.setFetchingMessagesState(false)
         }
       })
-      
+
     });
-    
+
   };
 
   /**
@@ -394,7 +397,7 @@ export class InboxComponent implements OnInit {
    * @param address: (string) the address of the messages
    * @param messages: array of messages
    */
-  public processUnreadMessagesInboxCounter(address, messages) {    
+  public processUnreadMessagesInboxCounter(address, messages) {
     let unreadMsgs = this.mailchainService.filterMessages(
       messages,
       {status: "ok", readState: false}
@@ -402,21 +405,21 @@ export class InboxComponent implements OnInit {
     let uniqUnreadMsgs = this.mailchainService.dedupeMessagesByIds(unreadMsgs)
 
     this.onInboxCounter([address, uniqUnreadMsgs.length])
-    
+
   }
-  
+
   /**
    * processInboxMessages: adds messages with status: "ok" to the InboxMessages as an InboundMail object
-   * @param messages 
+   * @param messages
    */
   public processInboxMessages(messages: Array<any>) {
     let validMessages = this.mailchainService.filterMessages(
       messages,
       {status: "ok"}
     )
-    validMessages.forEach(msg => this.addMailToInboxMessages(msg));    
+    validMessages.forEach(msg => this.addMailToInboxMessages(msg));
   }
-  
+
 
   /**
    * setFetchingMessagesState
@@ -454,14 +457,14 @@ export class InboxComponent implements OnInit {
         this.fetchMessagesText = "Loading..."
         break
     }
-    
+
   }
 
   /**
    * Adds a message to inboxMessages as an InboundMessage object
-   * @param decryptedMsg 
+   * @param decryptedMsg
    */
-  addMailToInboxMessages(decryptedMsg){  
+  addMailToInboxMessages(decryptedMsg){
     decryptedMsg.senderIdenticon = this.mailchainService.generateIdenticon(decryptedMsg.headers.from)
     var msg = {
       ...new InboundMail,
