@@ -7,9 +7,9 @@
 <div>
   <h4>Compose <span class="fw-semi-bold">New</span></h4>
   <div class="compose-form" id="compose-view">
-    
+
     <form #mailForm="ngForm" id="message-compose" (ngSubmit)="onSubmit()" autocomplete="off">
-      
+
       <!-- From Field -->
       <div class="form-group row">
         <label for="from" class="col-form-label col-sm-2 col-md- col-lg-2">From:</label>
@@ -43,7 +43,9 @@
                   <img class="rounded-circle addressIcon" src={{generateIdenticon(model.to)}} alt="">
                 </div>
               </div>
-              <input type="text" id="messageTo" placeholder="To" name="to" class="form-control " placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField" (keyup)="recipientResolve($event)">
+              <input type="text" id="messageTo" placeholder="To" name="to" class="form-control "
+                placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField"
+                (keyup)="recipientResolve($event)">
             </div>
           </div>
         </div>
@@ -67,10 +69,11 @@
       <div class="form-group row">
 
         <label for="subject" class="col-form-label col-sm-2 col-md- col-lg-2">Subject:</label>
-        
+
         <div class="col-md-10 col-lg-9">
           <div class="input-group mb-2 row">
-            <input type="text" id="messageSubject" placeholder="Subject" [(ngModel)]="model.subject"  name="subject" class="form-control">
+            <input type="text" id="messageSubject" placeholder="Subject" [(ngModel)]="model.subject" name="subject"
+              class="form-control">
           </div>
         </div>
 
@@ -84,10 +87,8 @@
           <div class="input-group mb-2 row">
 
             <div class="custom-control custom-switch content-type-switch">
-              <input type="checkbox" class="custom-control-input" id="contentTypeSwitch"
-                (click)="convertToPlainText()"
-                [disabled]="inputContentType == 'plaintext'"
-              >
+              <input type="checkbox" class="custom-control-input" id="contentTypeSwitch" (click)="convertToPlainText()"
+                [disabled]="inputContentType == 'plaintext'">
               <label class="custom-control-label" for="contentTypeSwitch">{{contentTypeSwitchLabel}}</label>
             </div>
 
@@ -98,18 +99,12 @@
 
       <!-- Body Field -->
       <!-- Plaintext Field -->
-      <div
-        *ngIf="inputContentType == 'plaintext' "
-        class="form-group row">
+      <div *ngIf="inputContentType == 'plaintext' " class="form-group row">
         <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
           <div class="input-group mb-2 row">
-  
-            <textarea class="form-control courier" id="messageBody"
-              [(ngModel)]="model.body"
-              (keydown.enter)="supressEnterPropagation($event)"
-              name="body"
-              rows="18"
-            ></textarea>
+
+            <textarea class="form-control courier" id="messageBody" [(ngModel)]="model.body"
+              (keydown.enter)="supressEnterPropagation($event)" name="body" rows="18"></textarea>
 
           </div>
         </div>
@@ -117,20 +112,12 @@
       <!-- ./Plaintext Field -->
 
       <!-- CKeditor Field -->
-      <div
-        *ngIf="inputContentType == 'html' " 
-        class="form-group row">
+      <div *ngIf="inputContentType == 'html' " class="form-group row">
         <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
           <div class="input-group mb-2 row">
-  
-            <ckeditor
-              #editor
-              id="messageBody"
-              name="body"
-              [(ngModel)]="model.body"
-              (keydown.enter)="supressEnterPropagation($event)"
-              [editor]="Editor"
-              ></ckeditor>
+
+            <ckeditor #editor id="messageBody" name="body" [(ngModel)]="model.body"
+              (keydown.enter)="supressEnterPropagation($event)" [editor]="Editor"></ckeditor>
 
           </div>
         </div>
@@ -147,11 +134,8 @@
               <button type="reset" class="btn btn-outline-secondary" (click)="returnToMessage()">Discard</button>
             </div>
             <div class="btn-group">
-              <button
-                type="submit"
-                class="btn btn-danger"
-                [disabled]="sendMessagesDisabled"
-              >&nbsp;&nbsp;&nbsp;Send&nbsp;&nbsp;&nbsp;</button>
+              <button type="submit" class="btn btn-danger"
+                [disabled]="sendMessagesDisabled">&nbsp;&nbsp;&nbsp;Send&nbsp;&nbsp;&nbsp;</button>
             </div>
           </div>
 

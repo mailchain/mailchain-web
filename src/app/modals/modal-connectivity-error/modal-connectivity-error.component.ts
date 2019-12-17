@@ -10,6 +10,6 @@ export class ModalConnectivityErrorComponent {
   @Input() errorTitle: string;
   @Input() errorMessage: string;
 
-  constructor(public bsModalRef: BsModalRef) {}
+  constructor(public bsModalRef: BsModalRef) { }
 
 }

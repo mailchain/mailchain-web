@@ -39,4 +39,4 @@ const routes: Routes = [
   providers: [HttpHelpersService],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

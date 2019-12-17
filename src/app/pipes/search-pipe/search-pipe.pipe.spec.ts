@@ -37,7 +37,7 @@ describe('SearchPipe', () => {
       ],
       imports: []
     });
-    
+
     pipe = TestBed.get(SearchPipe);
   });
 
@@ -49,11 +49,11 @@ describe('SearchPipe', () => {
     let result = [
       messages[0],
     ]
-    
+
     expect(pipe.transform(messages, addr1).length).toEqual(1);
     expect(pipe.transform(messages, addr1)).toEqual(result);
   })
-  
+
   it('should search the "subject" field', () => {
     let result = [
       messages[1],
@@ -62,7 +62,7 @@ describe('SearchPipe', () => {
     expect(pipe.transform(messages, str).length).toEqual(1);
     expect(pipe.transform(messages, str)).toEqual(result);
   })
-  
+
   it('should search the "body" field', () => {
     let result = [
       messages[0],
@@ -71,16 +71,16 @@ describe('SearchPipe', () => {
     expect(pipe.transform(messages, str).length).toEqual(1);
     expect(pipe.transform(messages, str)).toEqual(result);
   })
-  
+
   it('should NOT search the "to" field', () => {
     let result = [
       messages[1]
     ]
-    
+
     expect(pipe.transform(messages, addr1).length).not.toEqual(2);
     expect(pipe.transform(messages, addr1)).not.toEqual(result);
   })
-  
+
   it('should NOT search the "date" field', () => {
     let result = [
       messages[1],
@@ -89,6 +89,6 @@ describe('SearchPipe', () => {
 
     expect(pipe.transform(messages, str).length).toEqual(0);
     expect(pipe.transform(messages, str)).toEqual([]);
-  
+
   })
 });

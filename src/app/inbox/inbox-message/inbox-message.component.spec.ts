@@ -23,13 +23,13 @@ describe('InboxMessageComponent', () => {
   const mcAddress1 = "<" + address1 + "@ropsten.ethereum>"
   const address2 = "0x0000000000000000000000000000000000000002"
   const mcAddress2 = "<" + address2 + "@ropsten.ethereum>"
-  
-    /**
-   * Resolves address1: myname.eth
-   * Throws 404 error for address2
-   */
+
+  /**
+ * Resolves address1: myname.eth
+ * Throws 404 error for address2
+ */
   class NameserviceServiceStub {
-    resolveAddress(protocol,network,value) {
+    resolveAddress(protocol, network, value) {
       if (value == address1) {
         return of(
           {
@@ -38,7 +38,7 @@ describe('InboxMessageComponent', () => {
           }
         )
       } else {
-        return of({"status": 404})
+        return of({ "status": 404 })
       }
     }
   }
@@ -56,11 +56,11 @@ describe('InboxMessageComponent', () => {
       imports: [
         ModalModule.forRoot(),
         RouterTestingModule,
-        HttpClientModule,  
+        HttpClientModule,
 
       ]
     })
-    .compileComponents();
+      .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
     nameserviceService = TestBed.get(NameserviceService);
     mailchainService = TestBed.get(MailchainService);
@@ -83,16 +83,16 @@ describe('InboxMessageComponent', () => {
 
   describe('returnToInboxMessages', () => {
     it('should call goToInboxMessages.emit() to change the view to  "messages"', () => {
-      spyOn(component.goToInboxMessages,'emit')
+      spyOn(component.goToInboxMessages, 'emit')
 
       component.returnToInboxMessages()
       expect(component.goToInboxMessages.emit).toHaveBeenCalledWith('')
-    })  
+    })
   });
 
   describe('replyToMessage', () => {
     it('should call replyToMessage.emit() to change the view to "message" with the currentMessage', () => {
-      spyOn(component.replyToMessage,'emit')
+      spyOn(component.replyToMessage, 'emit')
 
       component.replyToMsg()
       expect(component.replyToMessage.emit).toHaveBeenCalledWith(component.currentMessage)
@@ -114,14 +114,14 @@ describe('InboxMessageComponent', () => {
       it('should resolve the From field when there is a resolvable name', () => {
         component.currentMessage["headers"]["from"] = mcAddress1
         component.ngOnInit()
-        expect(component.messageNameRecords[address1]).toEqual('myname.eth')      
+        expect(component.messageNameRecords[address1]).toEqual('myname.eth')
       })
       it('should NOT resolve the From field when there is NOT a resolvable name', () => {
         component.currentMessage["headers"]["from"] = mcAddress2
         component.ngOnInit()
         expect(component.messageNameRecords[address2]).toEqual(undefined)
       })
-    });  
-  });  
+    });
+  });
 
 });

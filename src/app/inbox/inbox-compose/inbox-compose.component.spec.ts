@@ -27,7 +27,7 @@ import { CKEditorModule, CKEditorComponent } from '@ckeditor/ckeditor5-angular';
   declarations: [ModalConnectivityErrorComponent],
   entryComponents: [ModalConnectivityErrorComponent]
 })
-export class FakeModalConnectivityErrorModule {}
+export class FakeModalConnectivityErrorModule { }
 // End workaround
 
 describe('InboxComposeComponent', () => {
@@ -35,7 +35,7 @@ describe('InboxComposeComponent', () => {
   let fixture: ComponentFixture<InboxComposeComponent>;
   let mailchainTestService: MailchainTestService
   let publicKeyService: PublicKeyService
-  let sendService : SendService
+  let sendService: SendService
   let mailchainService: MailchainService
   let nameserviceService: NameserviceService
 
@@ -45,28 +45,28 @@ describe('InboxComposeComponent', () => {
   const addresses = [currentAccount, currentAccount2];
 
   class AddressesServiceStub {
-    getAddresses(){
+    getAddresses() {
       return addresses
     }
   }
   class PublicKeyServiceStub {
-    getPublicKeyFromAddress(publicAddress, network) {       
+    getPublicKeyFromAddress(publicAddress, network) {
       return of(['1234567890'])
     }
   }
   class SendServiceStub {
-    sendMail(outboundMail: OutboundMail, network: string){
+    sendMail(outboundMail: OutboundMail, network: string) {
       return of([])
     }
   }
   class NameserviceServiceStub {
-    resolveName(value) {      
+    resolveName(value) {
       return of(
         { body: { address: currentAccount } }
       )
     }
   }
-  
+
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -89,9 +89,9 @@ describe('InboxComposeComponent', () => {
         HttpClientModule,
         ModalModule.forRoot(),
         RouterTestingModule,
-      ] 
+      ]
     })
-    .compileComponents();
+      .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
     publicKeyService = TestBed.get(PublicKeyService);
     sendService = TestBed.get(SendService);
@@ -110,117 +110,117 @@ describe('InboxComposeComponent', () => {
     fixture.destroy();
   });
 
-  it('should create', () => {    
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   describe('ngOnInit', () => {
     describe('initMail', () => {
-      
+
       it('should start with an empty Mail object', () => {
         expect(component.model).toEqual(new Mail)
       })
 
       describe('when composing a new message', () => {
-        it('should initialize an empty model "to" field', async() => {
+        it('should initialize an empty model "to" field', async () => {
           await component.ngOnInit();
           expect(component.model.to).toBe('')
-        })  
+        })
 
-        it('should initialize the model "from" field with currentAccount', async() => {
+        it('should initialize the model "from" field with currentAccount', async () => {
           component.currentAccount = currentAccount
           await component.ngOnInit();
           expect(component.model.from).toBe(currentAccount)
-          
+
           component.currentAccount = currentAccount2
           await component.ngOnInit();
           fixture.detectChanges()
           expect(component.model.from).toBe(currentAccount2)
-        })  
+        })
 
-        it('should initialize an empty model "subject" field', async() => {
+        it('should initialize an empty model "subject" field', async () => {
           await component.ngOnInit();
           expect(component.model.subject).toBe('')
-        })  
+        })
 
-        it('should initialize an empty model "body" field', async() => {
+        it('should initialize an empty model "body" field', async () => {
           await component.ngOnInit();
           expect(component.model.body).toBe('')
-        })  
+        })
       });
 
       describe('when composing a plaintext reply', () => {
-        beforeEach(()=>{
+        beforeEach(() => {
           component.currentMessage = mailchainTestService.inboundMessage();
         })
 
-        it('should initialize the model "from" field with the recipient address', async() => {
+        it('should initialize the model "from" field with the recipient address', async () => {
           await component.ngOnInit();
           expect(component.model.from).toBe('0x0123456789abcdef0123456789abcdef01234567')
-        })  
+        })
 
-        it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async() => {
+        it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async () => {
           await component.ngOnInit();
           expect(component.model.subject).toBe('Re: Mailchain Test!')
-        })  
+        })
 
-        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async() => {
+        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async () => {
           component.currentMessage.subject = "Re: Mailchain Test!"
           await component.ngOnInit();
           expect(component.model.subject).toBe('Re: Mailchain Test!')
-        })  
+        })
 
-        it('should initialize the model "body" field with the original message field', async() => {
-        let response = "\r\n\r\n>From: <0x0123456789012345678901234567890123456789@testnet.ethereum>\r\n>Date: 2019-06-07T14:53:36Z\r\n>To: <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum>\r\n>Subject: Mailchain Test!\r\n>\r\n>A body"
+        it('should initialize the model "body" field with the original message field', async () => {
+          let response = "\r\n\r\n>From: <0x0123456789012345678901234567890123456789@testnet.ethereum>\r\n>Date: 2019-06-07T14:53:36Z\r\n>To: <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum>\r\n>Subject: Mailchain Test!\r\n>\r\n>A body"
 
           await component.ngOnInit();
           expect(JSON.stringify(component.model.body)).toBe(JSON.stringify(response))
-        })  
+        })
       });
-      
+
       describe('when composing an html reply', () => {
-        beforeEach(()=>{
+        beforeEach(() => {
           component.currentMessage = mailchainTestService.inboundMessage();
           component.currentMessage.headers["content-type"] = "text/html; charset=\"UTF-8\""
         })
 
-        it('should initialize the model "from" field with the recipient address', async() => {
+        it('should initialize the model "from" field with the recipient address', async () => {
           await component.ngOnInit();
           expect(component.model.from).toBe('0x0123456789abcdef0123456789abcdef01234567')
-        })  
+        })
 
-        it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async() => {
+        it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async () => {
           await component.ngOnInit();
           expect(component.model.subject).toBe('Re: Mailchain Test!')
-        })  
+        })
 
-        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async() => {
+        it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async () => {
           component.currentMessage.subject = "Re: Mailchain Test!"
           await component.ngOnInit();
           expect(component.model.subject).toBe('Re: Mailchain Test!')
-        })  
+        })
 
-        it('should initialize the model "body" field with the original message field and wrap the body in a `blockquote`', async() => {
-        let response = "<p></p><p><strong>From:</strong> <0x0123456789012345678901234567890123456789@testnet.ethereum><br><strong>Date:</strong> 2019-06-07T14:53:36Z<br><strong>To:</strong> <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum><br><strong>Subject:</strong> Mailchain Test!</p><blockquote>A body<br></blockquote>"
+        it('should initialize the model "body" field with the original message field and wrap the body in a `blockquote`', async () => {
+          let response = "<p></p><p><strong>From:</strong> <0x0123456789012345678901234567890123456789@testnet.ethereum><br><strong>Date:</strong> 2019-06-07T14:53:36Z<br><strong>To:</strong> <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum><br><strong>Subject:</strong> Mailchain Test!</p><blockquote>A body<br></blockquote>"
 
           await component.ngOnInit();
           expect(JSON.stringify(component.model.body)).toBe(JSON.stringify(response))
         })
 
       });
-      
+
       describe('setFromAddressList', () => {
-        it('should set the fromAddresses', async() => {
+        it('should set the fromAddresses', async () => {
           expect(component.fromAddresses).toEqual([])
           await component.ngOnInit();
           expect(component.fromAddresses).toEqual(addresses)
 
-        })  
+        })
       });
     });
 
     describe('initEditor', () => {
-      it('should initialize the editor', async()=> {
+      it('should initialize the editor', async () => {
         await component.ngOnInit();
         expect(component.editorComponent).toBeTruthy();
       })
@@ -228,128 +228,128 @@ describe('InboxComposeComponent', () => {
   });
 
   describe('recipientResolve', () => {
-    it('should clear the recipientLoadingIcon if the event target value is empty', ()=>{
-      let event = {target: { value: "" } }
-      spyOn(component,'setRecipientLoadingIcon').and.callThrough()
-      
+    it('should clear the recipientLoadingIcon if the event target value is empty', () => {
+      let event = { target: { value: "" } }
+      spyOn(component, 'setRecipientLoadingIcon').and.callThrough()
+
       component.recipientResolve(event)
       expect(component.setRecipientLoadingIcon).toHaveBeenCalledWith('clear')
       expect(component.recipientLoadingIcon).toEqual("")
     })
-    it('should clear the setRecipientLoadingText if the event target value is empty', ()=>{
-      let event = {target: { value: "" } }
-      spyOn(component,'setRecipientLoadingText').and.callThrough()
-      
+    it('should clear the setRecipientLoadingText if the event target value is empty', () => {
+      let event = { target: { value: "" } }
+      spyOn(component, 'setRecipientLoadingText').and.callThrough()
+
       component.recipientResolve(event)
       expect(component.setRecipientLoadingText).toHaveBeenCalled()
       expect(component.recipientLoadingText).toEqual("")
     })
-    it('should reset the model.to field if the event target value is empty', ()=>{
-      let event = {target: { value: "" } }
-      spyOn(component,'resetModelToField').and.callThrough()
-      
+    it('should reset the model.to field if the event target value is empty', () => {
+      let event = { target: { value: "" } }
+      spyOn(component, 'resetModelToField').and.callThrough()
+
       component.recipientResolve(event)
       expect(component.resetModelToField).toHaveBeenCalled()
       expect(component.model.to).toEqual("")
     })
 
-    it('should set the recipientLoadingIcon to loading if the event target value is different to the currentRecipientValue', ()=>{
-      let event = {target: { value: "alice.eth" } }
-      spyOn(component,'setRecipientLoadingIcon').and.callThrough()
+    it('should set the recipientLoadingIcon to loading if the event target value is different to the currentRecipientValue', () => {
+      let event = { target: { value: "alice.eth" } }
+      spyOn(component, 'setRecipientLoadingIcon').and.callThrough()
       component.currentRecipientValue = "bob.eth"
-      
+
       component.recipientResolve(event)
       expect(component.setRecipientLoadingIcon).toHaveBeenCalledWith('loading')
       expect(component.recipientLoadingIcon).not.toEqual("")
     })
-    it('should clear the setRecipientLoadingText if the event target value is empty', ()=>{
-      let event = {target: { value: "alice.eth" } }
-      spyOn(component,'setRecipientLoadingText').and.callThrough()
+    it('should clear the setRecipientLoadingText if the event target value is empty', () => {
+      let event = { target: { value: "alice.eth" } }
+      spyOn(component, 'setRecipientLoadingText').and.callThrough()
       component.currentRecipientValue = "bob.eth"
-      
+
       component.recipientResolve(event)
       expect(component.setRecipientLoadingText).toHaveBeenCalled()
       expect(component.recipientLoadingText).toEqual("")
     })
-    it('should reset the model.to field if the event target value is empty', ()=>{
-      let event = {target: { value: "alice.eth" } }
-      spyOn(component,'resetModelToField').and.callThrough()
+    it('should reset the model.to field if the event target value is empty', () => {
+      let event = { target: { value: "alice.eth" } }
+      spyOn(component, 'resetModelToField').and.callThrough()
       component.currentRecipientValue = "bob.eth"
-      
+
       component.recipientResolve(event)
       expect(component.resetModelToField).toHaveBeenCalled()
       expect(component.model.to).toEqual("")
     })
-    it('should set the currentRecipientValue to event target value when given a name-like value', ()=>{
-      let event = {target: { value: "alice.eth" } }
+    it('should set the currentRecipientValue to event target value when given a name-like value', () => {
+      let event = { target: { value: "alice.eth" } }
 
       component.recipientResolve(event)
       expect(component.currentRecipientValue).toEqual("alice.eth")
     })
-    xit('should call the resolveAddress thru the private recipientAddressChanged subscription next function with the event.target.value', ()=>{
-      let event = {target: { value: "alice.eth" } }
-      spyOn(component,'resolveAddress').and.callThrough()
+    xit('should call the resolveAddress thru the private recipientAddressChanged subscription next function with the event.target.value', () => {
+      let event = { target: { value: "alice.eth" } }
+      spyOn(component, 'resolveAddress').and.callThrough()
       // todo: track recipientAddressChanged call
     })
   })
-  
+
   describe('setRecipientLoadingIcon', () => {
-    it('should set the recipientLoadingIcon for variable: "loading"', ()=>{
+    it('should set the recipientLoadingIcon for variable: "loading"', () => {
       component.recipientLoadingIcon = ""
       component.setRecipientLoadingIcon('loading')
-      expect(component.recipientLoadingIcon).toBe ("fa fa-spinner fa-pulse")
+      expect(component.recipientLoadingIcon).toBe("fa fa-spinner fa-pulse")
     })
-    it('should set the recipientLoadingIcon for variable: "valid"', ()=>{
+    it('should set the recipientLoadingIcon for variable: "valid"', () => {
       component.recipientLoadingIcon = ""
       component.setRecipientLoadingIcon('valid')
-      expect(component.recipientLoadingIcon).toBe ("fa fa-check-circle text-success")
+      expect(component.recipientLoadingIcon).toBe("fa fa-check-circle text-success")
     })
-    it('should set the recipientLoadingIcon for variable: "invalid"', ()=>{
+    it('should set the recipientLoadingIcon for variable: "invalid"', () => {
       component.recipientLoadingIcon = ""
       component.setRecipientLoadingIcon('invalid')
-      expect(component.recipientLoadingIcon).toBe ("fa fa-times-circle text-danger")
+      expect(component.recipientLoadingIcon).toBe("fa fa-times-circle text-danger")
     })
-    it('should set the recipientLoadingIcon for variable: "clear"', ()=>{
+    it('should set the recipientLoadingIcon for variable: "clear"', () => {
       component.recipientLoadingIcon = ""
       component.setRecipientLoadingIcon('clear')
-      expect(component.recipientLoadingIcon).toBe ("")
+      expect(component.recipientLoadingIcon).toBe("")
     })
   })
-  
+
   describe('setRecipientLoadingText', () => {
-    it('should set the text to the input value', ()=>{
+    it('should set the text to the input value', () => {
       component.setRecipientLoadingText("My message")
       expect(component.recipientLoadingText).toEqual("My message")
     })
-    it('should set the text to empty when no value is provided', ()=>{
+    it('should set the text to empty when no value is provided', () => {
       component.setRecipientLoadingText()
       expect(component.recipientLoadingText).toEqual("")
     })
   })
-  
+
   describe('setupRecipientAddressLookupSubscription', () => {
-    xit('should ', ()=>{
+    xit('should ', () => {
       // todo: needs help
     })
   })
-  
+
   describe('resetModelToField', () => {
-    it('should reset the model.to field', ()=>{
+    it('should reset the model.to field', () => {
       component.model.to = "0x0000000"
       component.resetModelToField()
       expect(component.model.to).toEqual("")
     })
   })
-  
+
   describe('resolveAddress', () => {
-    it('should call nameserviceService.resolveName if given a name-like value', ()=>{
-      spyOn(nameserviceService,'resolveName').and.callThrough()
+    it('should call nameserviceService.resolveName if given a name-like value', () => {
+      spyOn(nameserviceService, 'resolveName').and.callThrough()
       component.resolveAddress(ensName)
       expect(nameserviceService.resolveName).toHaveBeenCalled()
 
     })
-    it('should call nameserviceService.resolveName with params for protocol, network & name-like value', ()=>{
-      spyOn(nameserviceService,'resolveName').and.callThrough()
+    it('should call nameserviceService.resolveName with params for protocol, network & name-like value', () => {
+      spyOn(nameserviceService, 'resolveName').and.callThrough()
       component.resolveAddress(ensName)
       expect(nameserviceService.resolveName).toHaveBeenCalledWith(
         component.currentProtocol,
@@ -357,59 +357,59 @@ describe('InboxComposeComponent', () => {
         ensName
       )
     })
-    it('should return an observable with body containing address hash if given a name-like value', async()=>{
+    it('should return an observable with body containing address hash if given a name-like value', async () => {
       let obs = await component.resolveAddress(ensName)
-      let expectedBody = {address: currentAccount}
+      let expectedBody = { address: currentAccount }
       obs.subscribe(res => {
         expect(res['body']).toEqual(expectedBody)
       })
     })
-    it('should return an observable with body containing address hash if given an address-like value', async()=>{
+    it('should return an observable with body containing address hash if given an address-like value', async () => {
       let obs = await component.resolveAddress(currentAccount)
-      let expectedBody = {address: currentAccount}
+      let expectedBody = { address: currentAccount }
       obs.subscribe(res => {
         expect(res['body']).toEqual(expectedBody)
       })
     })
-    it('should return an observable with body containing empty address hash if given a value that is not name-like or address-like', async()=>{
+    it('should return an observable with body containing empty address hash if given a value that is not name-like or address-like', async () => {
       let obs = await component.resolveAddress('string')
-      let expectedBody = {address: ''}
+      let expectedBody = { address: '' }
       obs.subscribe(res => {
         expect(res['body']).toEqual(expectedBody)
       })
     })
   })
-  
+
   describe('returnToInboxMessages', () => {
     it('should call goToInboxMessages.emit() to change the view to  "messages"', () => {
-      spyOn(component.goToInboxMessages,'emit')
+      spyOn(component.goToInboxMessages, 'emit')
 
       component.returnToInboxMessages()
       expect(component.goToInboxMessages.emit).toHaveBeenCalledWith('')
-    })  
+    })
   });
   describe('returnToMessage', () => {
     it('should call goToInboxMessages.emit() to change the view to  "messages" if there is no currentMessage', () => {
-      spyOn(component.goToInboxMessages,'emit')
+      spyOn(component.goToInboxMessages, 'emit')
 
       component.returnToMessage()
       expect(component.goToInboxMessages.emit).toHaveBeenCalledWith('')
-    })  
+    })
     it('should call openMessage.emit(`currentMessage`) to change the view to  "messages" if there is a currentMessage', () => {
-      spyOn(component.openMessage,'emit')
+      spyOn(component.openMessage, 'emit')
       component.currentMessage = mailchainTestService.inboundMessage();
 
       component.returnToMessage()
       expect(component.openMessage.emit).toHaveBeenCalledWith(component.currentMessage)
-    })  
+    })
   });
   describe('supressEnterPropagation', () => {
     it('should stop event propagation when Enter is pressed', () => {
-      let $event = new KeyboardEvent('keydown', {'code': 'Enter'})
-      spyOn($event,'stopPropagation')
+      let $event = new KeyboardEvent('keydown', { 'code': 'Enter' })
+      spyOn($event, 'stopPropagation')
       component.supressEnterPropagation($event)
       expect($event.stopPropagation).toHaveBeenCalled()
-    })  
+    })
   });
 
   describe('onSubmit', () => {
@@ -432,62 +432,64 @@ describe('InboxComposeComponent', () => {
       subject: 'Test Message'
     }
 
-    beforeEach(()=>{
+    beforeEach(() => {
       component.model.to = currentAccount
       component.model.from = currentAccount2
       component.model.subject = "Test Message"
       component.model.body = "This is a test message"
       component.currentNetwork = 'testnet'
 
-      spyOn(publicKeyService,"getPublicKeyFromAddress").and.callFake( ()=>{
-        return of({"body":{
-          "public_key": '1234567890abcd'}
+      spyOn(publicKeyService, "getPublicKeyFromAddress").and.callFake(() => {
+        return of({
+          "body": {
+            "public_key": '1234567890abcd'
+          }
         })
-      });      
-      spyOn(sendService,"sendMail").and.callFake( ()=>{
+      });
+      spyOn(sendService, "sendMail").and.callFake(() => {
         return of(['ok'])
       });
-      
-      spyOn(mailchainService,"generateMail").and.callFake(() => {
+
+      spyOn(mailchainService, "generateMail").and.callFake(() => {
         return outboundMail
       })
     })
 
-    it('should get the public key for an address', async() => {
+    it('should get the public key for an address', async () => {
       component.onSubmit();
 
-      expect(publicKeyService.getPublicKeyFromAddress).toHaveBeenCalledWith(currentAccount,'testnet')
-    })  
+      expect(publicKeyService.getPublicKeyFromAddress).toHaveBeenCalledWith(currentAccount, 'testnet')
+    })
 
-    it('should send a message using the sendService', async() => {
-      
+    it('should send a message using the sendService', async () => {
+
       component.onSubmit();
-      expect(sendService.sendMail).toHaveBeenCalledWith(outboundMail,'testnet')
-    })  
+      expect(sendService.sendMail).toHaveBeenCalledWith(outboundMail, 'testnet')
+    })
 
     it('should generate a message', () => {
-      
+
       component.onSubmit();
       expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html')
 
-    })  
-    
+    })
+
     it('should reinitialize the message after sending', () => {
 
       component.onSubmit();
       expect(component.model).toEqual(mail)
-    })  
+    })
     it('should call returnToInboxMessages after sending', () => {
-      spyOn(component,"returnToInboxMessages")
+      spyOn(component, "returnToInboxMessages")
       component.onSubmit();
       expect(component.returnToInboxMessages).toHaveBeenCalled()
-    })  
+    })
     xit('should validate form fields', () => {
       // expect()
-    })  
+    })
     xit('should handle public key lookup failure', () => {
       // expect()
-    })  
+    })
   });
 
   describe('handleErrorOnPage', () => {
@@ -498,8 +500,8 @@ describe('InboxComposeComponent', () => {
       let title = "Error Title"
       let msg = "Error Message"
 
-      component.handleErrorOnPage(title, msg)      
-      
+      component.handleErrorOnPage(title, msg)
+
       expect(component.errorTitle).toEqual(title)
       expect(component.errorMessage).toEqual(msg)
 
@@ -513,23 +515,23 @@ describe('InboxComposeComponent', () => {
       let origMsg = "Error is already in view"
       let title = "Error Title"
       let msg = "Error Message"
-      
+
       component.errorTitle = origTitle
       component.errorMessage = origMsg
-      
+
       component.handleErrorOnPage(title, msg)
-            
+
       expect(component.errorTitle).toEqual(origTitle)
       expect(component.errorMessage).toEqual(origMsg)
-      
+
     });
   });
 
   describe('convertToPlainText', () => {
     it('should convert html to plain text when confirm box is OK', () => {
       spyOn(window, 'confirm').and.returnValue(true);
-      spyOn(document, 'getElementsByClassName').and.returnValue([ {"innerText": "Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message"} ]);
-      
+      spyOn(document, 'getElementsByClassName').and.returnValue([{ "innerText": "Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message" }]);
+
       component.convertToPlainText()
 
       expect(window.confirm).toHaveBeenCalled()

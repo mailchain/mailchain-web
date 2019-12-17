@@ -24,7 +24,7 @@ export class NameserviceService {
   /**
    * Initialize URL from local storage
    */
-  initUrl(){
+  initUrl() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
     // this.protocol = this.localStorageProtocolService.getCurrentProtocol()
   }
@@ -35,10 +35,10 @@ export class NameserviceService {
    */
   public resolveName(protocol, network, name) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',protocol],
-      ['network',network],
+      ['protocol', protocol],
+      ['network', network],
     ])
-    
+
     return this.http.get(
       this.url + `/nameservice/name/${name}/resolve`,
       httpOptions
@@ -52,8 +52,8 @@ export class NameserviceService {
    */
   public resolveAddress(protocol, network, address) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol',protocol],
-      ['network',network],
+      ['protocol', protocol],
+      ['network', network],
     ])
 
     return this.http.get(
@@ -61,7 +61,7 @@ export class NameserviceService {
       httpOptions
       // TODO: handle failure
     );
-    
+
   }
 
 }

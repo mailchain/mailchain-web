@@ -7,9 +7,9 @@ import { OutboundMail } from 'src/app/models/outbound-mail';
 export class MailchainTestService {
 
   constructor() { }
-  
+
   public outboundMailObject(): OutboundMail {
-    
+
     let outboundMailObject = new OutboundMail
     outboundMailObject["message"] = {
       "body": "Hi Sofia,\n\nHow are you?\n\nBest Wishes\n\nCharlotte",
@@ -24,7 +24,7 @@ export class MailchainTestService {
 
     return outboundMailObject
   }
-  
+
   public outboundMailObjectPlainText(): OutboundMail {
     let outboundMailObject = this.outboundMailObject()
     outboundMailObject["content-type"] = "text/plain; charset=\"UTF-8\""
@@ -124,10 +124,10 @@ export class MailchainTestService {
 
   public senderAddressServerResponse(): any {
     return {
-      "addresses":[
+      "addresses": [
         "92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
         "d5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
-      ]      
+      ]
     }
   };
 
@@ -170,7 +170,7 @@ export class MailchainTestService {
       "ok": true,
       "type": 4,
       "body": {
-        "addresses": [ ]
+        "addresses": []
       }
     }
   }
@@ -210,7 +210,7 @@ export class MailchainTestService {
     }
   }
 
-  public apiVersionInfoOutdated(){
+  public apiVersionInfoOutdated() {
     return {
       "status": "outdated",
       "errors": 0,
@@ -225,7 +225,7 @@ export class MailchainTestService {
     }
   }
 
-  public apiVersionInfoReleaseError(){
+  public apiVersionInfoReleaseError() {
     return {
       "status": "ok",
       "errors": 1,
@@ -240,7 +240,7 @@ export class MailchainTestService {
     }
   }
 
-  public apiVersionInfoClientError(){
+  public apiVersionInfoClientError() {
     return {
       "status": "ok",
       "errors": 1,
@@ -264,25 +264,25 @@ export class MailchainTestService {
 
   public versionServerResponse(): any {
     return {
-      "version":"0.0.34","commit":"none","time":"unknown"
+      "version": "0.0.34", "commit": "none", "time": "unknown"
     }
   }
 
   public networkList(): any {
     return [
-      { label: "goerli", value: "goerli"}, 
-      { label: "kovan", value: "kovan"}, 
-      { label: "mainnet", value: "mainnet"}, 
-      { label: "rinkeby", value: "rinkeby"}, 
-      { label: "ropsten", value: "ropsten"},
+      { label: "goerli", value: "goerli" },
+      { label: "kovan", value: "kovan" },
+      { label: "mainnet", value: "mainnet" },
+      { label: "rinkeby", value: "rinkeby" },
+      { label: "ropsten", value: "ropsten" },
       // { label: "edgeware-testnet", value: "edgeware-testnet"}
     ]
   }
 
   public currentWebProtocolsList(): any {
     return [
-      { label: "http", value: "http"}, 
-      { label: "https", value: "https"}, 
+      { label: "http", value: "http" },
+      { label: "https", value: "https" },
     ]
   }
 
@@ -294,7 +294,7 @@ export class MailchainTestService {
 
   public resolveAddressResponse(): any {
     return {
-      "name":"mailchain.eth"
+      "name": "mailchain.eth"
     }
   }
 

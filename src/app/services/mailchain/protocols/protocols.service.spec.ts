@@ -22,14 +22,14 @@ describe('ProtocolsService', () => {
       imports: [HttpClientTestingModule]
     });
     mailchainTestService = TestBed.get(MailchainTestService);
-    
+
     protocolsService = TestBed.get(ProtocolsService);
     mailchainTestService = TestBed.get(MailchainTestService);
     httpTestingController = TestBed.get(HttpTestingController);
 
     serverResponse = mailchainTestService.protocolsServerResponse()
   });
-  
+
   afterEach(() => {
     httpTestingController.verify();
   });
@@ -38,15 +38,15 @@ describe('ProtocolsService', () => {
     const protocolsService: ProtocolsService = TestBed.get(ProtocolsService);
     expect(protocolsService).toBeTruthy();
   });
-  
+
   describe('initUrl', () => {
-    it('should initialize the url', () => {    
+    it('should initialize the url', () => {
       let protocolsService: ProtocolsService = TestBed.get(ProtocolsService)
       expect(protocolsService['url']).toEqual('http://127.0.0.1:8080/api')
     });
   });
 
-  it('should get an array of protocols and networks', () => {    
+  it('should get an array of protocols and networks', () => {
     protocolsService.getProtocols().subscribe(res => {
       expect(res).toEqual(serverResponse)
     });

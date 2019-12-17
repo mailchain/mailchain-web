@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AddressesService } from '../../mailchain/addresses/addresses.service';
 
 describe('LocalStorageAccountService', () => {
-  
+
   let localStorageAccountService: LocalStorageAccountService;
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
@@ -15,7 +15,7 @@ describe('LocalStorageAccountService', () => {
 
 
   class AddressesServiceStub {
-    getAddresses(){
+    getAddresses() {
       return addresses
     }
   }
@@ -41,18 +41,18 @@ describe('LocalStorageAccountService', () => {
   });
 
   describe('getCurrentAccount', () => {
-    it('should retrieve the currentAccount when NO value is stored', async() => {
+    it('should retrieve the currentAccount when NO value is stored', async () => {
       expect(await localStorageAccountService.getCurrentAccount()).toEqual(currentAccount);
     });
 
-    it('should retrieve the currentAccount when a value is stored', async() => {      
+    it('should retrieve the currentAccount when a value is stored', async () => {
       sessionStorage.setItem('currentAccount', newAddr);
       expect(await localStorageAccountService.getCurrentAccount()).toEqual(newAddr);
     });
   });
 
   describe('setCurrentAccount', () => {
-    it('should set the current network', async() => {
+    it('should set the current network', async () => {
       expect(await localStorageAccountService.getCurrentAccount()).not.toEqual(newAddr)
       localStorageAccountService.setCurrentAccount(newAddr)
       expect(await localStorageAccountService.getCurrentAccount()).toEqual(newAddr)
@@ -60,7 +60,7 @@ describe('LocalStorageAccountService', () => {
   });
 
   describe('removeCurrentAccount', () => {
-    it('should remove the current network', async() => {
+    it('should remove the current network', async () => {
       localStorageAccountService.setCurrentAccount(newAddr)
       expect(await localStorageAccountService.getCurrentAccount()).toEqual(newAddr)
       localStorageAccountService.removeCurrentAccount()

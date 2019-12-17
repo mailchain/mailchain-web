@@ -18,13 +18,13 @@ describe('InboxMessagesComponent', () => {
 
   const address1 = "0x0000000000000000000000000000000000000001"
   const address2 = "0x0000000000000000000000000000000000000002"
-  const addresses = [address1,address2]
+  const addresses = [address1, address2]
 
   class ReadServiceStub {
-    markRead(msgId){
+    markRead(msgId) {
       return of(["ok"])
     }
-    markUnread(msgId){
+    markUnread(msgId) {
       return of(["ok"])
     }
   }
@@ -33,7 +33,7 @@ describe('InboxMessagesComponent', () => {
    * Throws 404 error for address2
    */
   class NameserviceServiceStub {
-    resolveAddress(protocol,network,value) {      
+    resolveAddress(protocol, network, value) {
       if (value == address1) {
         return of(
           {
@@ -43,7 +43,7 @@ describe('InboxMessagesComponent', () => {
         )
       }
       if (value == address2) {
-        return of({"status": 404})
+        return of({ "status": 404 })
       }
     }
   }
@@ -69,8 +69,8 @@ describe('InboxMessagesComponent', () => {
   const messages = [
     {
       "headers": {
-        "from":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
-        "to":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "to": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
         "message-id": "00"
       },
       "read": false,
@@ -79,8 +79,8 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
-        "to":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "to": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
         "message-id": "01"
       },
       "read": false,
@@ -89,8 +89,8 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
-        "to":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "to": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
         "message-id": "02"
       },
       "read": false,
@@ -99,8 +99,8 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
-        "to":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
         "message-id": "03"
       },
       "read": false,
@@ -109,8 +109,8 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
-        "to":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
         "message-id": "04"
       },
       "read": true,
@@ -119,8 +119,8 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
-        "to":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
         "message-id": "05"
       },
       "read": true,
@@ -144,10 +144,10 @@ describe('InboxMessagesComponent', () => {
       ],
       imports: [
         FormsModule,
-        HttpClientModule,  
+        HttpClientModule,
       ]
     })
-    .compileComponents();
+      .compileComponents();
     mailchainService = TestBed.get(MailchainService);
     readService = TestBed.get(ReadService);
     nameserviceService = TestBed.get(NameserviceService);
@@ -174,8 +174,8 @@ describe('InboxMessagesComponent', () => {
 
   describe('emitInboxCount', () => {
 
-    it('should emit the the number of unread, valid messages for each address', ()=>{
-      spyOn(component.inboxCounter,'emit')
+    it('should emit the the number of unread, valid messages for each address', () => {
+      spyOn(component.inboxCounter, 'emit')
       component.inboxMessages = messages
       component.emitInboxCount(addresses)
 
@@ -191,64 +191,64 @@ describe('InboxMessagesComponent', () => {
   });
 
   describe('resolveSendersFromMessages', () => {
-    it('should include resolved names in messagesNameRecords', ()=>{
+    it('should include resolved names in messagesNameRecords', () => {
       component.resolveSendersFromMessages(messages)
       expect(component.messagesNameRecords[address1]).toEqual("myname.eth")
     })
-    it('should not include unresolved names in messagesNameRecords', ()=>{
+    it('should not include unresolved names in messagesNameRecords', () => {
       component.resolveSendersFromMessages(messages)
       expect(component.messagesNameRecords[address2]).toEqual(undefined)
     })
   })
 
   describe('addMailToInboxMessages', () => {
-    
-    it('should add senderIdenticon to each message', ()=>{
+
+    it('should add senderIdenticon to each message', () => {
       let addrIcon1 = mailchainService.generateIdenticon(address1);
       let addrIcon2 = mailchainService.generateIdenticon(address2);
-      
+
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
 
-      component.inboxMessages.forEach( (val, index) => {
+      component.inboxMessages.forEach((val, index) => {
         expect(val['senderIdenticon']).toEqual(
           index <= 2 ? addrIcon2 : addrIcon1
-        ) 
+        )
       });
     });
 
-    it('should merge header field from the decrypted message', ()=>{
+    it('should merge header field from the decrypted message', () => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
 
-      component.inboxMessages.forEach( (val, index) => {
+      component.inboxMessages.forEach((val, index) => {
         expect(val['headers']).toEqual(
           messages[index]["headers"]
-        ) 
+        )
       });
 
     });
 
-    it('should merge subject field from the decrypted message', ()=>{
+    it('should merge subject field from the decrypted message', () => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
 
-      component.inboxMessages.forEach( (val, index) => {
+      component.inboxMessages.forEach((val, index) => {
         expect(val['subject']).toEqual(
           messages[index]["subject"]
-        ) 
+        )
       });
 
     });
 
-    it('should NOT set a subject field if none is specified on the decrypted message', ()=>{
+    it('should NOT set a subject field if none is specified on the decrypted message', () => {
       let message = {
         "headers": {
-          "from":   "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
-          "to":   "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+          "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+          "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
           "message-id": "05"
         },
         "read": true,
@@ -261,12 +261,12 @@ describe('InboxMessagesComponent', () => {
 
   });
   describe('openMail', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
     })
-    it('should call the readService.markRead with the mail headers ', ()=>{
+    it('should call the readService.markRead with the mail headers ', () => {
       spyOn(readService, "markRead").and.callThrough()
 
       component.openMail(component.inboxMessages[2])
@@ -274,19 +274,19 @@ describe('InboxMessagesComponent', () => {
       expect(readService.markRead).toHaveBeenCalledWith(messages[2]["headers"]["message-id"])
     })
 
-    it('should mark the component mail as read', ()=>{
+    it('should mark the component mail as read', () => {
       component.openMail(component.inboxMessages[2])
 
       expect(component.inboxMessages[2]["read"]).toBe(true)
     })
-    it('should call the openMessage.emit function with the mail as an input', ()=>{
+    it('should call the openMessage.emit function with the mail as an input', () => {
       spyOn(component.openMessage, "emit")
 
       component.openMail(component.inboxMessages[2])
 
       expect(component.openMessage.emit).toHaveBeenCalledWith(component.inboxMessages[2])
     })
-    it('should call the emitInboxCount method with the TO address as an input', ()=>{
+    it('should call the emitInboxCount method with the TO address as an input', () => {
       spyOn(component, "emitInboxCount")
 
       component.openMail(component.inboxMessages[3])
@@ -296,47 +296,47 @@ describe('InboxMessagesComponent', () => {
   });
 
   describe('selectMail', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       component.addMailToInboxMessages(messages[0])
       component.addMailToInboxMessages(messages[1])
     });
 
-    it('should select a message in the inboxMessages array', ()=>{
+    it('should select a message in the inboxMessages array', () => {
       expect(component.inboxMessages[0]["selected"]).toBe(false)
-      
+
       component.selectMail(component.inboxMessages[0])
-      
+
       expect(component.inboxMessages[0]["selected"]).toBe(true)
     })
 
-    it('should NOT select other messages in the inboxMessages array', ()=>{
+    it('should NOT select other messages in the inboxMessages array', () => {
       expect(component.inboxMessages[1]["selected"]).toBe(false)
-      
+
       component.selectMail(component.inboxMessages[0])
-      
+
       expect(component.inboxMessages[1]["selected"]).toBe(false)
     })
 
-    it('should de-select a message in the inboxMessages array', ()=>{
+    it('should de-select a message in the inboxMessages array', () => {
       component.inboxMessages[0]["selected"] = true
-      
+
       component.selectMail(component.inboxMessages[0])
-      
+
       expect(component.inboxMessages[0]["selected"]).toBe(false)
     })
 
-    it('should NOT de-select other messages in the inboxMessages array', ()=>{
+    it('should NOT de-select other messages in the inboxMessages array', () => {
       component.inboxMessages[0]["selected"] = true
       component.inboxMessages[1]["selected"] = true
-      
+
       component.selectMail(component.inboxMessages[0])
-      
+
       expect(component.inboxMessages[1]["selected"]).toBe(true)
     })
   });
 
   describe('selectAll', () => {
-    it('should select all messages in the currentAccountInboxMessages', ()=>{
+    it('should select all messages in the currentAccountInboxMessages', () => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -344,11 +344,11 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[0],
         component.inboxMessages[1]
       )
-      
+
       component.currentAccountInboxMessages.forEach(msg => {
         expect(msg.selected).toBe(false)
       })
-      
+
       component.selectAll()
 
       component.currentAccountInboxMessages.forEach(msg => {
@@ -357,7 +357,7 @@ describe('InboxMessagesComponent', () => {
     })
   });
   describe('selectNone', () => {
-    it('should ', ()=>{
+    it('should ', () => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -365,12 +365,12 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[0],
         component.inboxMessages[1]
       )
-      
+
       component.currentAccountInboxMessages.forEach(msg => {
         msg.selected = true
         expect(msg.selected).toBe(true)
       })
-      
+
       component.selectNone()
 
       component.currentAccountInboxMessages.forEach(msg => {
@@ -380,7 +380,7 @@ describe('InboxMessagesComponent', () => {
   });
 
   describe('selectRead', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -391,7 +391,7 @@ describe('InboxMessagesComponent', () => {
       )
     })
 
-    it('should select read messages', ()=>{
+    it('should select read messages', () => {
       component.currentAccountInboxMessages.forEach(msg => {
         expect(msg.selected).toBe(false)
       })
@@ -402,8 +402,8 @@ describe('InboxMessagesComponent', () => {
       expect(component.currentAccountInboxMessages[1]["selected"]).toBe(true)
       expect(component.currentAccountInboxMessages[2]["selected"]).toBe(true)
     })
-    it('should handle when other messages are already selected', ()=>{
-      
+    it('should handle when other messages are already selected', () => {
+
       component.currentAccountInboxMessages[0]["selected"] = true
 
       component.selectRead()
@@ -414,7 +414,7 @@ describe('InboxMessagesComponent', () => {
     })
   });
   describe('selectUnread', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -425,7 +425,7 @@ describe('InboxMessagesComponent', () => {
       )
     })
 
-    it('should select unread messages', ()=>{
+    it('should select unread messages', () => {
       component.currentAccountInboxMessages.forEach(msg => {
         expect(msg.selected).toBe(false)
       })
@@ -436,8 +436,8 @@ describe('InboxMessagesComponent', () => {
       expect(component.currentAccountInboxMessages[1]["selected"]).toBe(false)
       expect(component.currentAccountInboxMessages[2]["selected"]).toBe(false)
     })
-    it('should handle when other messages are already selected', ()=>{
-      
+    it('should handle when other messages are already selected', () => {
+
       component.currentAccountInboxMessages[1]["selected"] = true
 
       component.selectUnread()
@@ -448,7 +448,7 @@ describe('InboxMessagesComponent', () => {
     })
   });
   describe('markSelectedAsRead', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -458,52 +458,52 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[5]
       )
     })
-    
-    it('should mark a selected message as read', ()=>{
+
+    it('should mark a selected message as read', () => {
       component.currentAccountInboxMessages[0]["selected"] = true
-      
+
       component.markSelectedAsRead()
 
       expect(component.currentAccountInboxMessages[0]["read"]).toBe(true);
     })
-    it('should NOT mark an unselected message as read', ()=>{
+    it('should NOT mark an unselected message as read', () => {
       component.markSelectedAsRead()
 
       expect(component.currentAccountInboxMessages[0]["read"]).toBe(false);
     })
-    it('should call the readService.markRead for the each selected message id', ()=>{
-      spyOn(readService,'markRead').and.callThrough()
+    it('should call the readService.markRead for the each selected message id', () => {
+      spyOn(readService, 'markRead').and.callThrough()
 
       component.currentAccountInboxMessages[0]["selected"] = true
       component.currentAccountInboxMessages[1]["selected"] = true
-      
+
       component.markSelectedAsRead()
 
       expect(readService.markRead).toHaveBeenCalledWith(component.currentAccountInboxMessages[0]["headers"]["message-id"])
       expect(readService.markRead).toHaveBeenCalledWith(component.currentAccountInboxMessages[1]["headers"]["message-id"])
     })
-    it('should NOT call the readService.markRead for unselected message ids', ()=>{
-      spyOn(readService,'markRead').and.callThrough()
+    it('should NOT call the readService.markRead for unselected message ids', () => {
+      spyOn(readService, 'markRead').and.callThrough()
 
       component.currentAccountInboxMessages[0]["selected"] = true
       component.currentAccountInboxMessages[1]["selected"] = true
-      
+
       component.markSelectedAsRead()
 
       expect(readService.markRead).not.toHaveBeenCalledWith(component.currentAccountInboxMessages[2]["headers"]["message-id"])
     })
     it('should call emitInboxCount for the currentAccount', () => {
-      spyOn(component,"emitInboxCount");
+      spyOn(component, "emitInboxCount");
 
       component.currentAccountInboxMessages[0]["selected"] = true
-    
+
       component.markSelectedAsRead()
 
       expect(component.emitInboxCount).toHaveBeenCalledWith([address2])
     })
   });
   describe('markSelectedAsUnread', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -513,74 +513,74 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[5]
       )
     })
-    
-    it('should mark a selected message as unread', ()=>{
+
+    it('should mark a selected message as unread', () => {
       component.currentAccountInboxMessages[1]["selected"] = true
-      
+
       component.markSelectedAsUnread()
 
       expect(component.currentAccountInboxMessages[1]["read"]).toBe(false);
     })
-    it('should NOT mark an unselected message as unread', ()=>{
+    it('should NOT mark an unselected message as unread', () => {
       component.markSelectedAsUnread()
 
       expect(component.currentAccountInboxMessages[2]["read"]).toBe(true);
     })
-    it('should call the readService.markUnread for the each selected message id', ()=>{
-      spyOn(readService,'markUnread').and.callThrough()
+    it('should call the readService.markUnread for the each selected message id', () => {
+      spyOn(readService, 'markUnread').and.callThrough()
 
       component.currentAccountInboxMessages[0]["selected"] = true
       component.currentAccountInboxMessages[1]["selected"] = true
-      
+
       component.markSelectedAsUnread()
 
       expect(readService.markUnread).toHaveBeenCalledWith(component.currentAccountInboxMessages[0]["headers"]["message-id"])
       expect(readService.markUnread).toHaveBeenCalledWith(component.currentAccountInboxMessages[1]["headers"]["message-id"])
     })
-    it('should NOT call the readService.markUnread for unselected message ids', ()=>{
-      spyOn(readService,'markUnread').and.callThrough()
+    it('should NOT call the readService.markUnread for unselected message ids', () => {
+      spyOn(readService, 'markUnread').and.callThrough()
 
       component.currentAccountInboxMessages[0]["selected"] = true
       component.currentAccountInboxMessages[1]["selected"] = true
-      
+
       component.markSelectedAsUnread()
 
       expect(readService.markUnread).not.toHaveBeenCalledWith(component.currentAccountInboxMessages[2]["headers"]["message-id"])
     })
     it('should call emitInboxCount for the currentAccount', () => {
-      spyOn(component,"emitInboxCount");
+      spyOn(component, "emitInboxCount");
 
       component.currentAccountInboxMessages[0]["selected"] = true
-    
+
       component.markSelectedAsUnread()
 
       expect(component.emitInboxCount).toHaveBeenCalledWith([address2])
     })
   });
   describe('ngOnInit', () => {
-    it('should call getCurrentAccountInboxMessages', async()=>{
-      spyOn(component,"getCurrentAccountInboxMessages")
+    it('should call getCurrentAccountInboxMessages', async () => {
+      spyOn(component, "getCurrentAccountInboxMessages")
       await component.ngOnInit()
-      expect(component.getCurrentAccountInboxMessages).toHaveBeenCalled()  
+      expect(component.getCurrentAccountInboxMessages).toHaveBeenCalled()
     })
   });
   describe('getCurrentAccountInboxMessages', () => {
-    beforeEach(()=>{
+    beforeEach(() => {
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
     })
-    it('should set currentAccountInboxMessages to the currently selected account', ()=>{
+    it('should set currentAccountInboxMessages to the currently selected account', () => {
       component.currentAccount = address2
       component.getCurrentAccountInboxMessages()
-      
+
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[3],
         component.inboxMessages[4],
         component.inboxMessages[5]
       ])
     })
-    it('should filter currentAccountInboxMessages based on search text', ()=>{
+    it('should filter currentAccountInboxMessages based on search text', () => {
       component.currentAccount = address2
       component.searchText = "Message 04"
       component.getCurrentAccountInboxMessages()
@@ -589,11 +589,11 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[4]
       ])
     })
-    it('should dedupe currentAccountInboxMessages', ()=>{
+    it('should dedupe currentAccountInboxMessages', () => {
       component.currentAccount = address2
       component.inboxMessages.push(component.inboxMessages[4])
       component.getCurrentAccountInboxMessages()
-      
+
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[3],
         component.inboxMessages[4],
@@ -602,11 +602,11 @@ describe('InboxMessagesComponent', () => {
     })
   });
   describe('ngOnChanges', () => {
-    xit('should selectNone if "event" contains "currentAccount"', ()=>{
+    xit('should selectNone if "event" contains "currentAccount"', () => {
       // event = new Event
     })
 
-    xit('should call getCurrentAccountInboxMessages', async()=>{
+    xit('should call getCurrentAccountInboxMessages', async () => {
       // spyOn(component,"getCurrentAccountInboxMessages")
       // component.ngOnChanges()
       // expect(component.getCurrentAccountInboxMessages).toHaveBeenCalled()  

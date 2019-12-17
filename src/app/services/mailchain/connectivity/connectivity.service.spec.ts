@@ -42,130 +42,130 @@ describe('ConnectivityService', () => {
 
   describe('getVersionStatus', () => {
     it('should handle dirty semver', () => {
-      let resReleaseObs = of({"tag_name": "v0.0.1"});
-      let clientReleaseObs = of({"version": "0.0.1"});
-      
+      let resReleaseObs = of({ "tag_name": "v0.0.1" });
+      let clientReleaseObs = of({ "version": "0.0.1" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("0.0.1")
-        expect(res["release-version"]).toEqual("0.0.1")
-        expect(res["status"]).toEqual("ok")
-        expect(res["errors"]).toEqual(0)
-      })
-      
+        .then(res => {
+          expect(res["client-version"]).toEqual("0.0.1")
+          expect(res["release-version"]).toEqual("0.0.1")
+          expect(res["status"]).toEqual("ok")
+          expect(res["errors"]).toEqual(0)
+        })
+
     });
 
     it('should return status unknown if releaseVersion is not present', () => {
-      let resReleaseObs = of({"some_tag": "some_data"});
-      let clientReleaseObs = of({"version": "0.0.1"});
-      
+      let resReleaseObs = of({ "some_tag": "some_data" });
+      let clientReleaseObs = of({ "version": "0.0.1" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("0.0.1")
-        expect(res["release-version"]).toEqual("unknown")
-        expect(res["status"]).toEqual("unknown")
-        expect(res["errors"]).toEqual(0)
-      })     
+        .then(res => {
+          expect(res["client-version"]).toEqual("0.0.1")
+          expect(res["release-version"]).toEqual("unknown")
+          expect(res["status"]).toEqual("unknown")
+          expect(res["errors"]).toEqual(0)
+        })
     });
     it('should return status unknown if clientVersion is not present', () => {
-      let resReleaseObs = of({"tag_name": "v0.0.1"});
-      let clientReleaseObs = of({"some_val": "some_data"});
-      
+      let resReleaseObs = of({ "tag_name": "v0.0.1" });
+      let clientReleaseObs = of({ "some_val": "some_data" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("unknown")
-        expect(res["release-version"]).toEqual("0.0.1")
-        expect(res["status"]).toEqual("unknown")
-        expect(res["errors"]).toEqual(0)
-      })  
+        .then(res => {
+          expect(res["client-version"]).toEqual("unknown")
+          expect(res["release-version"]).toEqual("0.0.1")
+          expect(res["status"]).toEqual("unknown")
+          expect(res["errors"]).toEqual(0)
+        })
     });
 
     it('should return status unknown if releaseVersion is not valid', () => {
-      let resReleaseObs = of({"tag_name": "dev"});
-      let clientReleaseObs = of({"version": "0.0.1"});
-      
+      let resReleaseObs = of({ "tag_name": "dev" });
+      let clientReleaseObs = of({ "version": "0.0.1" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("0.0.1")
-        expect(res["release-version"]).toEqual("unknown")
-        expect(res["status"]).toEqual("unknown")
-        expect(res["errors"]).toEqual(0)
-      })
+        .then(res => {
+          expect(res["client-version"]).toEqual("0.0.1")
+          expect(res["release-version"]).toEqual("unknown")
+          expect(res["status"]).toEqual("unknown")
+          expect(res["errors"]).toEqual(0)
+        })
     });
     it('should return status unknown if clientVersion is not valid', () => {
-      let resReleaseObs = of({"tag_name": "v0.0.1"});
-      let clientReleaseObs = of({"version": "dev"});
-      
+      let resReleaseObs = of({ "tag_name": "v0.0.1" });
+      let clientReleaseObs = of({ "version": "dev" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("unknown")
-        expect(res["release-version"]).toEqual("0.0.1")
-        expect(res["status"]).toEqual("unknown")
-        expect(res["errors"]).toEqual(0)
-      })
+        .then(res => {
+          expect(res["client-version"]).toEqual("unknown")
+          expect(res["release-version"]).toEqual("0.0.1")
+          expect(res["status"]).toEqual("unknown")
+          expect(res["errors"]).toEqual(0)
+        })
     });
 
     it('should return status ok if releaseVersion is the same as clientVersion', () => {
-      let resReleaseObs = of({"tag_name": "0.0.1"});
-      let clientReleaseObs = of({"version": "0.0.1"});
-      
+      let resReleaseObs = of({ "tag_name": "0.0.1" });
+      let clientReleaseObs = of({ "version": "0.0.1" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("0.0.1")
-        expect(res["release-version"]).toEqual("0.0.1")
-        expect(res["status"]).toEqual("ok")
-        expect(res["errors"]).toEqual(0)
-      })
+        .then(res => {
+          expect(res["client-version"]).toEqual("0.0.1")
+          expect(res["release-version"]).toEqual("0.0.1")
+          expect(res["status"]).toEqual("ok")
+          expect(res["errors"]).toEqual(0)
+        })
     });
 
     it('should return status outdated if clientVersion is less than releaseVersion', () => {
-      let resReleaseObs = of({"tag_name": "v0.0.3"});
-      let clientReleaseObs = of({"version": "0.0.1"});
-      
+      let resReleaseObs = of({ "tag_name": "v0.0.3" });
+      let clientReleaseObs = of({ "version": "0.0.1" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("0.0.1")
-        expect(res["release-version"]).toEqual("0.0.3")
-        expect(res["status"]).toEqual("outdated")
-        expect(res["errors"]).toEqual(0)
-      })
-    }); 
+        .then(res => {
+          expect(res["client-version"]).toEqual("0.0.1")
+          expect(res["release-version"]).toEqual("0.0.3")
+          expect(res["status"]).toEqual("outdated")
+          expect(res["errors"]).toEqual(0)
+        })
+    });
 
     it('should return status unknown if clientVersion is greater than releaseVersion', () => {
-      let resReleaseObs = of({"tag_name": "0.0.1"});
-      let clientReleaseObs = of({"version": "0.0.3"});
-      
+      let resReleaseObs = of({ "tag_name": "0.0.1" });
+      let clientReleaseObs = of({ "version": "0.0.3" });
+
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
       connectivityService.getVersionStatus()
-      .then(res => {
-        expect(res["client-version"]).toEqual("0.0.3")
-        expect(res["release-version"]).toEqual("0.0.1")
-        expect(res["status"]).toEqual("unknown")
-        expect(res["errors"]).toEqual(0)
-      })
+        .then(res => {
+          expect(res["client-version"]).toEqual("0.0.3")
+          expect(res["release-version"]).toEqual("0.0.1")
+          expect(res["status"]).toEqual("unknown")
+          expect(res["errors"]).toEqual(0)
+        })
     });
 
   });
@@ -180,7 +180,7 @@ describe('ConnectivityService', () => {
       //   expect(err["status"]).toEqual("unknown")
       //   expect(err["errors"]).toEqual(1)
       // })
-      
+
     });
   });
 
@@ -199,7 +199,7 @@ describe('ConnectivityService', () => {
 
 
   describe('getApiAvailability', () => {
-    
+
     it('should return the number of configured addresses', () => {
       let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
