@@ -125,6 +125,28 @@ describe('SendService', () => {
       // outboundMailObject.envelope = ""
     })
 
+    it('should specify public-key-encoding as "hex/0x-prefix" in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObject()
+      expect(outboundMailObject["message"]["public-key-encoding"]).toBe("hex/0x-prefix")
+    })
+
+    it('should error on send if public-key-encoding is empty in the outbound mail', () => {
+      // TODO add test for: should error on send if public-key-encoding is empty in the outbound mail
+      // let outboundMailObject = mailchainTestService.outboundMailObject()
+      // outboundMailObject["message"]["public-key-encoding"] = ""
+    })
+
+    it('should specify public-key-kind as "secp256k1" in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObject()
+      expect(outboundMailObject["message"]["public-key-kind"]).toBe("secp256k1")
+    })
+
+    it('should error on send if public-key-kind is empty in the outbound mail', () => {
+      // TODO add test for: should error on send if public-key-kind is empty in the outbound mail
+      // let outboundMailObject = mailchainTestService.outboundMailObject()
+      // outboundMailObject["message"]["public-key-kind"] = ""
+    })
+
     it('should specify encryption-method-name as "aes256cbc" in the outbound mail', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       expect(outboundMailObject["encryption-method-name"]).toBe("aes256cbc")
