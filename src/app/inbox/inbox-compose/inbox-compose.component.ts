@@ -427,7 +427,7 @@ export class InboxComposeComponent implements OnInit {
       this.currentNetwork
     ).subscribe(res => {
 
-      this.model.publicKey = res["body"]["public_key"]
+      this.model.publicKey = res["body"]["public-key"]
       var outboundMail = this.generateMessage(this.model, this.inputContentType)
 
       this.sendMessage(outboundMail).subscribe(res => {
