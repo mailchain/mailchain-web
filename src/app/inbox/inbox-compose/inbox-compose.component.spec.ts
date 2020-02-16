@@ -442,7 +442,7 @@ describe('InboxComposeComponent', () => {
       spyOn(publicKeyService, "getPublicKeyFromAddress").and.callFake(() => {
         return of({
           "body": {
-            "public_key": '1234567890abcd'
+            "public-key": '1234567890abcd'
           }
         })
       });
