@@ -50,6 +50,8 @@ export class MailchainService {
     var regexMailAddr = new RegExp('<0x[0-9a-fA-Z]{40}[@].+>$');
     if (regexMailAddr.test(address)) {
       return address.substr(1, address.indexOf('@') - 1);
+    } else {
+      return ''
     }
   }
 
@@ -175,7 +177,7 @@ export class MailchainService {
    * see tests for conditions 
    */
   public validateEnsName(value) {
-    let regex = new RegExp('^([0-9a-zA-Z][0-9a-zA-Z\-]{2,}[\.]){1,}[a-zA-Z]{2,}$')
+    let regex = new RegExp('^([0-9a-zA-Z]{1,}[0-9a-zA-Z\-]{0,}[\.]){1,}[a-zA-Z]{2,}$')
     return regex.test(value)
   };
 
