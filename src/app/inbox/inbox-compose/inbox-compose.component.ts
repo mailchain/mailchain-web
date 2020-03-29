@@ -216,7 +216,7 @@ export class InboxComposeComponent implements OnInit {
     let returnObs
 
     if (this.mailchainService.validateEnsName(value)) {
-      returnObs = this.nameserviceService.resolveName(
+      returnObs = await this.nameserviceService.resolveName(
         this.currentProtocol,
         this.currentNetwork,
         value

@@ -18,7 +18,6 @@ export class InboxMessageComponent implements OnInit {
   @Output() replyToMessage = new EventEmitter();
 
   public messageNameRecords = {}
-  public viewForContentType = "plaintext"
 
   constructor(
     private nameserviceService: NameserviceService,
@@ -33,7 +32,7 @@ export class InboxMessageComponent implements OnInit {
 
   ngOnInit() {
     this.resolveNamesFromMessage()
-    this.viewForContentType = this.getViewForContentType()
+    this.getViewForContentType()
   }
 
   /**
@@ -86,9 +85,49 @@ export class InboxMessageComponent implements OnInit {
   /**
    * getViewForContentType: Returns correct view for content-type
    */
-  private getViewForContentType() {
+  public getViewForContentType() {
     let ct = this.currentMessage.headers["content-type"]
-    return this.mailchainService.getContentTypeForView(ct)
+
+    switch (ct) {
+      case 'plaintext':
+        this.addMessageText()
+        break;
+      case 'text/html; charset="UTF-8"':
+        this.addMessageIframe()
+        break;
+      default:
+        this.addMessageText()
+        break;
+    }
+  }
+
+  /** addMessageIframe: Creates iframe containing message and adds it to message-frame */
+  public addMessageIframe() {
+    var messageFrame = document.getElementById('message-frame')
+
+    var ifrm = document.createElement("iframe");
+    ifrm.setAttribute("srcdoc", this.currentMessage.body);
+    ifrm.setAttribute("frameborder", "0");
+    ifrm.style.width = "100%";
+    ifrm.style.height = "100%";
+    ifrm.classList.add("message-body-html")
+
+    messageFrame.appendChild(ifrm);
+  }
+
+  /** Creates message div & pre containing message and adds it to message-frame */
+  public addMessageText() {
+    var messageFrame = document.getElementById('message-frame')
+
+    var divMessage = document.createElement('div')
+    divMessage.classList.add("message-body")
+
+    var preMessage = document.createElement('pre')
+    divMessage.classList.add("pre-inherit")
+    divMessage.innerText = this.currentMessage.body
+
+    divMessage.appendChild(preMessage)
+    messageFrame.appendChild(divMessage)
   }
 
 }
