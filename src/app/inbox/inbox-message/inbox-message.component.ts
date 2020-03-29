@@ -85,7 +85,7 @@ export class InboxMessageComponent implements OnInit {
   /**
    * getViewForContentType: Returns correct view for content-type
    */
-  private getViewForContentType() {
+  public getViewForContentType() {
     let ct = this.currentMessage.headers["content-type"]
 
     switch (ct) {
@@ -99,7 +99,6 @@ export class InboxMessageComponent implements OnInit {
         this.addMessageText()
         break;
     }
-    return this.mailchainService.getContentTypeForView(ct)
   }
 
   /** addMessageIframe: Creates iframe containing message and adds it to message-frame */
