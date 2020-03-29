@@ -81,6 +81,14 @@ describe('MailchainService', () => {
 
       expect(response).toEqual(ethereumAccountAddress)
     });
+
+    it('should return a blank string if the Mailchain address is invalid', () => {
+      const mailchainAddress = "<0x@ropsten.ethereum>"
+
+      let response = mailchainService.parseAddressFromMailchain(mailchainAddress)
+
+      expect(response).toEqual('')
+    });
   })
 
   describe('dedupeMessagesByIds', () => {
