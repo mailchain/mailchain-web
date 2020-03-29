@@ -124,4 +124,84 @@ describe('InboxMessageComponent', () => {
     });
   });
 
+  describe('getViewForContentType', () => {
+    it('should call getViewForContentType when the content-type is plaintext ', () => {
+      spyOn(component, 'getViewForContentType')
+
+      component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
+      component.ngOnInit()
+      expect(component.getViewForContentType).toHaveBeenCalled()
+    })
+
+    it('should call getViewForContentType when the content-type is text/plain; charset="UTF-8"', () => {
+      spyOn(component, 'getViewForContentType')
+
+      component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
+      component.ngOnInit()
+      expect(component.getViewForContentType).toHaveBeenCalled()
+    })
+
+    it('should call getViewForContentType when the content-type is unknown', () => {
+      spyOn(component, 'getViewForContentType')
+
+      component.currentMessage["headers"]["content-type"] = 'unknown'
+      component.ngOnInit()
+      expect(component.getViewForContentType).toHaveBeenCalled()
+    })
+  })
+
+  describe('addMessageText', () => {
+    it('should call addMessageText when the content-type is plaintext ', () => {
+      spyOn(component, 'addMessageText')
+
+      component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
+      component.ngOnInit()
+      expect(component.addMessageText).toHaveBeenCalled()
+    })
+
+    it('should NOT call addMessageText when the content-type is text/html; charset="UTF-8" ', () => {
+      spyOn(component, 'addMessageText')
+
+      component.currentMessage["headers"]["content-type"] = 'text/html; charset="UTF-8"'
+      component.ngOnInit()
+      expect(component.addMessageText).not.toHaveBeenCalled()
+    })
+
+    it('should call addMessageText when the content-type is unknown ', () => {
+      spyOn(component, 'addMessageText')
+
+      component.currentMessage["headers"]["content-type"] = 'unknown'
+      component.ngOnInit()
+      expect(component.addMessageText).toHaveBeenCalled()
+    })
+
+  })
+  describe('addMessageIframe', () => {
+    it('should NOT call addMessageIframe when the content-type is plaintext ', () => {
+      spyOn(component, 'addMessageIframe')
+
+      component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
+      component.ngOnInit()
+      expect(component.addMessageIframe).not.toHaveBeenCalled()
+    })
+
+    it('should call addMessageIframe when the content-type is text/html; charset="UTF-8" ', () => {
+      spyOn(component, 'addMessageIframe')
+
+      component.currentMessage["headers"]["content-type"] = 'text/html; charset="UTF-8"'
+      component.ngOnInit()
+      expect(component.addMessageIframe).toHaveBeenCalled()
+    })
+
+    it('should NOT call addMessageIframe when the content-type is unknown ', () => {
+      spyOn(component, 'addMessageIframe')
+
+      component.currentMessage["headers"]["content-type"] = 'unknown'
+      component.ngOnInit()
+      expect(component.addMessageIframe).not.toHaveBeenCalled()
+    })
+
+  })
+
+
 });
