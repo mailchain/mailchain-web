@@ -33,11 +33,12 @@ This repository contains the Mailchain Web Application that is powered by [https
 
 ---
 
+## About Mailchain
 
-## About Mailchain 
 Extract from the [Mailchain specification](https://github.com/mailchain/mailchain-specification):
 
-### Introduction 
+### Introduction
+
 Mailchain enables blockchain-based email-like messaging with plain or rich text and attachment capabilities. Using blockchain protocols and decentralized storage, Mailchain delivers a simple, secure, messaging experience.
 
 Account holders or owners of a public address often need to communicate in the context of the account or public address. Communication may relate to transactions, account actions or some type of notification.
@@ -79,6 +80,7 @@ The following address formats are referenced:
 | Mailchain | `<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>` | Case insensitive |
 
 ### URL and Port Settings
+
 By default, the Mailchain web interface expects to communicate with the Mailchain application running on the localhost using port 8080.
 
 To change this:
@@ -112,6 +114,7 @@ currentPort: | The current selected port (e.g. `8080`) for contacting the mailch
 currentHost: | The current selected host (e.g. `127.0.0.1`, `localhost`, etc.) for contacting the mailchain application
 
 ### Message Storage
+
 The Mailchain web application does not store message contents.
 
 ## Development Info
@@ -133,4 +136,5 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web?ref=badge_large)
