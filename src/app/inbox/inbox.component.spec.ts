@@ -921,6 +921,7 @@ describe('InboxComponent', () => {
       "status-code": "",
       "read": true
     }
+    const messages = []
 
     it('should add a message to inboxMessages', () => {
       expect(component.inboxMessages).toEqual([])
