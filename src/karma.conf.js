@@ -10,6 +10,7 @@ module.exports = function (config) {
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage-istanbul-reporter'),
+      require('karma-spec-reporter'),
       require('@angular-devkit/build-angular/plugins/karma'),
       require('karma-coveralls')
     ],
@@ -25,7 +26,7 @@ module.exports = function (config) {
       type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
       dir: 'coverage/'
     },
-    reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls'],
+    reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls', 'spec'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -37,6 +38,14 @@ module.exports = function (config) {
         base: 'ChromeHeadless',
         flags: ['--no-sandbox']
       }
+    },
+    specReporter: {
+      maxLogLines: 5,         // limit number of lines logged per test
+      suppressErrorSummary: false,  // do not print error summary
+      suppressPassed: true,  // do not print information about passed tests
+      suppressFailed: false,  // do not print information about failed tests
+      suppressSkipped: true,  // do not print information about skipped tests
+      showSpecTiming: false // print the time elapsed for each spec
     }
   });
 };
