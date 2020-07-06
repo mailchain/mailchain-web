@@ -385,6 +385,7 @@ describe('InboxComponent', () => {
     });
 
     xit('should set the webProtocol value from the form', async () => {
+      // issue related to undefined 'messages' - needs a deep dive
       await component.ngOnInit()
       expect(localStorageServerService.getCurrentWebProtocol()).toEqual('https')
       expect(component.serverSettings["webProtocol"]).toEqual('https')
