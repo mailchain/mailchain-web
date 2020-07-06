@@ -119,7 +119,7 @@ describe('SendService', () => {
       expect(outboundMailObject.envelope).toBe("0x01")
     })
 
-    it('should error on send if envelope type is empty in the outbound mail', () => {
+    xit('should error on send if envelope type is empty in the outbound mail', () => {
       // TODO add test for: should error on send if envelope type is empty in the outbound mail
       // let outboundMailObject = mailchainTestService.outboundMailObject()
       // outboundMailObject.envelope = ""
@@ -130,7 +130,7 @@ describe('SendService', () => {
       expect(outboundMailObject["message"]["public-key-encoding"]).toBe("hex/0x-prefix")
     })
 
-    it('should error on send if public-key-encoding is empty in the outbound mail', () => {
+    xit('should error on send if public-key-encoding is empty in the outbound mail', () => {
       // TODO add test for: should error on send if public-key-encoding is empty in the outbound mail
       // let outboundMailObject = mailchainTestService.outboundMailObject()
       // outboundMailObject["message"]["public-key-encoding"] = ""
@@ -141,7 +141,7 @@ describe('SendService', () => {
       expect(outboundMailObject["message"]["public-key-kind"]).toBe("secp256k1")
     })
 
-    it('should error on send if public-key-kind is empty in the outbound mail', () => {
+    xit('should error on send if public-key-kind is empty in the outbound mail', () => {
       // TODO add test for: should error on send if public-key-kind is empty in the outbound mail
       // let outboundMailObject = mailchainTestService.outboundMailObject()
       // outboundMailObject["message"]["public-key-kind"] = ""
@@ -152,7 +152,7 @@ describe('SendService', () => {
       expect(outboundMailObject["encryption-method-name"]).toBe("aes256cbc")
     })
 
-    it('should error on send if encryption-method-name is empty in the outbound mail', () => {
+    xit('should error on send if encryption-method-name is empty in the outbound mail', () => {
       // TODO add test for: should error on send if encryption-method-name is empty in the outbound mail
       // let outboundMailObject = mailchainTestService.outboundMailObject()
       // outboundMailObject["encryption-method-name"] = ""
@@ -163,7 +163,7 @@ describe('SendService', () => {
       expect(outboundMailObject["envelope"]).not.toBeUndefined()
     })
 
-    it('should error on send if `envelope` is empty in the outbound mail', () => {
+    xit('should error on send if `envelope` is empty in the outbound mail', () => {
       // TODO add test for: should error on send if envelope is empty in the outbound mail
     })
 
