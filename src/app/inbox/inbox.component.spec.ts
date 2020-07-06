@@ -384,7 +384,7 @@ describe('InboxComponent', () => {
       spyOn(component, 'windowReload').and.callFake(function () { });
     });
 
-    it('should set the webProtocol value from the form', async () => {
+    xit('should set the webProtocol value from the form', async () => {
       await component.ngOnInit()
       expect(localStorageServerService.getCurrentWebProtocol()).toEqual('https')
       expect(component.serverSettings["webProtocol"]).toEqual('https')
