@@ -300,5 +300,20 @@ export class MailchainTestService {
     }
   }
 
+  public envelopeTypeMli(): any {
+    return [{ "type": "0x01", "description": "Private Message Stored with MLI" }]
+  }
+
+  public envelopeTypeIpfs(): any {
+    return [{ "type": "0x02", "description": "Private Message Stored on IPFS" }]
+  }
+
+  public envelopeTypesMultiple(): any {
+    return [
+      { "type": "0x01", "description": "Private Message Stored with MLI" },
+      { "type": "0x02", "description": "Private Message Stored on IPFS" }
+    ]
+  }
+
 }
 

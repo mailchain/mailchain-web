@@ -147,7 +147,23 @@ describe('InboxComposeComponent', () => {
           await component.ngOnInit();
           expect(component.model.body).toBe('')
         })
+
+        describe('handling the envelope', () => {
+          it('should initialize an envelope in the "envelope" field using an available envelop', async () => {
+            await component.ngOnInit();
+            fixture.detectChanges()
+            expect(component.model.envelope).toBe('0x01')
+          })
+
+          it('should populate the envelope_type dropdown if there are multiple envelopes available', async () => {
+            await component.ngOnInit();
+            expect(component.model.envelope).toBe('')
+          })
+
+        })
+
       });
+
 
       describe('when composing a plaintext reply', () => {
         beforeEach(() => {

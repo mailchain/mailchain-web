@@ -158,6 +158,15 @@ describe('SendService', () => {
       // outboundMailObject["encryption-method-name"] = ""
     })
 
+    it('should specify `envelope` in the outbound mail', () => {
+      let outboundMailObject = mailchainTestService.outboundMailObject()
+      expect(outboundMailObject["envelope"]).not.toBeUndefined()
+    })
+
+    it('should error on send if `envelope` is empty in the outbound mail', () => {
+      // TODO add test for: should error on send if envelope is empty in the outbound mail
+    })
+
     it('should specify content-type as "text/plain; charset=\"UTF-8\"" by default in the outbound mail', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       expect(outboundMailObject["content-type"]).toBe("text/plain; charset=\"UTF-8\"")

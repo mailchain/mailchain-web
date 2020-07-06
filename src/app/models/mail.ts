@@ -4,4 +4,5 @@ export class Mail {
   public subject: string = "";
   public body: string = "";
   public publicKey: string = "";
+  public envelope: string = "";
 }
