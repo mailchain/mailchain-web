@@ -11,7 +11,7 @@ export class OutboundMail {
     "public-key-kind": "secp256k1",
     "subject": ""
   };
-  public "envelope": string = "0x01";
+  public "envelope": string = "";
   public "encryption-method-name": string = "aes256cbc";
   public "content-type": string = "text/plain; charset=\"UTF-8\"";
 }

@@ -54,7 +54,12 @@ describe('InboxComposeComponent', () => {
 
   class EnvelopeServiceStub {
     getEnvelope() {
-      return envelopes // set envelope in test
+      if (envelopes) {
+        return envelopes // set envelope in test
+      } else {
+        return [{ "type": "0x01", "description": "Private Message Stored with MLI" }]
+      }
+
     }
   }
   class PublicKeyServiceStub {
