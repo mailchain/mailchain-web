@@ -1,5 +1,4 @@
 dist: trusty
-sudo: false
 
 language: node_js
 node_js:
@@ -16,4 +15,4 @@ install:
   - npm install
 
 script:
-  - npm run test -- --watch=false --no-progress --browsers=ChromeHeadlessNoSandbox
+  - npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
