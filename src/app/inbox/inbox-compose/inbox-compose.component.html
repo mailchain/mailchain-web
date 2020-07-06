@@ -31,7 +31,6 @@
 
       <!-- ./From Field -->
 
-
       <!-- To Field -->
       <div class="form-group">
         <div class="row">
@@ -64,6 +63,24 @@
 
       </div>
       <!-- ./To Field -->
+
+
+      <!-- Envelope Field -->
+      <div class="form-group row">
+        <label for="envelope" class="col-form-label col-sm-2 col-md- col-lg-2">Envelope Type:</label>
+        <div class="col-md-10 col-lg-9">
+          <div class="input-group mb-2 row">
+            <select class="form-control" [(ngModel)]="model.envelope" name="envelope"
+              [disabled]="envelopes.length <= 1">
+              <option *ngFor="let envelope of envelopes; let i = index" [value]="envelope.type">
+                {{envelope.description}} ({{envelope.type}})
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ./Envelope Field -->
 
       <!-- Subject Field -->
       <div class="form-group row">

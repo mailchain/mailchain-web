@@ -51,8 +51,6 @@ describe('EnvelopeService', () => {
 
   it('should get an array of envelope types with their description', () => {
     envelopeService.getEnvelope().then(res => {
-      console.log(res);
-
       expect(res).toEqual(serverResponse)
     });
 

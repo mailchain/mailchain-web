@@ -5,6 +5,7 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { SendService } from 'src/app/services/mailchain/messages/send.service';
 import { PublicKeyService } from 'src/app/services/mailchain/public-key/public-key.service';
 import { AddressesService } from 'src/app/services/mailchain/addresses/addresses.service';
+import { EnvelopeService } from 'src/app/services/mailchain/envelope/envelope.service';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { Subject, of, Observable } from 'rxjs';
 
@@ -32,6 +33,8 @@ export class InboxComposeComponent implements OnInit {
 
   public model = new Mail()
   public fromAddresses: Array<any> = []
+  public envelopes: Array<any> = []
+
   public sendMessagesDisabled: boolean = false;
   private subscription
   public currentRecipientValue
@@ -56,6 +59,7 @@ export class InboxComposeComponent implements OnInit {
     private sendService: SendService,
     private publicKeyService: PublicKeyService,
     private addressesService: AddressesService,
+    private envelopeService: EnvelopeService,
     private nameserviceService: NameserviceService,
     private modalService: BsModalService,
   ) { }
@@ -68,6 +72,7 @@ export class InboxComposeComponent implements OnInit {
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
+    this.model.envelope = ""
   }
 
   /**
@@ -97,10 +102,17 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
-   * Sets the available from addresses
+   * Sets the available 'from' addresses
    */
   private async setFromAddressList() {
     this.fromAddresses = await this.addressesService.getAddresses();
+  }
+
+  /**
+   * Sets the available envelopes
+   */
+  private async setEnvelopeList() {
+    this.envelopes = await this.envelopeService.getEnvelope();
   }
 
   /**
@@ -272,6 +284,16 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
+ * Sets the envelope in the `envelope` dropdown
+ * By default takes the first value returned from the /envelop endpoint
+ */
+  private setFirstEnvelopeInEnvelopeDropdown() {
+    if (this.envelopes != undefined) {
+      this.model.envelope = this.envelopes[0]["type"]
+    }
+  }
+
+  /**
    * Initialise the message.
    * If it's a new message, fields will be blank.
    * -or-
@@ -279,10 +301,12 @@ export class InboxComposeComponent implements OnInit {
    */
   async ngOnInit(): Promise<void> {
     await this.setFromAddressList()
+    await this.setEnvelopeList()
     this.setContentTypeForView()
     this.initMail()
     this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
+    this.setFirstEnvelopeInEnvelopeDropdown()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
   }
