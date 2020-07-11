@@ -26,7 +26,8 @@ module.exports = function (config) {
       type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
       dir: 'coverage/'
     },
-    reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls', 'spec'],
+    // reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls', 'spec'],
+    reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -42,7 +43,7 @@ module.exports = function (config) {
     specReporter: {
       maxLogLines: 5,         // limit number of lines logged per test
       suppressErrorSummary: false,  // do not print error summary
-      suppressPassed: false,  // do not print information about passed tests
+      suppressPassed: true,  // do not print information about passed tests
       suppressFailed: false,  // do not print information about failed tests
       suppressSkipped: true,  // do not print information about skipped tests
       showSpecTiming: false // print the time elapsed for each spec

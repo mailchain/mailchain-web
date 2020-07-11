@@ -41,14 +41,14 @@ describe('ConnectivityService', () => {
   });
 
   describe('getVersionStatus', () => {
-    it('should handle dirty semver', () => {
+    it('should handle dirty semver', async () => {
       let resReleaseObs = of({ "tag_name": "v0.0.1" });
       let clientReleaseObs = of({ "version": "0.0.1" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("0.0.1")
           expect(res["release-version"]).toEqual("0.0.1")
@@ -58,14 +58,14 @@ describe('ConnectivityService', () => {
 
     });
 
-    it('should return status unknown if releaseVersion is not present', () => {
+    it('should return status unknown if releaseVersion is not present', async () => {
       let resReleaseObs = of({ "some_tag": "some_data" });
       let clientReleaseObs = of({ "version": "0.0.1" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("0.0.1")
           expect(res["release-version"]).toEqual("unknown")
@@ -73,14 +73,14 @@ describe('ConnectivityService', () => {
           expect(res["errors"]).toEqual(0)
         })
     });
-    it('should return status unknown if clientVersion is not present', () => {
+    it('should return status unknown if clientVersion is not present', async () => {
       let resReleaseObs = of({ "tag_name": "v0.0.1" });
       let clientReleaseObs = of({ "some_val": "some_data" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("unknown")
           expect(res["release-version"]).toEqual("0.0.1")
@@ -89,14 +89,14 @@ describe('ConnectivityService', () => {
         })
     });
 
-    it('should return status unknown if releaseVersion is not valid', () => {
+    it('should return status unknown if releaseVersion is not valid', async () => {
       let resReleaseObs = of({ "tag_name": "dev" });
       let clientReleaseObs = of({ "version": "0.0.1" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("0.0.1")
           expect(res["release-version"]).toEqual("unknown")
@@ -104,14 +104,14 @@ describe('ConnectivityService', () => {
           expect(res["errors"]).toEqual(0)
         })
     });
-    it('should return status unknown if clientVersion is not valid', () => {
+    it('should return status unknown if clientVersion is not valid', async () => {
       let resReleaseObs = of({ "tag_name": "v0.0.1" });
       let clientReleaseObs = of({ "version": "dev" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("unknown")
           expect(res["release-version"]).toEqual("0.0.1")
@@ -120,14 +120,14 @@ describe('ConnectivityService', () => {
         })
     });
 
-    it('should return status ok if releaseVersion is the same as clientVersion', () => {
+    it('should return status ok if releaseVersion is the same as clientVersion', async () => {
       let resReleaseObs = of({ "tag_name": "0.0.1" });
       let clientReleaseObs = of({ "version": "0.0.1" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("0.0.1")
           expect(res["release-version"]).toEqual("0.0.1")
@@ -136,14 +136,14 @@ describe('ConnectivityService', () => {
         })
     });
 
-    it('should return status outdated if clientVersion is less than releaseVersion', () => {
+    it('should return status outdated if clientVersion is less than releaseVersion', async () => {
       let resReleaseObs = of({ "tag_name": "v0.0.3" });
       let clientReleaseObs = of({ "version": "0.0.1" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("0.0.1")
           expect(res["release-version"]).toEqual("0.0.3")
@@ -152,14 +152,14 @@ describe('ConnectivityService', () => {
         })
     });
 
-    it('should return status unknown if clientVersion is greater than releaseVersion', () => {
+    it('should return status unknown if clientVersion is greater than releaseVersion', async () => {
       let resReleaseObs = of({ "tag_name": "0.0.1" });
       let clientReleaseObs = of({ "version": "0.0.3" });
 
       spyOn(http, 'get').and.returnValue(resReleaseObs);
       spyOn(versionService, 'getVersion').and.returnValue(clientReleaseObs);
 
-      connectivityService.getVersionStatus()
+      await connectivityService.getVersionStatus()
         .then(res => {
           expect(res["client-version"]).toEqual("0.0.3")
           expect(res["release-version"]).toEqual("0.0.1")
@@ -200,11 +200,11 @@ describe('ConnectivityService', () => {
 
   describe('getApiAvailability', () => {
 
-    it('should return the number of configured addresses', () => {
+    it('should return the number of configured addresses', async () => {
       let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
-      connectivityService.getApiAvailability().then(res => {
+      await connectivityService.getApiAvailability().then(res => {
         expect(res["addresses"]).toEqual(2)
         expect(res["status"]).toEqual("ok")
         expect(res["code"]).toEqual(200)
@@ -212,11 +212,11 @@ describe('ConnectivityService', () => {
       })
     });
 
-    it('should return 0 addresses when none are configured', () => {
+    it('should return 0 addresses when none are configured', async () => {
       let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponseNoAddress())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
-      connectivityService.getApiAvailability().then(res => {
+      await connectivityService.getApiAvailability().then(res => {
         expect(res["addresses"]).toEqual(0)
         expect(res["status"]).toEqual("ok")
         expect(res["code"]).toEqual(200)
@@ -227,11 +227,11 @@ describe('ConnectivityService', () => {
     xit('should return error and message when the client is not available', () => {
       // TODO add test for error scenario
     });
-    it('should return status "ok" when client is running and configured', () => {
+    it('should return status "ok" when client is running and configured', async () => {
       let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
-      connectivityService.getApiAvailability().then(res => {
+      await connectivityService.getApiAvailability().then(res => {
         expect(res["status"]).toEqual("ok")
       })
     });

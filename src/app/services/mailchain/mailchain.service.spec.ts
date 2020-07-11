@@ -237,20 +237,20 @@ describe('MailchainService', () => {
       "public-key-kind": "secp256k1",
       "subject": "Test message",
     }
-
+    outboundMailObject["envelope"] = "0x05"
 
     it('should return valid outputs when given a valid Mail object', () => {
-      let response = mailchainService.generateMail(mailObject, "plaintext")
-
+      let response = mailchainService.generateMail(mailObject, "plaintext", "0x05")
+      
       expect(response).toEqual(outboundMailObject)
     })
     it('should return valid content type for plaintext', () => {
-      let response = mailchainService.generateMail(mailObject, "plaintext")
+      let response = mailchainService.generateMail(mailObject, "plaintext", "0x01")
 
       expect(response["content-type"]).toEqual('text/plain; charset=\"UTF-8\"')
     })
     it('should return valid content type for html', () => {
-      let response = mailchainService.generateMail(mailObject, "html")
+      let response = mailchainService.generateMail(mailObject, "html", "0x01")
 
       expect(response["content-type"]).toEqual('text/html; charset=\"UTF-8\"')
     })
