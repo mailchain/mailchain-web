@@ -51,6 +51,8 @@ export class InboxComposeComponent implements OnInit {
   public Editor = ClassicEditor;
   public inputContentType = "html"
   public contentTypeSwitchLabel: string = ""
+  public envelopeType
+  public envelopeDescription
 
   @ViewChild('editor', { static: false }) public editorComponent: CKEditorComponent;
 
@@ -72,7 +74,6 @@ export class InboxComposeComponent implements OnInit {
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
-    this.model.envelope = ""
   }
 
   /**
@@ -289,7 +290,8 @@ export class InboxComposeComponent implements OnInit {
  */
   private setFirstEnvelopeInEnvelopeDropdown() {
     if (this.envelopes != undefined) {
-      this.model.envelope = this.envelopes[0]["type"]
+      this.envelopeType = this.envelopes[0]["type"]
+      this.envelopeDescription = this.envelopes[0]["description"]
     }
   }
 
@@ -452,7 +454,7 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe(res => {
 
       this.model.publicKey = res["body"]["public-key"]
-      var outboundMail = this.generateMessage(this.model, this.inputContentType)
+      var outboundMail = this.generateMessage(this.model, this.inputContentType, this.envelopeType)
 
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
@@ -473,8 +475,8 @@ export class InboxComposeComponent implements OnInit {
    * Builds the OutboundMail object for sending
    * @param mailObj The form Mail object
    */
-  private generateMessage(mailObj: Mail, inputContentType: string): OutboundMail {
-    return this.mailchainService.generateMail(mailObj, inputContentType)
+  private generateMessage(mailObj: Mail, inputContentType: string, envelope: string): OutboundMail {
+    return this.mailchainService.generateMail(mailObj, inputContentType, envelope)
   }
 
   /**

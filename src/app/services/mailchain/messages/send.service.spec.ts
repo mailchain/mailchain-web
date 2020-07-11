@@ -114,9 +114,9 @@ describe('SendService', () => {
       req.flush(body);
     })
 
-    it('should specify envelope type "0x01" in the outbound mail', () => {
+    it('should specify envelope type "0x05" in the outbound mail', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
-      expect(outboundMailObject.envelope).toBe("0x01")
+      expect(outboundMailObject.envelope).toBe("0x05")
     })
 
     xit('should error on send if envelope type is empty in the outbound mail', () => {

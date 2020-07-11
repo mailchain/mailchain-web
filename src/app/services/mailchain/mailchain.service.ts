@@ -18,27 +18,27 @@ export class MailchainService {
  * @param mailObj the Mail object
  * @param contentType the content type [ 'text/plain; charset=\"UTF-8\"' | 'text/html; charset=\"UTF-8\"' ]
  */
-  generateMail(mailObj, contentType): OutboundMail {
-
-    var envelope = new OutboundMail
-    envelope.message["body"] = mailObj["body"]
-    envelope.message["headers"]["from"] = mailObj["from"]
-    envelope.message["headers"]["reply-to"] = mailObj["from"] //TODO: handle reply-to
-    envelope.message["headers"]["to"] = mailObj["to"]
-    envelope.message["public-key"] = mailObj["publicKey"]
-    envelope.message["subject"] = mailObj["subject"]
+  generateMail(mailObj, contentType, envelope): OutboundMail {
+    var outboundMail = new OutboundMail
+    outboundMail.message["body"] = mailObj["body"]
+    outboundMail.message["headers"]["from"] = mailObj["from"]
+    outboundMail.message["headers"]["reply-to"] = mailObj["from"] //TODO: handle reply-to
+    outboundMail.message["headers"]["to"] = mailObj["to"]
+    outboundMail.message["public-key"] = mailObj["publicKey"]
+    outboundMail.message["subject"] = mailObj["subject"]
+    outboundMail["envelope"] = envelope
 
     switch (contentType) {
       case "html":
-        envelope["content-type"] = 'text/html; charset=\"UTF-8\"'
+        outboundMail["content-type"] = 'text/html; charset=\"UTF-8\"'
         break;
 
       default:
-        envelope["content-type"] = 'text/plain; charset=\"UTF-8\"'
+        outboundMail["content-type"] = 'text/plain; charset=\"UTF-8\"'
         break;
     }
 
-    return envelope
+    return outboundMail
 
   }
 
