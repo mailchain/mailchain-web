@@ -23,6 +23,9 @@ export class MailchainTestService {
       "public-key-kind": "secp256k1",
       "subject": "Test message",
     }
+    outboundMailObject["envelope"] = "0x05"
+    outboundMailObject["encryption-method-name"] = "aes256cbc"
+    outboundMailObject["content-type"] = "text/plain; charset=\"UTF-8\""
 
     return outboundMailObject
   }
