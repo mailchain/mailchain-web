@@ -12,7 +12,7 @@
 
       <!-- From Field -->
       <div class="form-group row">
-        <label for="from" class="col-form-label col-sm-2 col-md- col-lg-2">From:</label>
+        <label for="from" class="col-form-label col-sm-2 col-md-2 col-lg-2">From:</label>
         <div class="col-md-10 col-lg-9">
           <div class="input-group mb-2 row">
             <div class="input-group-prepend">
@@ -31,11 +31,10 @@
 
       <!-- ./From Field -->
 
-
       <!-- To Field -->
-      <div class="form-group">
+      <div class="form-group mb-0">
         <div class="row">
-          <label for="to" class="col-form-label col-sm-2 col-md- col-lg-2">To:</label>
+          <label for="to" class="col-form-label col-sm-2 col-md-2 col-lg-2">To:</label>
           <div class="col-md-10 col-lg-9">
             <div class="input-group row">
               <div class="input-group-prepend">
@@ -65,10 +64,13 @@
       </div>
       <!-- ./To Field -->
 
+
+
+
       <!-- Subject Field -->
       <div class="form-group row">
 
-        <label for="subject" class="col-form-label col-sm-2 col-md- col-lg-2">Subject:</label>
+        <label for="subject" class="col-form-label col-sm-2 col-md-2 col-lg-2">Subject:</label>
 
         <div class="col-md-10 col-lg-9">
           <div class="input-group mb-2 row">
@@ -81,21 +83,41 @@
       <!-- ./Subject Field -->
 
 
-      <!-- Plain/HTML toggle field -->
       <div class="form-group row">
-        <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+        <label for="envelope" class="col-form-label col-sm-2 col-md-2 col-lg-2">Envelope Type:</label>
+        <div class="col-md-10 col-lg-10">
           <div class="input-group mb-2 row">
-
-            <div class="custom-control custom-switch content-type-switch">
-              <input type="checkbox" class="custom-control-input" id="contentTypeSwitch" (click)="convertToPlainText()"
-                [disabled]="inputContentType == 'plaintext'">
-              <label class="custom-control-label" for="contentTypeSwitch">{{contentTypeSwitchLabel}}</label>
+            <!-- Envelope Field -->
+            <div class="col-md-7 col-lg-7">
+              <div class="input-group mb-2 row">
+                <!-- <1 Envelope -->
+                <input type="hidden" *ngIf="envelopeType && envelopes.length <= 1" [(ngModel)]="envelope"
+                  name="envelope">
+                <input type="text" *ngIf="envelopeType && envelopes.length <= 1"
+                  value="{{envelopeDescription}} ({{envelopeType}})" name="envelope" class="form-control" disabled>
+                <!-- ./ <1 Envelope -->
+                <!-- >1 Envelope -->
+                <select class="form-control" [(ngModel)]="envelope" name="envelope" *ngIf="envelopes.length > 1">
+                  <option *ngFor="let envelope of envelopes; let i = index" [value]="envelope.type">
+                    {{envelope.description}} ({{envelope.type}})
+                  </option>
+                </select>
+                <!-- ./ >1 Envelope -->
+              </div>
             </div>
-
+            <!-- ./Envelope Field -->
+            <!-- Plain/HTML toggle field -->
+            <div class="col-md-5 col-lg-4">
+              <div class="custom-control custom-switch content-type-switch">
+                <input type="checkbox" class="custom-control-input" id="contentTypeSwitch"
+                  (click)="convertToPlainText()" [disabled]="inputContentType == 'plaintext'">
+                <label class="custom-control-label" for="contentTypeSwitch">{{contentTypeSwitchLabel}}</label>
+              </div>
+            </div>
+            <!-- ./Plain/HTML toggle field -->
           </div>
         </div>
       </div>
-      <!-- ./Plain/HTML toggle field -->
 
       <!-- Body Field -->
       <!-- Plaintext Field -->

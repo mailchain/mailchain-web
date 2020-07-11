@@ -23,6 +23,9 @@ export class MailchainTestService {
       "public-key-kind": "secp256k1",
       "subject": "Test message",
     }
+    outboundMailObject["envelope"] = "0x05"
+    outboundMailObject["encryption-method-name"] = "aes256cbc"
+    outboundMailObject["content-type"] = "text/plain; charset=\"UTF-8\""
 
     return outboundMailObject
   }
@@ -298,6 +301,21 @@ export class MailchainTestService {
     return {
       "name": "mailchain.eth"
     }
+  }
+
+  public envelopeTypeMli(): any {
+    return [{ "type": "0x01", "description": "Private Message Stored with MLI" }]
+  }
+
+  public envelopeTypeIpfs(): any {
+    return [{ "type": "0x02", "description": "Private Message Stored on IPFS" }]
+  }
+
+  public envelopeTypesMultiple(): any {
+    return [
+      { "type": "0x01", "description": "Private Message Stored with MLI" },
+      { "type": "0x02", "description": "Private Message Stored on IPFS" }
+    ]
   }
 
 }

@@ -19,6 +19,7 @@ import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity-error/modal-connectivity-error.component';
 import { NgModule } from '@angular/core';
 import { CKEditorModule, CKEditorComponent } from '@ckeditor/ckeditor5-angular';
+import { EnvelopeService } from 'src/app/services/mailchain/envelope/envelope.service';
 
 
 // Workaround:
@@ -43,10 +44,22 @@ describe('InboxComposeComponent', () => {
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
   const ensName = 'mailchain.eth';
   const addresses = [currentAccount, currentAccount2];
+  let envelopes: Array<any>
 
   class AddressesServiceStub {
     getAddresses() {
       return addresses
+    }
+  }
+
+  class EnvelopeServiceStub {
+    getEnvelope() {
+      if (envelopes) {
+        return envelopes // set envelope in test
+      } else {
+        return [{ "type": "0x01", "description": "Private Message Stored with MLI" }]
+      }
+
     }
   }
   class PublicKeyServiceStub {
@@ -77,6 +90,7 @@ describe('InboxComposeComponent', () => {
         HttpHelpersService,
         MailchainService,
         { provide: AddressesService, useClass: AddressesServiceStub },
+        { provide: EnvelopeService, useClass: EnvelopeServiceStub },
         { provide: PublicKeyService, useClass: PublicKeyServiceStub },
         { provide: SendService, useClass: SendServiceStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub },
@@ -147,7 +161,33 @@ describe('InboxComposeComponent', () => {
           await component.ngOnInit();
           expect(component.model.body).toBe('')
         })
+
+        describe('handling the envelope', () => {
+          it('should initialize an envelope in the "envelope" field using an available envelop', async () => {
+            envelopes = mailchainTestService.envelopeTypeMli()
+            await component.ngOnInit();
+            fixture.detectChanges()
+            expect(component.envelopeType).toBe('0x01')
+          })
+
+          it('should initialize an envelope in the "envelope" field using an available envelop', async () => {
+            envelopes = mailchainTestService.envelopeTypeIpfs()
+            await component.ngOnInit();
+            fixture.detectChanges()
+            expect(component.envelopeType).toBe('0x02')
+          })
+
+          it('should populate the envelope_type dropdown with the first value if there are multiple envelopes available', async () => {
+            envelopes = mailchainTestService.envelopeTypesMultiple()
+            await component.ngOnInit();
+            fixture.detectChanges()
+            expect(component.envelopeType).toBe('0x01')
+          })
+
+        })
+
       });
+
 
       describe('when composing a plaintext reply', () => {
         beforeEach(() => {
@@ -431,6 +471,7 @@ describe('InboxComposeComponent', () => {
       "public-key": "1234567890abcd",
       subject: 'Test Message'
     }
+    // outboundMail.envelope = "0x01"
 
     beforeEach(() => {
       component.model.to = currentAccount
@@ -438,6 +479,7 @@ describe('InboxComposeComponent', () => {
       component.model.subject = "Test Message"
       component.model.body = "This is a test message"
       component.currentNetwork = 'testnet'
+      component.envelopeType = "0x05"
 
       spyOn(publicKeyService, "getPublicKeyFromAddress").and.callFake(() => {
         return of({
@@ -470,7 +512,7 @@ describe('InboxComposeComponent', () => {
     it('should generate a message', () => {
 
       component.onSubmit();
-      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html')
+      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html', '0x05')
 
     })
 
