@@ -21,6 +21,12 @@ import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { LocalStorageServerServiceStub } from '../services/helpers/local-storage-server/local-storage-server.service.stub';
+import { AddressesServiceStub } from '../services/mailchain/addresses/addresses.service.stub';
+import { MessagesServiceStub } from '../services/mailchain/messages/messages.service.stub';
+import { ProtocolsServiceStub } from '../services/mailchain/protocols/protocols.service.stub';
+import { NameserviceServiceStub } from '../services/mailchain/nameservice/nameservice.service.stub';
+import { LocalStorageAccountServiceStub } from '../services/helpers/local-storage-account/local-storage-account.service.stub';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -31,107 +37,21 @@ describe('InboxComponent', () => {
   let localStorageServerService: LocalStorageServerService
   let mailchainService: MailchainService
   let nameserviceService: NameserviceService
+  let addressesService: AddressesService
   let activatedRoute: any
   let networkList: any
   let currentWebProtocolsList: any
   let inboundMessage: any
 
-  const currentProtocol: string = "ethereum"
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
   const currentAccountNameLookup = 'myaddress.eth';
   const currentAccount2NameLookup = 'someaddress.myaddress.eth';
 
-  const currentNetwork = 'testnet';
   const currentWebProtocol = 'https';
   const currentHost = 'example.com';
   const currentPort = '8080';
   const addresses = [currentAccount, currentAccount2];
-
-  let localStorageCurrentWebProtocol: string
-  let localStorageCurrentPort: string
-  let localStorageCurrentHost: string
-  let localStorageCurrentAccount: string
-  let localStorageCurrentNetwork: string
-  let localStorageCurrentProtocol: string
-
-  class LocalStorageAccountServiceStub {
-    getCurrentAccount() {
-      return localStorageCurrentAccount
-    }
-    setCurrentAccount(address) {
-      localStorageCurrentAccount = address
-    }
-    removeCurrentAccount() {
-      localStorageCurrentAccount = undefined
-    }
-  }
-
-  class LocalStorageServerServiceStub {
-    getCurrentWebProtocol() {
-      return localStorageCurrentWebProtocol
-    }
-    setCurrentWebProtocol(protocol) {
-      localStorageCurrentWebProtocol = protocol
-    }
-    getCurrentHost() {
-      return localStorageCurrentHost
-    }
-    setCurrentHost(host) {
-      localStorageCurrentHost = host
-    }
-    getCurrentPort() {
-      return localStorageCurrentPort
-    }
-    setCurrentPort(port) {
-      localStorageCurrentPort = port
-    }
-    getCurrentNetwork() {
-      return localStorageCurrentNetwork
-    }
-    getCurrentProtocol() {
-      return localStorageCurrentProtocol
-    }
-    setCurrentNetwork(network) {
-      localStorageCurrentNetwork = network
-    }
-    getCurrentServerDetails() {
-      return `${currentWebProtocol}://${currentHost}:${currentPort}`
-    }
-    removeCurrentNetwork() {
-      localStorageCurrentNetwork = undefined
-    }
-  }
-  class AddressesServiceStub {
-    getAddresses() {
-      return addresses
-    }
-  }
-  class MessagesServiceStub {
-    getMessages() {
-      let messages = mailchainTestService.messagesResponse
-      return of(messages)
-    }
-  }
-  class ProtocolsServiceStub {
-    getProtocols() {
-      return of(mailchainTestService.protocolsServerResponse())
-    }
-  }
-  class NameserviceServiceStub {
-    resolveAddress(protocol, network, value) {
-      let returnVals = {}
-      returnVals[currentAccount] = currentAccountNameLookup,
-        returnVals[currentAccount2] = currentAccount2NameLookup
-
-      return of(
-        {
-          "body": { name: returnVals[value] },
-          "ok": true
-        }
-      )
-    }
-  }
 
   class ActivatedRouteStub {
     //Observable that contains a map of the parameters
@@ -204,21 +124,11 @@ describe('InboxComponent', () => {
     localStorageServerService = TestBed.get(LocalStorageServerService);
     mailchainService = TestBed.get(MailchainService);
     nameserviceService = TestBed.get(NameserviceService);
+    addressesService = TestBed.get(AddressesService);
 
   }));
 
   beforeEach(() => {
-    /* Set Values */
-    localStorageCurrentWebProtocol = currentWebProtocol
-    localStorageCurrentPort = currentPort
-    localStorageCurrentHost = currentHost
-    localStorageCurrentAccount = currentAccount
-    localStorageCurrentNetwork = currentNetwork
-    localStorageCurrentProtocol = currentProtocol
-
-    /* End Set Values */
-
-
     fixture = TestBed.createComponent(InboxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -231,7 +141,6 @@ describe('InboxComponent', () => {
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
-
 
   describe('composeMessage', () => {
 
@@ -573,14 +482,6 @@ describe('InboxComponent', () => {
       await component.setFromAddressList()
 
       expect(Object.keys(component.fromAddresses)).toEqual(addresses)
-    });
-    it('should add a new address then this has been added ', async () => {
-      addresses.push("0x0000000000abcdef0123456789abcdef00000000")
-      await component.setFromAddressList()
-
-      expect(Object.keys(component.fromAddresses)).toEqual(addresses)
-      addresses.pop()
-
     });
     it('should set the label to the address value', async () => {
       await component.setFromAddressList()

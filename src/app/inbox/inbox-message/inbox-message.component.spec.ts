@@ -9,6 +9,7 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { of } from 'rxjs';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { HttpClientModule } from '@angular/common/http';
+import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 
 describe('InboxMessageComponent', () => {
 
@@ -19,29 +20,10 @@ describe('InboxMessageComponent', () => {
 
   let mailchainTestService: MailchainTestService
 
-  const address1 = "0x0000000000000000000000000000000000000001"
+  const address1 = "0x0123456789012345678901234567890123456789"
   const mcAddress1 = "<" + address1 + "@ropsten.ethereum>"
   const address2 = "0x0000000000000000000000000000000000000002"
   const mcAddress2 = "<" + address2 + "@ropsten.ethereum>"
-
-  /**
- * Resolves address1: myname.eth
- * Throws 404 error for address2
- */
-  class NameserviceServiceStub {
-    resolveAddress(protocol, network, value) {
-      if (value == address1) {
-        return of(
-          {
-            "body": { name: "myname.eth" },
-            "ok": true
-          }
-        )
-      } else {
-        return of({ "status": 404 })
-      }
-    }
-  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -104,7 +86,7 @@ describe('InboxMessageComponent', () => {
       it('should resolve the To field when there is a resolvable name', () => {
         component.currentMessage["headers"]["to"] = mcAddress1
         component.ngOnInit()
-        expect(component.messageNameRecords[address1]).toEqual('myname.eth')
+        expect(component.messageNameRecords[address1]).toEqual('myaddress.eth')
       })
       it('should NOT resolve the To field when there is NOT a resolvable name', () => {
         component.currentMessage["headers"]["to"] = mcAddress2
@@ -114,7 +96,7 @@ describe('InboxMessageComponent', () => {
       it('should resolve the From field when there is a resolvable name', () => {
         component.currentMessage["headers"]["from"] = mcAddress1
         component.ngOnInit()
-        expect(component.messageNameRecords[address1]).toEqual('myname.eth')
+        expect(component.messageNameRecords[address1]).toEqual('myaddress.eth')
       })
       it('should NOT resolve the From field when there is NOT a resolvable name', () => {
         component.currentMessage["headers"]["from"] = mcAddress2

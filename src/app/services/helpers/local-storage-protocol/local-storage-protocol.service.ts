@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { applicationApiConfig } from 'src/environments/environment';
+import { ProtocolsService } from '../../mailchain/protocols/protocols.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,7 @@ import { applicationApiConfig } from 'src/environments/environment';
 export class LocalStorageProtocolService {
 
   constructor(
+    private protocolsService: ProtocolsService,
   ) { }
 
   /**

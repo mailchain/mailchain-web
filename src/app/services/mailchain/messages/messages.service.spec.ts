@@ -3,20 +3,27 @@ import { TestBed } from '@angular/core/testing';
 import { MessagesService } from './messages.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
+import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
+import { LocalStorageServerServiceStub } from '../../helpers/local-storage-server/local-storage-server.service.stub';
 
 describe('MessagesService', () => {
   let messagesService: MessagesService;
+  let mailchainTestService: MailchainTestService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         MessagesService,
-        HttpHelpersService
+        HttpHelpersService,
+        { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
       ],
       imports: [HttpClientTestingModule]
     });
 
     messagesService = TestBed.get(MessagesService);
+    mailchainTestService = TestBed.get(MailchainTestService);
+
   });
 
   it('should be created', () => {

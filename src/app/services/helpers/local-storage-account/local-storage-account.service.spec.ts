@@ -3,6 +3,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { LocalStorageAccountService } from './local-storage-account.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AddressesService } from '../../mailchain/addresses/addresses.service';
+import { AddressesServiceStub } from '../../mailchain/addresses/addresses.service.stub';
 
 describe('LocalStorageAccountService', () => {
 
@@ -12,13 +13,6 @@ describe('LocalStorageAccountService', () => {
   const addresses = [currentAccount, currentAccount2];
 
   const newAddr = '0x12345678901234567890123456789012'
-
-
-  class AddressesServiceStub {
-    getAddresses() {
-      return addresses
-    }
-  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({

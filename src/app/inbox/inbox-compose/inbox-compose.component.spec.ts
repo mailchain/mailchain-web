@@ -20,6 +20,11 @@ import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity
 import { NgModule } from '@angular/core';
 import { CKEditorModule, CKEditorComponent } from '@ckeditor/ckeditor5-angular';
 import { EnvelopeService } from 'src/app/services/mailchain/envelope/envelope.service';
+import { AddressesServiceStub } from 'src/app/services/mailchain/addresses/addresses.service.stub';
+import { EnvelopeServiceStub } from 'src/app/services/mailchain/envelope/envelope.service.stub';
+import { PublicKeyServiceStub } from 'src/app/services/mailchain/public-key/public-key.service.stub';
+import { SendServiceStub } from 'src/app/services/mailchain/messages/send.service.stub';
+import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 
 
 // Workaround:
@@ -44,42 +49,8 @@ describe('InboxComposeComponent', () => {
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
   const ensName = 'mailchain.eth';
   const addresses = [currentAccount, currentAccount2];
+
   let envelopes: Array<any>
-
-  class AddressesServiceStub {
-    getAddresses() {
-      return addresses
-    }
-  }
-
-  class EnvelopeServiceStub {
-    getEnvelope() {
-      if (envelopes) {
-        return envelopes // set envelope in test
-      } else {
-        return [{ "type": "0x01", "description": "Private Message Stored with MLI" }]
-      }
-
-    }
-  }
-  class PublicKeyServiceStub {
-    getPublicKeyFromAddress(publicAddress, network) {
-      return of(['1234567890'])
-    }
-  }
-  class SendServiceStub {
-    sendMail(outboundMail: OutboundMail, network: string) {
-      return of([])
-    }
-  }
-  class NameserviceServiceStub {
-    resolveName(value) {
-      return of(
-        { body: { address: currentAccount } }
-      )
-    }
-  }
-
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -168,13 +139,6 @@ describe('InboxComposeComponent', () => {
             await component.ngOnInit();
             fixture.detectChanges()
             expect(component.envelopeType).toBe('0x01')
-          })
-
-          it('should initialize an envelope in the "envelope" field using an available envelop', async () => {
-            envelopes = mailchainTestService.envelopeTypeIpfs()
-            await component.ngOnInit();
-            fixture.detectChanges()
-            expect(component.envelopeType).toBe('0x02')
           })
 
           it('should populate the envelope_type dropdown with the first value if there are multiple envelopes available', async () => {

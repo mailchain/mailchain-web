@@ -261,10 +261,7 @@ export class MailchainTestService {
   }
 
   public protocolsServerResponse(): any {
-    return {
-      "protocols":
-        [{ "name": "ethereum", "networks": [{ "name": "goerli", "id": "" }, { "name": "kovan", "id": "" }, { "name": "mainnet", "id": "" }, { "name": "rinkeby", "id": "" }, { "name": "ropsten", "id": "" }] }, { "name": "substrate", "networks": [{ "name": "edgeware-testnet", "id": "42" }] }]
-    }
+    return { "protocols": [{ "name": "ethereum", "networks": [{ "name": "goerli", "id": "" }, { "name": "kovan", "id": "" }, { "name": "mainnet", "id": "" }, { "name": "rinkeby", "id": "" }, { "name": "ropsten", "id": "" }] }, { "name": "substrate", "networks": [{ "name": "edgeware-berlin", "id": "7" }, { "name": "edgeware-mainnet", "id": "7" }] }] }
   }
 
   public versionServerResponse(): any {
