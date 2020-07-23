@@ -19,4 +19,8 @@ export class ProtocolsServiceStub {
     return of(this.mailchainTestService.protocolsServerResponse())
   }
 
+  getProtocolsByName() {
+    return ["ethereum", "substrate"]
+  }
+
 }

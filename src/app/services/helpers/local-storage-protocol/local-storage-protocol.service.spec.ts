@@ -5,16 +5,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 import { of } from 'rxjs';
 import { ProtocolsService } from '../../mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from '../../mailchain/protocols/protocols.service.stub';
 
 describe('LocalStorageProtocolService', () => {
   let localStorageProtocolService: LocalStorageProtocolService;
   let mailchainTestService: MailchainTestService;
-
-  class ProtocolsServiceStub {
-    getProtocols() {
-      return of(mailchainTestService.protocolsServerResponse())
-    }
-  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({
