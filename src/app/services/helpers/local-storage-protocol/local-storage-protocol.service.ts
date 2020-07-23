@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { applicationApiConfig } from 'src/environments/environment';
 import { ProtocolsService } from '../../mailchain/protocols/protocols.service';
 
 @Injectable({
@@ -14,12 +13,13 @@ export class LocalStorageProtocolService {
   /**
    * Retrieves the current protocol for the application.
    */
-  getCurrentProtocol() {
+  async getCurrentProtocol() {
 
     if (sessionStorage['currentProtocol'] && sessionStorage['currentProtocol'] != "undefined") {
       return sessionStorage.getItem('currentProtocol')
     } else {
-      var protocols = applicationApiConfig.protocols
+      var protocols = await this.protocolsService.getProtocolsByName()
+
       var protocol = protocols.length ? protocols[0] : ""
       this.setCurrentProtocol(protocol)
       return protocol
