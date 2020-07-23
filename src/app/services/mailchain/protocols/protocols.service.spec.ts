@@ -4,6 +4,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 
 import { ProtocolsService } from './protocols.service';
+import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 describe('ProtocolsService', () => {
 
@@ -18,6 +19,7 @@ describe('ProtocolsService', () => {
     TestBed.configureTestingModule({
       providers: [
         ProtocolsService,
+        HttpHelpersService,
       ],
       imports: [HttpClientTestingModule]
     });
@@ -42,7 +44,7 @@ describe('ProtocolsService', () => {
   describe('initUrl', () => {
     it('should initialize the url', () => {
       let protocolsService: ProtocolsService = TestBed.get(ProtocolsService)
-      expect(protocolsService['url']).toEqual('http://127.0.0.1:8080/api')
+      expect(protocolsService['url']).toEqual('http://127.0.0.1:8080/api/protocols')
     });
   });
 

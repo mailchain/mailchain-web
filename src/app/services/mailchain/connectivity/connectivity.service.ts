@@ -191,7 +191,7 @@ export class ConnectivityService {
   public async getApiProtocolsAvailability() {
     let status = { "protocols": 0 }
 
-    let res = await this.protocolsService.getProtocols().toPromise().catch(err => {
+    let res = await this.protocolsService.getProtocolsResponse().toPromise().catch(err => {
       status["status"] = "error",
         status["code"] = err.status,
         status["message"] = err.message

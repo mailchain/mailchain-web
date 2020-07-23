@@ -207,7 +207,7 @@ describe('ConnectivityService', () => {
 
     it('should return the number of configured protocols', async () => {
       let expectedProtocolsObs = of(mailchainTestService.protocolsObserveResponse())
-      spyOn(protocolsService, 'getProtocols').and.returnValue(expectedProtocolsObs);
+      spyOn(protocolsService, 'getProtocolsResponse').and.returnValue(expectedProtocolsObs);
 
       await connectivityService.getApiProtocolsAvailability().then(res => {
         expect(res["protocols"]).toEqual(2)
@@ -219,7 +219,7 @@ describe('ConnectivityService', () => {
 
     it('should return 0 protocols when none are configured', async () => {
       let expectedProtocolsObs = of(mailchainTestService.protocolsObserveResponseNoProtocols())
-      spyOn(protocolsService, 'getProtocols').and.returnValue(expectedProtocolsObs);
+      spyOn(protocolsService, 'getProtocolsResponse').and.returnValue(expectedProtocolsObs);
 
       await connectivityService.getApiProtocolsAvailability().then(res => {
         expect(res["protocols"]).toEqual(0)

@@ -20,7 +20,11 @@ export class LocalStorageProtocolService {
     } else {
       var protocols = await this.protocolsService.getProtocolsByName()
 
-      var protocol = protocols.length ? protocols[0] : ""
+      var protocol = ""
+      if (protocols.length) {
+        protocol = protocols.includes('ethereum') ? 'ethereum' : protocols[0]
+      }
+
       this.setCurrentProtocol(protocol)
       return protocol
     }
