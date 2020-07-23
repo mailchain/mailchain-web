@@ -26,7 +26,6 @@ export class NameserviceService {
    */
   initUrl() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
-    // this.protocol = this.localStorageProtocolService.getCurrentProtocol()
   }
 
   /**
