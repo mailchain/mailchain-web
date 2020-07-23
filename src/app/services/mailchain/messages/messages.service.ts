@@ -24,9 +24,9 @@ export class MessagesService {
   /**
    * Initialize URL from local storage
    */
-  initServerDetails() {
+  async initServerDetails() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
-    this.protocol = this.localStorageProtocolService.getCurrentProtocol()
+    this.protocol = await this.localStorageProtocolService.getCurrentProtocol()
   }
 
   /**
