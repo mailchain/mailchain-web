@@ -180,7 +180,7 @@ export class MailchainTestService {
     }
   }
 
-  public getApiAvailabilitySuccess() {
+  public getApiAddressAvailabilitySuccess() {
     return {
       "addresses": 2,
       "status": "ok",
@@ -189,7 +189,7 @@ export class MailchainTestService {
     }
   }
 
-  public getApiAvailabilitySuccessNoAddresses() {
+  public getApiAddressAvailabilitySuccessNoAddresses() {
     return {
       "addresses": 0,
       "status": "ok",
@@ -198,7 +198,7 @@ export class MailchainTestService {
     }
   }
 
-  public getApiAvailabilityConnectionRefused() {
+  public getApiAddressAvailabilityConnectionRefused() {
     return {
       "addresses": 0,
       "status": "error",
@@ -206,7 +206,7 @@ export class MailchainTestService {
       "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 0 Unknown Error"
     }
   }
-  public getApiAvailabilityErrorUnknown() {
+  public getApiAddressAvailabilityErrorUnknown() {
     return {
       "addresses": 0,
       "status": "error",
@@ -262,6 +262,39 @@ export class MailchainTestService {
 
   public protocolsServerResponse(): any {
     return { "protocols": [{ "name": "ethereum", "networks": [{ "name": "goerli", "id": "" }, { "name": "kovan", "id": "" }, { "name": "mainnet", "id": "" }, { "name": "rinkeby", "id": "" }, { "name": "ropsten", "id": "" }] }, { "name": "substrate", "networks": [{ "name": "edgeware-berlin", "id": "7" }, { "name": "edgeware-mainnet", "id": "7" }] }] }
+  }
+
+
+  public protocolsObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses",
+      "ok": true,
+      "type": 4,
+      "body": this.protocolsServerResponse()
+    }
+  }
+
+  public protocolsObserveResponseNoProtocols() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "protocols": []
+      }
+    }
   }
 
   public versionServerResponse(): any {

@@ -4,6 +4,9 @@ import { environment } from 'src/environments/environment';
 import { VersionService } from '../version/version.service';
 import { AddressesService } from '../addresses/addresses.service';
 import { lt as semverLt, coerce as semverCoerce } from 'semver'
+import { LocalStorageProtocolService } from '../../helpers/local-storage-protocol/local-storage-protocol.service';
+import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
+import { ProtocolsService } from '../protocols/protocols.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +18,9 @@ export class ConnectivityService {
     private http: HttpClient,
     private versionService: VersionService,
     private addressesService: AddressesService,
+    private protocolsService: ProtocolsService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageServerService: LocalStorageServerService,
 
   ) { }
 
@@ -150,9 +156,12 @@ export class ConnectivityService {
    *
    * Addresses: 0 by default
    */
-  public async getApiAvailability() {
+  public async getApiAddressAvailability() {
     let status = { "addresses": 0 }
-    let res = await this.addressesService.getAddressesResponse().toPromise().catch(err => {
+    let protocol = await this.localStorageProtocolService.getCurrentProtocol()
+    let network = await this.localStorageServerService.getCurrentNetwork()
+
+    let res = await this.addressesService.getAddressesResponse(protocol, network).toPromise().catch(err => {
       status["status"] = "error",
         status["code"] = err.status,
         status["message"] = err.message
@@ -164,6 +173,36 @@ export class ConnectivityService {
         status["message"] = res["statusText"]
       // Are any addresses configured?
       status["addresses"] = (res["body"] && res["body"]["addresses"]) ? res["body"]["addresses"].length : 0
+    }
+
+    return status
+  }
+
+  /**
+   * Get API status (protocols endpoint) and number of protocols configured.
+   * This helps a user understand/ troubleshoot connection details.
+   * Errors:
+   *    200 - OK
+   *    404 - Not found
+   *    0   - Nothing returns (offline?)
+   *
+   * Protocols: 0 by default
+   */
+  public async getApiProtocolsAvailability() {
+    let status = { "protocols": 0 }
+
+    let res = await this.protocolsService.getProtocols().toPromise().catch(err => {
+      status["status"] = "error",
+        status["code"] = err.status,
+        status["message"] = err.message
+    });
+
+    if (res && res["status"] == 200) {
+      status["status"] = "ok",
+        status["code"] = res["status"],
+        status["message"] = res["statusText"]
+      // Are any protocols configured?
+      status["protocols"] = (res["body"] && res["body"]["protocols"]) ? res["body"]["protocols"].length : 0
     }
 
     return status
