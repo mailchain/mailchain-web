@@ -11,7 +11,7 @@ export class SendServiceStub {
   ) {
   }
 
-  sendMail(outboundMail: OutboundMail, network: string) {
+  sendMail(outboundMail: OutboundMail, protocol: string, network: string) {
     return of([])
   }
 

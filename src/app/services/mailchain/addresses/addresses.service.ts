@@ -10,14 +10,11 @@ import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.serv
 export class AddressesService {
 
   private url: string
-  private protocol: string
-  private network: string
 
   constructor(
     private http: HttpClient,
     private httpHelpersService: HttpHelpersService,
     private localStorageServerService: LocalStorageServerService,
-    private localStorageProtocolService: LocalStorageProtocolService,
   ) {
     this.initUrl()
   }
@@ -26,18 +23,16 @@ export class AddressesService {
    * Initialize URL from local storage
    */
   async initUrl() {
-    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`,
-      this.protocol = await this.localStorageProtocolService.getCurrentProtocol()
-    this.network = this.localStorageServerService.getCurrentNetwork()
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
   }
 
   /**
    * Get and return the public addresses from my wallet to send from
    */
-  async getAddresses() {
+  async getAddresses(protocol, network) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol', this.protocol],
-      ['network', this.network]
+      ['protocol', protocol],
+      ['network', network]
     ])
 
     var addresses = []
@@ -47,7 +42,7 @@ export class AddressesService {
       // TODO handle failure
     ).toPromise();
     res["body"]["addresses"].forEach(address => {
-      addresses.push(this.handleAddressFormatting(address, 'ethereum'))
+      addresses.push(this.handleAddressFormatting(address, protocol))
     });
     return addresses
   }
@@ -64,10 +59,10 @@ export class AddressesService {
   /**
    * Returns the addresses response with status codes
    */
-  public getAddressesResponse() {
+  public getAddressesResponse(protocol, network) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol', this.protocol],
-      ['network', this.network]
+      ['protocol', protocol],
+      ['network', network]
     ])
 
     return this.http.get(

@@ -35,11 +35,6 @@ describe('MessagesService', () => {
       let messagesService: MessagesService = TestBed.get(MessagesService)
       expect(messagesService['url']).toEqual('http://127.0.0.1:8080/api')
     });
-
-    it('should initialize the protocol', () => {
-      let messagesService: MessagesService = TestBed.get(MessagesService)
-      expect(messagesService['protocol']).toEqual('ethereum')
-    });
   });
 
   describe('getMessages', () => {

@@ -13,7 +13,7 @@ export class AddressesServiceStub {
 
   constructor() { }
 
-  async getAddresses() {
+  async getAddresses(protocol, network) {
     return this.addresses
   }
 

@@ -442,6 +442,7 @@ describe('InboxComposeComponent', () => {
       component.model.from = currentAccount2
       component.model.subject = "Test Message"
       component.model.body = "This is a test message"
+      component.currentProtocol = 'ethereum'
       component.currentNetwork = 'testnet'
       component.envelopeType = "0x05"
 
@@ -470,7 +471,7 @@ describe('InboxComposeComponent', () => {
     it('should send a message using the sendService', async () => {
 
       component.onSubmit();
-      expect(sendService.sendMail).toHaveBeenCalledWith(outboundMail, 'testnet')
+      expect(sendService.sendMail).toHaveBeenCalledWith(outboundMail, 'ethereum', 'testnet')
     })
 
     it('should generate a message', () => {

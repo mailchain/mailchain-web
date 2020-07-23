@@ -4,6 +4,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { AddressesService } from './addresses.service';
 import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
+import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
+import { ProtocolsService } from '../protocols/protocols.service';
 
 
 describe('AddressesService', () => {
@@ -16,12 +18,12 @@ describe('AddressesService', () => {
 
   const desiredUrl = `http://127.0.0.1:8080/api/addresses?protocol=ethereum&network=mainnet`
 
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         AddressesService,
         HttpHelpersService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [HttpClientTestingModule]
     });
@@ -50,7 +52,7 @@ describe('AddressesService', () => {
   });
 
   it('should get an array of sender addresses', () => {
-    addressesService.getAddresses().then(res => {
+    addressesService.getAddresses('ethereum', 'mainnet').then(res => {
       expect(res).toEqual(expectedAddresses)
     });
 

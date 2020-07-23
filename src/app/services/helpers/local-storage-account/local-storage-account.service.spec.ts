@@ -4,6 +4,8 @@ import { LocalStorageAccountService } from './local-storage-account.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AddressesService } from '../../mailchain/addresses/addresses.service';
 import { AddressesServiceStub } from '../../mailchain/addresses/addresses.service.stub';
+import { ProtocolsService } from '../../mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from '../../mailchain/protocols/protocols.service.stub';
 
 describe('LocalStorageAccountService', () => {
 
@@ -19,6 +21,7 @@ describe('LocalStorageAccountService', () => {
       providers: [
         LocalStorageAccountService,
         { provide: AddressesService, useClass: AddressesServiceStub },
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [HttpClientModule]
     });

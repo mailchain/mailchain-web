@@ -232,7 +232,7 @@ export class InboxComponent implements OnInit {
    *   inbox: default 0
    */
   async setFromAddressList() {
-    this.fromAddressesKeys = await this.addressesService.getAddresses();
+    this.fromAddressesKeys = await this.addressesService.getAddresses(this.currentProtocol, this.currentNetwork);
 
     this.fromAddressesKeys.forEach(address => {
       this.fromAddresses[address] = {
@@ -376,7 +376,7 @@ export class InboxComponent implements OnInit {
 
     this.fromAddressesKeys.forEach(address => {
       var self = this
-      this.messagesService.getMessages(address, this.currentNetwork).subscribe(function (res) {
+      this.messagesService.getMessages(address, this.currentProtocol, this.currentNetwork).subscribe(function (res) {
 
         self.processUnreadMessagesInboxCounter(address, res["body"]["messages"])
         self.processInboxMessages(res["body"]["messages"])

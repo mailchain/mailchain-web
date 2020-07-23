@@ -106,7 +106,7 @@ export class InboxComposeComponent implements OnInit {
    * Sets the available 'from' addresses
    */
   private async setFromAddressList() {
-    this.fromAddresses = await this.addressesService.getAddresses();
+    this.fromAddresses = await this.addressesService.getAddresses(this.currentProtocol, this.currentNetwork);
   }
 
   /**
@@ -484,9 +484,10 @@ export class InboxComposeComponent implements OnInit {
    * @param outboundMail The OutboundMail object
    */
   private sendMessage(outboundMail: OutboundMail) {
+    let protocol = this.currentProtocol
     let network = this.currentNetwork
 
-    return this.sendService.sendMail(outboundMail, network)
+    return this.sendService.sendMail(outboundMail, protocol, network)
   }
 
   /**

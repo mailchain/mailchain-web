@@ -12,7 +12,7 @@ export class MessagesServiceStub {
   ) {
   }
 
-  getMessages(rcptAddress: string, network: string): Observable<any> {
+  getMessages(rcptAddress: string, protocol: string, network: string): Observable<any> {
     let messages = this.mailchainTestService.messagesResponse
     return of(messages)
   };

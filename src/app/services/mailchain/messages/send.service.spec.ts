@@ -5,6 +5,8 @@ import { SendService } from './send.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 import { MailchainTestService } from '../../../test/test-helpers/mailchain-test.service';
+import { ProtocolsService } from '../protocols/protocols.service';
+import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
 
 describe('SendService', () => {
   let sendService: SendService;
@@ -17,6 +19,7 @@ describe('SendService', () => {
         SendService,
         HttpHelpersService,
         MailchainTestService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [HttpClientTestingModule]
     });
@@ -39,10 +42,6 @@ describe('SendService', () => {
     it('should initialize the url', () => {
       expect(sendService['url']).toEqual('http://127.0.0.1:8080/api')
     });
-
-    it('should initialize the protocol', () => {
-      expect(sendService['protocol']).toEqual('ethereum')
-    });
   });
 
   describe('SendMail', () => {
@@ -51,7 +50,7 @@ describe('SendService', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let resResponse = mailchainTestService.sendMailResponse()
 
-      let response = sendService.sendMail(outboundMailObject, 'ropsten')
+      let response = sendService.sendMail(outboundMailObject, 'ethereum', 'ropsten')
 
       response.subscribe(res => {
         expect(res["url"]).toEqual(resResponse["url"])
@@ -67,7 +66,7 @@ describe('SendService', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let resResponse = mailchainTestService.sendMailResponse()
 
-      let response = sendService.sendMail(outboundMailObject, 'ropsten')
+      let response = sendService.sendMail(outboundMailObject, 'ethereum', 'ropsten')
 
       response.subscribe(res => {
         expect(res["body"]["body"]).toEqual(resResponse["body"])
@@ -84,11 +83,13 @@ describe('SendService', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let resResponse = mailchainTestService.sendMailResponse()
 
-      let response = sendService.sendMail(outboundMailObject, 'ropsten')
+      let response = sendService.sendMail(outboundMailObject, 'ethereum', 'ropsten')
 
       response.subscribe(res => {
         expect(res["status"]).toEqual(resResponse["status"])
       })
+
+      // console.warn(httpTestingController, 97);
 
       // handle open connections
       const req = httpTestingController.expectOne(resResponse["url"]);
@@ -100,7 +101,7 @@ describe('SendService', () => {
     it('should send an outbound mail to the right network', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       let network = "mytestnet"
-      let response = sendService.sendMail(outboundMailObject, network)
+      let response = sendService.sendMail(outboundMailObject, 'ethereum', network)
       let url = `http://127.0.0.1:8080/api/messages?protocol=ethereum&network=${network}`
       let body = null
 
