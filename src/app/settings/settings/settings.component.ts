@@ -15,8 +15,8 @@ export class SettingsComponent implements OnInit {
 
   public protocols: Array<any> = [];
   public networks: Array<any> = [];
-  public currentNetwork: String = "mainnet";
-  public currentProtocol: String = "ethereum";
+  public currentNetwork: String;
+  public currentProtocol: String;
   public currentSettings: any = {};
 
   public currentWebProtocol: string;
@@ -53,7 +53,7 @@ export class SettingsComponent implements OnInit {
    *   -or-
    *   sets the default protocol if none is configured ("ethereum")
    */
-  private async setCurrentProtocol() {
+  async setCurrentProtocol() {
     this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol() || "ethereum"
   }
 
@@ -62,15 +62,12 @@ export class SettingsComponent implements OnInit {
    *   -or-
    *   sets the default network if none is configured (the first Ethereum network)
    */
-  private async setCurrentNetwork() {
+  async setCurrentNetwork() {
     let localCurrentNetwork = await this.localStorageServerService.getCurrentNetwork()
-    if (this.networksListContainsNetwork(localCurrentNetwork) || !this.networks.length) {
-      console.log(1);
-
+    if (this.networksListContainsNetwork(localCurrentNetwork)) {
       this.currentNetwork = localCurrentNetwork
     } else {
       // protocol mismatch
-      console.log(2, this.networks);
       this.currentNetwork = this.networks[0]["value"]
     }
   }
