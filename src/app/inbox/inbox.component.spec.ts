@@ -53,41 +53,6 @@ describe('InboxComponent', () => {
   const currentPort = '8080';
   const addresses = [currentAccount, currentAccount2];
 
-  class ActivatedRouteStub {
-    //Observable that contains a map of the parameters
-    private subjectParamMap = new BehaviorSubject(convertToParamMap(this.testParamMap));
-    paramMap = this.subjectParamMap.asObservable();
-
-    private _testParamMap: ParamMap;
-    get testParamMap() {
-      return this._testParamMap;
-    }
-    set testParamMap(params: {}) {
-      this._testParamMap = convertToParamMap(params);
-      this.subjectParamMap.next(this._testParamMap);
-    }
-
-    //Observable that contains a map of the query parameters
-    private subjectQueryParamMap = new BehaviorSubject(convertToParamMap(this.testParamMap));
-    queryParamMap = this.subjectQueryParamMap.asObservable();
-
-    private _testQueryParamMap: ParamMap;
-    get testQueryParamMap() {
-      return this._testQueryParamMap;
-    }
-    set testQueryParamMap(params: {}) {
-      this._testQueryParamMap = convertToParamMap(params);
-      this.subjectQueryParamMap.next(this._testQueryParamMap);
-    }
-
-    get snapshot() {
-      return {
-        paramMap: this.testParamMap,
-        queryParamMap: this.testQueryParamMap
-      }
-    }
-  }
-
   beforeEach(async(() => {
 
     TestBed.configureTestingModule({
@@ -104,7 +69,6 @@ describe('InboxComponent', () => {
         { provide: AddressesService, useClass: AddressesServiceStub },
         { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: MessagesService, useClass: MessagesServiceStub },
-        { provide: ActivatedRoute, useClass: ActivatedRouteStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub }
 
       ],
@@ -575,74 +539,6 @@ describe('InboxComponent', () => {
 
       expect(component.serverSettings).toEqual(obj)
     });
-  });
-  describe('checkServerSettingsInQueryParams', () => {
-    let wpVal = 'zttps'
-    let hostVal = 'someexample.com'
-    let portVal = '2019'
-
-    beforeEach(() => {
-      activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as any;
-
-
-      spyOn(component, 'windowReload').and.callFake(function () { });
-      // activatedRoute.testParamMap = {category: 'api-02'};
-      // activatedRoute.testQueryParamMap = {period:'2018',size:'14'};
-    })
-
-    it('should update serverSettings if params are present', () => {
-      activatedRoute.testQueryParamMap = {
-        "web-protocol": wpVal,
-        "host": hostVal,
-        "port": portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual(wpVal)
-      expect(localStorageServerService.getCurrentHost()).toEqual(hostVal)
-      expect(localStorageServerService.getCurrentPort()).toEqual(portVal)
-    });
-
-    it('should NOT update webProtocol serverSettings if webProtocol param is NOT present', () => {
-      let originalVal = localStorageServerService.getCurrentWebProtocol()
-
-      activatedRoute.testQueryParamMap = {
-        // "web-protocol":wpVal,
-        "host": hostVal,
-        "port": portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentWebProtocol()).not.toEqual(wpVal)
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual(originalVal)
-    });
-    it('should NOT update host serverSettings if host param is NOT present', () => {
-      let originalVal = localStorageServerService.getCurrentHost()
-
-      activatedRoute.testQueryParamMap = {
-        "web-protocol": wpVal,
-        // "host":hostVal,
-        "port": portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentHost()).not.toEqual(hostVal)
-      expect(localStorageServerService.getCurrentHost()).toEqual(originalVal)
-    });
-    it('should NOT update port serverSettings if port param is NOT present', () => {
-      let originalVal = localStorageServerService.getCurrentPort()
-
-      activatedRoute.testQueryParamMap = {
-        "web-protocol": wpVal,
-        "host": hostVal,
-        // "port":portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentPort()).not.toEqual(portVal)
-      expect(localStorageServerService.getCurrentPort()).toEqual(originalVal)
-    });
-
   });
 
   describe('getMails', () => {
