@@ -346,40 +346,59 @@ describe('InboxComposeComponent', () => {
   })
 
   describe('resolveAddress', () => {
-    it('should call nameserviceService.resolveName if given a name-like value', () => {
-      spyOn(nameserviceService, 'resolveName').and.callThrough()
-      component.resolveAddress(ensName)
-      expect(nameserviceService.resolveName).toHaveBeenCalled()
+    describe('in ethereum', () => {
 
-    })
-    it('should call nameserviceService.resolveName with params for protocol, network & name-like value', () => {
-      spyOn(nameserviceService, 'resolveName').and.callThrough()
-      component.resolveAddress(ensName)
-      expect(nameserviceService.resolveName).toHaveBeenCalledWith(
-        component.currentProtocol,
-        component.currentNetwork,
-        ensName
-      )
-    })
-    it('should return an observable with body containing address hash if given a name-like value', async () => {
-      let obs = await component.resolveAddress(ensName)
-      let expectedBody = { address: currentAccount }
-      obs.subscribe(res => {
-        expect(res['body']).toEqual(expectedBody)
+      it('should call nameserviceService.resolveName if given a name-like value', () => {
+        spyOn(nameserviceService, 'resolveName').and.callThrough()
+        component.currentProtocol = 'ethereum'
+        component.resolveAddress(ensName)
+        expect(nameserviceService.resolveName).toHaveBeenCalled()
+
+      })
+      it('should call nameserviceService.resolveName with params for protocol, network & name-like value ', () => {
+        spyOn(nameserviceService, 'resolveName').and.callThrough()
+        component.currentProtocol = 'ethereum'
+        component.resolveAddress(ensName)
+        expect(nameserviceService.resolveName).toHaveBeenCalledWith(
+          component.currentProtocol,
+          component.currentNetwork,
+          ensName
+        )
+      })
+      it('should return an observable with body containing address hash if given a name-like value', async () => {
+        component.currentProtocol = 'ethereum'
+        let obs = await component.resolveAddress(ensName)
+        let expectedBody = { address: currentAccount }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
+      })
+      it('should return an observable with body containing address hash if given an address-like value', async () => {
+        component.currentProtocol = 'ethereum'
+        let obs = await component.resolveAddress(currentAccount)
+        let expectedBody = { address: currentAccount }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
+      })
+      it('should return an observable with body containing empty address hash if given a value that is not name-like or address-like', async () => {
+        component.currentProtocol = 'ethereum'
+        let obs = await component.resolveAddress('string')
+        let expectedBody = { address: '' }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
       })
     })
-    it('should return an observable with body containing address hash if given an address-like value', async () => {
-      let obs = await component.resolveAddress(currentAccount)
-      let expectedBody = { address: currentAccount }
-      obs.subscribe(res => {
-        expect(res['body']).toEqual(expectedBody)
-      })
-    })
-    it('should return an observable with body containing empty address hash if given a value that is not name-like or address-like', async () => {
-      let obs = await component.resolveAddress('string')
-      let expectedBody = { address: '' }
-      obs.subscribe(res => {
-        expect(res['body']).toEqual(expectedBody)
+    describe('in substrate', () => {
+
+      it('should return an observable with body containing address hash if given an address-like value', async () => {
+        component.currentProtocol = 'substrate'
+        let obs = await component.resolveAddress(currentAccount)
+        let expectedBody = { address: currentAccount }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
       })
     })
   })

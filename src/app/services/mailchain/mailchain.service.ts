@@ -212,6 +212,17 @@ export class MailchainService {
   }
 
   /**
+   * tests the value matches the Substrate Address Regex
+   * @param value the address value to test, e.g. TODOTODO
+   * expects TODODO
+   */
+  public validateSubstrateAddress(value) {
+    // let regex = new RegExp('0x[0-9a-fA-F]{40}$');
+    // return regex.test(value)
+    return true
+  }
+
+  /**
    * getContentTypeForView: determines how the application should handle various content types in messages.
    * Returns `html` or `plaintext` based on the contentType provided.
    */

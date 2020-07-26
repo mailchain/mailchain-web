@@ -194,7 +194,10 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe((res) => {
       res.subscribe(val => {
         let address = val['body']['address']
-        if (this.mailchainService.validateEthAddress(address)) {
+        if (
+          (this.currentProtocol == 'ethereum' && this.mailchainService.validateEthAddress(address)) ||
+          (this.currentProtocol == 'substrate' && this.mailchainService.validateSubstrateAddress(address))
+        ) {
           this.model.to = address
           this.setRecipientLoadingIcon('valid')
           this.setRecipientLoadingText('valid address')
@@ -202,7 +205,6 @@ export class InboxComposeComponent implements OnInit {
           this.setRecipientLoadingIcon('invalid')
           this.setRecipientLoadingText('invalid address')
         }
-
       }, err => {
         this.setRecipientLoadingIcon('invalid')
         this.setRecipientLoadingText(err['error']['message'])
@@ -228,21 +230,33 @@ export class InboxComposeComponent implements OnInit {
   public async resolveAddress(value) {
     let returnObs
 
-    if (this.mailchainService.validateEnsName(value)) {
-      returnObs = await this.nameserviceService.resolveName(
-        this.currentProtocol,
-        this.currentNetwork,
-        value
-      )
-    } else if (this.mailchainService.validateEthAddress(value)) {
-      returnObs = of(
-        { body: { address: value } }
-      )
-    } else {
-      returnObs = of(
-        { body: { address: '' } }
-      )
-    }
+    if (this.currentProtocol == 'ethereum') {
+      if (this.mailchainService.validateEnsName(value)) {
+        returnObs = await this.nameserviceService.resolveName(
+          this.currentProtocol,
+          this.currentNetwork,
+          value
+        )
+      } else if (this.mailchainService.validateEthAddress(value)) {
+        returnObs = of(
+          { body: { address: value } }
+        )
+      } else {
+        returnObs = of(
+          { body: { address: '' } }
+        )
+      }
+    } else if (this.currentProtocol == 'substrate') {
+      if (this.mailchainService.validateSubstrateAddress(value)) {
+        returnObs = of(
+          { body: { address: value } }
+        )
+      } else {
+        returnObs = of(
+          { body: { address: '' } }
+        )
+      }
+    };
 
     return returnObs
 
