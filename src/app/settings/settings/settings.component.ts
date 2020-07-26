@@ -66,7 +66,7 @@ export class SettingsComponent implements OnInit {
     let localCurrentNetwork = await this.localStorageServerService.getCurrentNetwork()
     if (this.networksListContainsNetwork(localCurrentNetwork)) {
       this.currentNetwork = localCurrentNetwork
-    } else {
+    } else if (this.networks.length) {
       // protocol mismatch
       this.currentNetwork = this.networks[0]["value"]
     }
@@ -77,23 +77,28 @@ export class SettingsComponent implements OnInit {
    * @param network 
    */
   private networksListContainsNetwork(network): boolean {
-    let networkValues = this.networks.map(function (el) { return el.value })
+    let networkValues = this.networks.map(el => { return el.value })
     return networkValues.includes(network)
   }
 
   /**
-   * changeProtocol updates the network values in the list and sets the network to either be the original currentNetwork in session storage or the first in the list
+   * changeProtocol updates the network values in the list and sets the network to either be either (in preferred order):
+   * 1. the original currentNetwork in session storage
+   * 2. the first network in the list
+   * 3. undefined
    */
   public async changeProtocol() {
     await this.setNetworkList()
 
+    let nwValues = this.networks.map(el => el["value"])
     if (
-      this.currentProtocol == this.currentSettings["currentProtocol"] &&
-      this.networks.map(el => el["value"]).includes(this.currentSettings["currentNetwork"])
+      this.currentProtocol == this.currentSettings["currentProtocol"] && nwValues.includes(this.currentSettings["currentNetwork"])
     ) {
       this.currentNetwork = this.currentSettings["currentNetwork"]
-    } else {
+    } else if (nwValues.length) {
       this.currentNetwork = this.networks[0]["value"]
+    } else {
+      this.currentNetwork = undefined
     }
   }
 
@@ -124,9 +129,11 @@ export class SettingsComponent implements OnInit {
   public async setNetworkList() {
     this.networks = []
     await this.protocolsService.getProtocols().toPromise().then(res => {
+
       this.protocols = res["protocols"].map(el => { return el["name"] });
       if (res["protocols"].length > 0) {
         res["protocols"].forEach(ptcl => {
+
           if (ptcl["name"] == this.currentProtocol) {
             this.networks = this.formatByNameForSelect(ptcl["networks"])
           }
@@ -225,15 +232,9 @@ export class SettingsComponent implements OnInit {
 
   /**
  * Reload the window with the original path.
- * Used to remove url params and reload a clean component
  */
   public windowReload() {
-    let path = window.location.pathname
-    window.location.replace(path)
+    window.location.reload()
   }
-
-
-
-
 
 }

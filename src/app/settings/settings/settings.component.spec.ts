@@ -16,6 +16,7 @@ import { LocalStorageAccountService } from 'src/app/services/helpers/local-stora
 import { LocalStorageAccountServiceStub } from 'src/app/services/helpers/local-storage-account/local-storage-account.service.stub';
 import { LocalStorageProtocolService } from 'src/app/services/helpers/local-storage-protocol/local-storage-protocol.service';
 import { LocalStorageProtocolServiceStub } from 'src/app/services/helpers/local-storage-protocol/local-storage-protocol.service.stub';
+import { Router } from '@angular/router';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
@@ -40,6 +41,7 @@ describe('SettingsComponent', () => {
   let localStorageCurrentHost: string;
   let localStorageCurrentNetwork: string;
   let localStorageCurrentProtocol: string;
+  let router: Router
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -66,7 +68,7 @@ describe('SettingsComponent', () => {
     localStorageServerService = TestBed.get(LocalStorageServerService);
     localStorageAccountService = TestBed.get(LocalStorageAccountService);
     localStorageProtocolService = TestBed.get(LocalStorageProtocolService);
-
+    router = TestBed.get(Router);
 
   }));
 
@@ -126,7 +128,7 @@ describe('SettingsComponent', () => {
     });
   })
 
-  fdescribe('setCurrentNetwork', () => {
+  describe('setCurrentNetwork', () => {
     it('should set the component currentNetwork to value returned by localStorageServerService.getCurrentNetwork if that value is also in the networks list for the currentProtcol', async () => {
       spyOn(localStorageServerService, 'getCurrentNetwork').and.returnValue('mainnet')
       component.networks = [
@@ -160,113 +162,125 @@ describe('SettingsComponent', () => {
       expect(component.currentNetwork).toBe('testnet')
     });
 
-  })
+    it('should handle empty networks list', async () => {
+      spyOn(localStorageServerService, 'getCurrentNetwork').and.returnValue('anothernet')
+      component.networks = []
+      await component.setCurrentNetwork()
 
+      expect(component.currentNetwork).toBe(undefined)
+    });
+  });
 
   describe('changeProtocol', () => {
-    it('should call setNetworkList function', () => {
+    it('should call setNetworkList function', async () => {
+      await component.ngOnInit
       spyOn(component, "setNetworkList")
-      component.changeProtocol()
+      await component.changeProtocol()
       expect(component.setNetworkList).toHaveBeenCalled()
     });
-    it('should set currentNetwork to the currentNetwork value in that value is present in the networks list for the currentProtocol', () => {
-      // TODO
+    it('should set the currentNetwork to the original currentNetwork value if that value is present in the networks list for the currentProtocol', async () => {
+      component.currentProtocol = 'myProtocol'
+      component.currentSettings['currentProtocol'] = 'myProtocol'
+      component.currentSettings['currentNetwork'] = 'myNetwork'
+      component.networks = [
+        { label: 'testnet', value: 'testnet' },
+        { label: 'myNetwork', value: 'myNetwork' },
+        { label: 'othernet', value: 'othernet' }
+      ]
+      spyOn(component, "setNetworkList").and.returnValue(of(''))
+
+      await component.changeProtocol()
+      component.changeProtocol()
+      expect(component.currentNetwork).toBe('myNetwork')
     });
-    it('should set currentNetwork to the first value in the networks list if the currentNetwork is not in the network list for the currentProtocol', () => {
-      // TODO
+    it('should set currentNetwork to the first value in the networks list if the currentNetwork is not in the network list for the currentProtocol', async () => {
+      component.currentProtocol = 'myProtocol'
+      component.currentSettings['currentProtocol'] = 'myProtocol'
+      component.currentSettings['currentNetwork'] = 'myNetwork'
+      component.networks = [
+        { label: 'testnet', value: 'testnet' },
+        { label: 'othernet', value: 'othernet' }
+      ]
+      spyOn(component, "setNetworkList").and.returnValue(of(''))
+
+      await component.changeProtocol()
+      expect(component.currentNetwork).toBe('testnet')
     });
   })
 
-  // getServerSettings
-  describe('changeProtocol', () => {
-    it('should do something', () => {
-      // TODO
+  describe('getServerSettings', () => {
+    it('should call localStorageServerService.getCurrentWebProtocol function', () => {
+      spyOn(localStorageServerService, "getCurrentWebProtocol")
+      component.getServerSettings()
+      expect(localStorageServerService.getCurrentWebProtocol).toHaveBeenCalled()
+    });
+    it('should call localStorageServerService.getCurrentHost function', () => {
+      spyOn(localStorageServerService, "getCurrentHost")
+      component.getServerSettings()
+      expect(localStorageServerService.getCurrentHost).toHaveBeenCalled()
+    });
+    it('should call localStorageServerService.getCurrentPort function', () => {
+      spyOn(localStorageServerService, "getCurrentPort")
+      component.getServerSettings()
+      expect(localStorageServerService.getCurrentPort).toHaveBeenCalled()
     });
   })
 
-  // setCurrentSettings
-  describe('changeProtocol', () => {
-    it('should do something', () => {
-      // TODO
+  describe('setCurrentSettings', () => {
+    beforeEach(() => {
+      component.currentWebProtocol = "myCurrentWebProtocol"
+      component.currentHost = "myCurrentHost"
+      component.currentPort = "myCurrentPort"
+      component.currentProtocol = "myCurrentProtocol"
+      component.currentNetwork = "myCurrentNetwork"
+      component.setCurrentSettings()
+    });
+
+    it('should store currentWebProtocol field in currentSettings', () => {
+      expect(component.currentSettings["currentWebProtocol"]).toBe('myCurrentWebProtocol')
+    });
+    it('should store currentHost field in currentSettings', () => {
+      expect(component.currentSettings["currentHost"]).toBe('myCurrentHost')
+    });
+    it('should store currentPort field in currentSettings', () => {
+      expect(component.currentSettings["currentPort"]).toBe('myCurrentPort')
+    });
+    it('should store currentProtocol field in currentSettings', () => {
+      expect(component.currentSettings["currentProtocol"]).toBe('myCurrentProtocol')
+    });
+    it('should store currentNetwork field in currentSettings', () => {
+      expect(component.currentSettings["currentNetwork"]).toBe('myCurrentNetwork')
     });
   })
 
-  describe('protocols and networks', () => {
+  describe('setNetworkList', () => {
     it('should get the available protocols', async () => {
-      component.setNetworkList()
+      await component.setNetworkList()
       expect(component.protocols).toEqual(['ethereum', 'substrate'])
     });
 
-    it('should set the default protocol', () => {
-      component.ngOnInit()
-      expect(component.currentProtocol).toEqual('ethereum')
-    });
+    it('should set network list for the currentProtocol', async () => {
+      await component.ngOnInit()
 
-    // it('should set the default network', () => {
-    //   component.ngOnInit()
-    //   expect(component.currentNetwork).toEqual('mainnet')
-    // });
+      component.currentProtocol = 'ethereum'
+      await component.setNetworkList()
+      expect(component.networks).toEqual([
+        { label: "goerli", value: "goerli" },
+        { label: "kovan", value: "kovan" },
+        { label: "mainnet", value: "mainnet" },
+        { label: "rinkeby", value: "rinkeby" },
+        { label: "ropsten", value: "ropsten" },
+      ])
 
-    // it('should get the networks based on the protocol', () => {
-    //   component.ngOnInit()
-    //   expect(component.networks).toEqual(["goerli", "kovan", "mainnet", "rinkeby", "ropsten"])
-    // });
-
-    // it('should update the networks based on the protocol changing', () => {
-    //   component.ngOnInit()
-    //   component.updateNetworks("substrate")
-    //   expect(component.networks).toEqual(["edgeware-testnet"])
-    // });
-
-    // it('should reset the network and protocol to defaults', () => {
-    // });
-
-  });
-
-  describe('setNetworkList', () => {
-    beforeEach(() => {
-      networkList = mailchainTestService.networkList();
-    });
-
-    it('should populate the network list', () => {
-      expect(component.networks).toEqual([]);
-      component.setNetworkList()
-      expect(component.networks).toEqual(networkList)
-    });
-    it('should TODO MORE', () => {
-      // TODO
-    });
-  });
-
-  describe('getServerSettings', () => {
-    it('should set the currentWebProtocol to the value foundin localStorage"', () => {
-      let val = 'webProtocolVal'
-
-      localStorageServerService.setCurrentWebProtocol(val)
-      expect(component.currentWebProtocol).not.toEqual(val)
-
-      component.getServerSettings()
-      expect(component.currentWebProtocol).toEqual(val)
+      component.currentProtocol = 'substrate'
+      await component.setNetworkList()
+      expect(component.networks).toEqual([
+        { label: "edgeware-berlin", value: "edgeware-berlin" },
+        { label: "edgeware-mainnet", value: "edgeware-mainnet" },
+      ])
 
     });
-    it('should set the currentHost to the value foundin localStorage"', () => {
-      let val = 'hostVal'
 
-      localStorageServerService.setCurrentWebProtocol(val)
-      expect(component.currentWebProtocol).not.toEqual(val)
-
-      component.getServerSettings()
-      expect(component.currentWebProtocol).toEqual(val)
-    });
-    it('should set the currentPort to the value foundin localStorage"', () => {
-      let val = 'portVal'
-
-      localStorageServerService.setCurrentWebProtocol(val)
-      expect(component.currentWebProtocol).not.toEqual(val)
-
-      component.getServerSettings()
-      expect(component.currentWebProtocol).toEqual(val)
-    });
   });
 
   describe('removeCurrentAccount', () => {
@@ -287,131 +301,166 @@ describe('SettingsComponent', () => {
     });
   });
 
-  describe('updateServerSettings', () => {
-    beforeEach(() => {
-      spyOn(component, 'windowReload').and.callFake(function () { });
+  describe('returnToInboxMessages', () => {
+    it('should navigate to "/"', () => {
+      spyOn(router, 'navigate');
+
+      component.returnToInboxMessages();
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
     });
-
-    it('should set the webProtocol value from the settingsHash', async () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      component.updateServerSettings()
-
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('customproto')
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-    it('should set the host value from the settingsHash', async () => {
-      let settingsHash = {
-        "host": "example.com"
-      }
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentHost()).toEqual('example.com')
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-    it('should set the port value from the settingsHash', async () => {
-      let settingsHash = {
-        "port": "8888"
-      }
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentPort()).toEqual('8888')
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-
-    it('should reload the current path if serverSettings are changed"', () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-    it('should NOT reload the current path if serverSettings are NOT changed"', () => {
-      let settingsHash = {}
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(component.windowReload).not.toHaveBeenCalled();
-    });
-    it('should remove the currentAccount if serverSettings are changed"', async () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      localStorageAccountService.setCurrentAccount("accountVal")
-      expect(await localStorageAccountService.getCurrentAccount()).toEqual("accountVal")
-
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(await localStorageAccountService.getCurrentAccount()).toBeUndefined()
-    });
-    it('should NOT remove the currentAccount if serverSettings are NOT changed"', async () => {
-      let settingsHash = {}
-      localStorageAccountService.setCurrentAccount("accountVal")
-      expect(await localStorageAccountService.getCurrentAccount()).toEqual("accountVal")
-
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(await localStorageAccountService.getCurrentAccount()).toEqual("accountVal");
-    });
-
-    it('should remove the currentNetwork if serverSettings are changed"', async () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      localStorageServerService.setCurrentNetwork("networkVal")
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual("networkVal")
-
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentNetwork()).toBeUndefined()
-    });
-    it('should NOT remove the currentNetwork if serverSettings are NOT changed"', async () => {
-      let settingsHash = {}
-      localStorageServerService.setCurrentNetwork("networkVal")
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual("networkVal")
-
-      component.updateServerSettings()
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual("networkVal");
-    });
-
-    it('should remove removeCurrentAccount if serverSettings have changed', () => {
-      expect(component.windowReload).toHaveBeenCalled()
-    });
-    it('should NOT remove removeCurrentAccount if serverSettings have NOT changed', () => {
-      expect(component.windowReload).not.toHaveBeenCalled()
-    });
-    it('should reload the window if serverSettings have changed', () => {
-      expect(component.windowReload).toHaveBeenCalled()
-    });
-    it('should NOT reload the window if serverSettings NOT have changed', () => {
-      expect(component.windowReload).not.toHaveBeenCalled()
-    });
-    // TODO: check removeCurrentAccount ran
-
-
   });
 
-  describe('windowReload', () => {
-    xit('should reload the component with the same path', () => {
-      // TODO
+  describe('updateServerSettings', () => {
+    beforeEach(() => {
+      component.ngOnInit()
+
+      component.currentSettings["currentWebProtocol"] = "myCurrentWebProtocol"
+      component.currentWebProtocol = "myCurrentWebProtocol"
+      spyOn(localStorageServerService, 'setCurrentWebProtocol')
+
+      component.currentSettings["currentHost"] = "myCurrentHost"
+      component.currentHost = "myCurrentHost"
+      spyOn(localStorageServerService, 'setCurrentHost')
+
+      component.currentSettings["currentPort"] = "myCurrentPort"
+      component.currentPort = "myCurrentPort"
+      spyOn(localStorageServerService, 'setCurrentPort')
+
+      component.currentSettings["currentProtocol"] = "myCurrentProtocol"
+      component.currentProtocol = "myCurrentProtocol"
+      spyOn(localStorageProtocolService, 'setCurrentProtocol')
+
+      component.currentSettings["currentNetwork"] = "myCurrentNetwork"
+      component.currentNetwork = "myCurrentNetwork"
+      spyOn(localStorageServerService, 'setCurrentNetwork')
+
+      spyOn(component, 'windowReload').and.callFake(function () { }); // required here to stop reload looping in test
     });
 
-    xit('should remove any params in the url', () => {
-      // TODO
+    describe('removeCurrentAccount', () => {
+      it('should remove removeCurrentAccount if a serverSetting has changed', () => {
+        spyOn(component, 'removeCurrentAccount')
+        component.currentWebProtocol = "myNewWebProtocol"
+        component.updateServerSettings()
+        expect(component.removeCurrentAccount).toHaveBeenCalled()
+      });
+
+      it('should NOT remove removeCurrentAccount if serverSettings have NOT changed', () => {
+        spyOn(component, 'removeCurrentAccount')
+        component.updateServerSettings()
+        expect(component.removeCurrentAccount).not.toHaveBeenCalled()
+      });
     });
+
+    describe('windowReload', () => {
+      it('should reload the window if serverSettings have changed', () => {
+        component.currentWebProtocol = "newCurrentWebProtocol"
+        component.updateServerSettings()
+        expect(component.windowReload).toHaveBeenCalled()
+      });
+
+      it('should NOT reload the window if serverSettings NOT have changed', () => {
+        component.updateServerSettings()
+        expect(component.windowReload).not.toHaveBeenCalled()
+      });
+    });
+
+    describe('currentWebProtocol', () => {
+      it('should NOT call "localStorageServerService.setCurrentWebProtocol" if "currentWebProtocol" has not changed', () => {
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentWebProtocol).not.toHaveBeenCalled()
+      });
+
+      it('should NOT call "localStorageServerService.setCurrentWebProtocol" if a different setting ("currentHost") has changed', () => {
+        component.currentHost = "newCurrentHost"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentWebProtocol).not.toHaveBeenCalled()
+      });
+
+      it('should call "localStorageServerService.setCurrentWebProtocol" with the new value if "currentWebProtocol" has changed', () => {
+        component.currentWebProtocol = "newCurrentWebProtocol"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentWebProtocol).toHaveBeenCalledWith('newCurrentWebProtocol')
+      });
+    });
+
+
+    describe('currentHost', () => {
+      it('should NOT call "localStorageServerService.setCurrentHost" if "currentHost" has not changed', () => {
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentHost).not.toHaveBeenCalled()
+      });
+
+      it('should NOT call "localStorageServerService.setCurrentHost" if a different setting ("currentWebProtocol") has changed', () => {
+        component.currentWebProtocol = "newCurrentWebProtocol"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentHost).not.toHaveBeenCalled()
+      });
+
+      it('should call "localStorageServerService.setCurrentHost" with the new value if "currentHost" has changed', () => {
+        component.currentHost = "newCurrentHost"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentHost).toHaveBeenCalledWith('newCurrentHost')
+      });
+    });
+
+    describe('currentPort', () => {
+      it('should NOT call "localStorageServerService.setCurrentPort" if "currentPort" has not changed', () => {
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentPort).not.toHaveBeenCalled()
+      });
+
+      it('should NOT call "localStorageServerService.setCurrentPort" if a different setting ("currentHost") has changed', () => {
+        component.currentHost = "newCurrentHost"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentPort).not.toHaveBeenCalled()
+      });
+
+      it('should call "localStorageServerService.setCurrentPort" with the new value if "currentWebProtocol" has changed', () => {
+        component.currentPort = "newCurrentPort"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentPort).toHaveBeenCalledWith('newCurrentPort')
+      });
+    });
+
+    describe('currentProtocol', () => {
+      it('should NOT call "localStorageProtocolService.setCurrentProtocol" if "currentProtocol" has not changed', () => {
+        component.updateServerSettings()
+        expect(localStorageProtocolService.setCurrentProtocol).not.toHaveBeenCalled()
+      });
+
+      it('should NOT call "localStorageProtocolService.setCurrentProtocol" if a different setting ("currentHost") has changed', () => {
+        component.currentHost = "newCurrentHost"
+        component.updateServerSettings()
+        expect(localStorageProtocolService.setCurrentProtocol).not.toHaveBeenCalled()
+      });
+
+      it('should call "localStorageProtocolService.setCurrentProtocol" with the new value if "currentWebProtocol" has changed', () => {
+        component.currentProtocol = "newCurrentProtocol"
+        component.updateServerSettings()
+        expect(localStorageProtocolService.setCurrentProtocol).toHaveBeenCalledWith('newCurrentProtocol')
+      });
+    });
+
+    describe('currentNetwork', () => {
+      it('should NOT call "localStorageServerService.setCurrentNetwork" if "currentNetwork" has not changed', () => {
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentNetwork).not.toHaveBeenCalled()
+      });
+
+      it('should NOT call "localStorageServerService.setCurrentNetwork" if a different setting ("currentHost") has changed', () => {
+        component.currentHost = "newCurrentHost"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentNetwork).not.toHaveBeenCalled()
+      });
+
+      it('should call "localStorageServerService.setCurrentNetwork" with the new value if "currentNetwork" has changed', () => {
+        component.currentNetwork = "newCurrentNetwork"
+        component.updateServerSettings()
+        expect(localStorageServerService.setCurrentNetwork).toHaveBeenCalledWith('newCurrentNetwork')
+      });
+    });
+
   });
 
 });
