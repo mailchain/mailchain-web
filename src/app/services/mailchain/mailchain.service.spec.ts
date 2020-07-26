@@ -240,19 +240,36 @@ describe('MailchainService', () => {
     outboundMailObject["envelope"] = "0x05"
 
     it('should return valid outputs when given a valid Mail object', () => {
-      let response = mailchainService.generateMail(mailObject, "plaintext", "0x05")
+      let response = mailchainService.generateMail(mailObject, "plaintext", "0x05", "ethereum")
       
       expect(response).toEqual(outboundMailObject)
     })
     it('should return valid content type for plaintext', () => {
-      let response = mailchainService.generateMail(mailObject, "plaintext", "0x01")
+      let response = mailchainService.generateMail(mailObject, "plaintext", "0x01", "ethereum")
 
       expect(response["content-type"]).toEqual('text/plain; charset=\"UTF-8\"')
     })
     it('should return valid content type for html', () => {
-      let response = mailchainService.generateMail(mailObject, "html", "0x01")
+      let response = mailchainService.generateMail(mailObject, "html", "0x01", "ethereum")
 
       expect(response["content-type"]).toEqual('text/html; charset=\"UTF-8\"')
+    })
+    it('should specify public-key-kind as "secp256k1" if the currentProtocol is `ethereum`', () => {
+      let response = mailchainService.generateMail(mailObject, "html", "0x01", "ethereum")
+
+      expect(response["message"]["public-key-kind"]).toBe("secp256k1")
+    })
+
+    it('should specify public-key-kind as "secp256k1" if the currentProtocol is `unknown`', () => {
+      let response = mailchainService.generateMail(mailObject, "html", "0x01", "unknown")
+
+      expect(response["message"]["public-key-kind"]).toBe("secp256k1")
+    })
+
+    it('should specify public-key-kind as "sr25519" if the currentProtocol is `substrate`', () => {
+      let response = mailchainService.generateMail(mailObject, "html", "0x01", "substrate")
+
+      expect(response["message"]["public-key-kind"]).toBe("sr25519")
     })
   })
 

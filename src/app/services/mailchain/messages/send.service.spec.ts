@@ -137,7 +137,7 @@ describe('SendService', () => {
       // outboundMailObject["message"]["public-key-encoding"] = ""
     })
 
-    it('should specify public-key-kind as "secp256k1" in the outbound mail', () => {
+    it('should specify public-key-kind as "secp256k1" in the outbound mail by default', () => {
       let outboundMailObject = mailchainTestService.outboundMailObject()
       expect(outboundMailObject["message"]["public-key-kind"]).toBe("secp256k1")
     })

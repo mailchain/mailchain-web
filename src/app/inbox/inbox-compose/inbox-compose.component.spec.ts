@@ -477,7 +477,7 @@ describe('InboxComposeComponent', () => {
     it('should generate a message', () => {
 
       component.onSubmit();
-      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html', '0x05')
+      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html', '0x05', 'ethereum')
 
     })
 

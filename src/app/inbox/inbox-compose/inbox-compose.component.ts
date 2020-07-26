@@ -454,7 +454,7 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe(res => {
 
       this.model.publicKey = res["body"]["public-key"]
-      var outboundMail = this.generateMessage(this.model, this.inputContentType, this.envelopeType)
+      var outboundMail = this.generateMessage(this.model, this.inputContentType, this.envelopeType, this.currentProtocol)
 
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
@@ -475,8 +475,8 @@ export class InboxComposeComponent implements OnInit {
    * Builds the OutboundMail object for sending
    * @param mailObj The form Mail object
    */
-  private generateMessage(mailObj: Mail, inputContentType: string, envelope: string): OutboundMail {
-    return this.mailchainService.generateMail(mailObj, inputContentType, envelope)
+  private generateMessage(mailObj: Mail, inputContentType: string, envelope: string, protocol: string): OutboundMail {
+    return this.mailchainService.generateMail(mailObj, inputContentType, envelope, protocol)
   }
 
   /**

@@ -17,14 +17,19 @@ export class MailchainService {
  * Generate an outbound message ready to send
  * @param mailObj the Mail object
  * @param contentType the content type [ 'text/plain; charset=\"UTF-8\"' | 'text/html; charset=\"UTF-8\"' ]
+ * @param envelope the envelope, e.g. 0x01, 0x05 etc.
+ * @param protocol the protocol, e.g. ethereum, substrate etc.
  */
-  generateMail(mailObj, contentType, envelope): OutboundMail {
+  generateMail(mailObj, contentType, envelope, protocol): OutboundMail {
     var outboundMail = new OutboundMail
+    let keytype: string = this.getPublicKeyKindByProtocol(protocol)
+
     outboundMail.message["body"] = mailObj["body"]
     outboundMail.message["headers"]["from"] = mailObj["from"]
     outboundMail.message["headers"]["reply-to"] = mailObj["from"] //TODO: handle reply-to
     outboundMail.message["headers"]["to"] = mailObj["to"]
     outboundMail.message["public-key"] = mailObj["publicKey"]
+    outboundMail.message["public-key-kind"] = keytype
     outboundMail.message["subject"] = mailObj["subject"]
     outboundMail["envelope"] = envelope
 
@@ -40,6 +45,20 @@ export class MailchainService {
 
     return outboundMail
 
+  }
+
+  /**
+   * returns the key type to be used in the message
+   * @param protocol the keytype 
+   */
+  private getPublicKeyKindByProtocol(protocol) {
+    switch (protocol) {
+      case 'substrate':
+        return 'sr25519'
+      case 'ethereum':
+      default:
+        return 'secp256k1'
+    }
   }
 
   /**
