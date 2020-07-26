@@ -50,7 +50,9 @@ export class AddressesService {
     switch (chain) {
       case 'ethereum':
         return '0x' + address.toLowerCase()
+      case 'substrate':
       default:
+        return address.toLowerCase()
         break;
     }
   }
