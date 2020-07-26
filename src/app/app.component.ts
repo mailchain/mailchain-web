@@ -4,6 +4,8 @@ import { ConnectivityService } from './services/mailchain/connectivity/connectiv
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from './modals/modal-connectivity-error/modal-connectivity-error.component';
 import { errorMessages } from './services/helpers/error-messages/error-messages'
+import { LocalStorageProtocolService } from './services/helpers/local-storage-protocol/local-storage-protocol.service';
+import { LocalStorageServerService } from './services/helpers/local-storage-server/local-storage-server.service';
 
 @Component({
   selector: 'app-root',
@@ -20,9 +22,14 @@ export class AppComponent implements OnInit {
   public apiVersion = "";
   public modalConnectivityError: BsModalRef;
 
+  public currentNetwork: String;
+  public currentProtocol: String;
+
   constructor(
     private connectivityService: ConnectivityService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageServerService: LocalStorageServerService,
   ) {
 
   }
@@ -32,6 +39,9 @@ export class AppComponent implements OnInit {
   }
 
   public async ngOnInit() {
+    this.currentNetwork = await this.localStorageServerService.getCurrentNetwork()
+    this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol()
+
     await this.handleApiProtocolsAvailability()
     await this.handleApiAddressesAvailability()
     await this.handleWebConnectivity()
