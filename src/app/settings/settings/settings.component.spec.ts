@@ -14,8 +14,10 @@ import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/proto
 import { LocalStorageServerServiceStub } from 'src/app/services/helpers/local-storage-server/local-storage-server.service.stub';
 import { LocalStorageAccountService } from 'src/app/services/helpers/local-storage-account/local-storage-account.service';
 import { LocalStorageAccountServiceStub } from 'src/app/services/helpers/local-storage-account/local-storage-account.service.stub';
+import { LocalStorageProtocolService } from 'src/app/services/helpers/local-storage-protocol/local-storage-protocol.service';
+import { LocalStorageProtocolServiceStub } from 'src/app/services/helpers/local-storage-protocol/local-storage-protocol.service.stub';
 
-fdescribe('SettingsComponent', () => {
+describe('SettingsComponent', () => {
   let component: SettingsComponent;
   let fixture: ComponentFixture<SettingsComponent>;
   let mailchainService: MailchainService;
@@ -23,6 +25,7 @@ fdescribe('SettingsComponent', () => {
   let mailchainTestService: MailchainTestService;
   let localStorageServerService: LocalStorageServerService;
   let localStorageAccountService: LocalStorageAccountService;
+  let localStorageProtocolService: LocalStorageProtocolService;
 
   let activatedRoute: any
   let networkList: any
@@ -46,6 +49,7 @@ fdescribe('SettingsComponent', () => {
         MailchainService,
         { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
+        { provide: LocalStorageProtocolService, useClass: LocalStorageProtocolServiceStub },
         { provide: LocalStorageAccountService, useClass: LocalStorageAccountServiceStub },
       ],
       imports: [
@@ -61,6 +65,7 @@ fdescribe('SettingsComponent', () => {
     mailchainService = TestBed.get(MailchainService);
     localStorageServerService = TestBed.get(LocalStorageServerService);
     localStorageAccountService = TestBed.get(LocalStorageAccountService);
+    localStorageProtocolService = TestBed.get(LocalStorageProtocolService);
 
 
   }));
@@ -108,50 +113,51 @@ fdescribe('SettingsComponent', () => {
   });
 
   describe('setCurrentProtocol', () => {
-    it('should set the component currentProtocol to value stored in sessionStorage', () => {
-      spyOn(window.sessionStorage, 'currentProtocol').and.returnValue('myProtocol')
-      component.setCurrentProtocol()
-      expect(component.currentProtocol).toBe('myProtcol')
+    it('should set the component currentProtocol to value returned from localStorageProtocolService', async () => {
+      spyOn(localStorageProtocolService, 'getCurrentProtocol').and.returnValue('myProto')
+      await component.setCurrentProtocol()
+
+      expect(component.currentProtocol).toBe('myProto')
     });
-    it('should set the component currentProtocol to "ethereum" if no value is stored in sessionStorage', () => {
-      spyOn(window.sessionStorage, 'currentProtocol').and.returnValue(undefined)
-      component.setCurrentProtocol()
+    it('should set the component currentProtocol to "ethereum" if no value is returned from localStorageProtocolService', async () => {
+      spyOn(localStorageProtocolService, 'getCurrentProtocol').and.returnValue(undefined)
+      await component.setCurrentProtocol()
       expect(component.currentProtocol).toBe('ethereum')
     });
   })
 
-  describe('setCurrentNetwork', () => {
-    it('should set the component currentNetwork to value stored in sessionStorage if that value is also in the networks list for the currentProtcol', () => {
-      spyOn(window.sessionStorage, 'currentProtocol').and.returnValue('myProtocol')
+  fdescribe('setCurrentNetwork', () => {
+    it('should set the component currentNetwork to value returned by localStorageServerService.getCurrentNetwork if that value is also in the networks list for the currentProtcol', async () => {
+      spyOn(localStorageServerService, 'getCurrentNetwork').and.returnValue('mainnet')
       component.networks = [
-        { label: 'substrate', value: 'substrate' },
-        { label: 'myProtocol', value: 'myProtocol' }
+        { label: 'testnet', value: 'testnet' },
+        { label: 'mainnet', value: 'mainnet' }
       ]
-      component.setCurrentNetwork()
+      await component.setCurrentNetwork()
 
-      expect(component.currentProtocol).toBe('myProtcol')
+      expect(component.currentNetwork).toBe('mainnet')
     });
 
-    it('should set the component currentNetwork to the first value in the networks list for the currentProtocol if no value is stored in sessionStorage', () => {
-      spyOn(window.sessionStorage, 'currentProtocol').and.returnValue(undefined)
+    it('should set the component currentNetwork to the first value in the networks list for the currentProtocol if no value is returned by localStorageServerService.getCurrentNetwork', async () => {
+      spyOn(localStorageServerService, 'getCurrentNetwork').and.returnValue(undefined)
       component.networks = [
-        { label: 'myProtocol', value: 'myProtocol' },
-        { label: 'substrate', value: 'substrate' }
+        { label: 'testnet', value: 'testnet' },
+        { label: 'mainnet', value: 'mainnet' }
       ]
-      component.setCurrentNetwork()
+      await component.setCurrentNetwork()
 
-      expect(component.currentProtocol).toBe('myProtocol')
+      expect(component.currentNetwork).toBe('testnet')
     });
 
-    it('should set the component currentNetwork to the first value in the networks list for the currentProtocol if the value stored in sessionStorage is not present in the networks list for the currentProtocol', () => {
-      spyOn(window.sessionStorage, 'currentProtocol').and.returnValue('myProtocol')
+    it('should set the component currentNetwork to the first value in the networks list for the currentProtocol if the value returned by localStorageServerService.getCurrentNetwork is not present in the networks list for the currentProtocol', async () => {
+      spyOn(localStorageServerService, 'getCurrentNetwork').and.returnValue('anothernet')
       component.networks = [
-        { label: 'substrate', value: 'substrate' },
-        { label: 'myProtocol', value: 'myProtocol' }
+        { label: 'testnet', value: 'testnet' },
+        { label: 'mainnet', value: 'mainnet' }
       ]
-      component.setCurrentNetwork()
+      await component.setCurrentNetwork()
 
-      expect(component.currentProtocol).toBe('substrate')
+      expect(component.currentNetwork).toBe('testnet')
     });
 
   })
