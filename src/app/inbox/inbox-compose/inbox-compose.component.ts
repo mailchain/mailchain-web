@@ -64,7 +64,9 @@ export class InboxComposeComponent implements OnInit {
     private envelopeService: EnvelopeService,
     private nameserviceService: NameserviceService,
     private modalService: BsModalService,
-  ) { }
+  ) {
+    this.initMail()
+  }
 
   /**
    * Initialize empty values for the message model
@@ -121,7 +123,7 @@ export class InboxComposeComponent implements OnInit {
    * @param address the address 
    */
   public generateIdenticon(address) {
-    let icon = this.mailchainService.generateIdenticon(address);
+    let icon = this.mailchainService.generateIdenticon(this.currentProtocol, address);
 
     return icon == "" ? "assets/question-circle-regular.svg" : icon
   }
@@ -319,7 +321,6 @@ export class InboxComposeComponent implements OnInit {
     await this.setFromAddressList()
     await this.setEnvelopeList()
     this.setContentTypeForView()
-    this.initMail()
     this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
     this.setFirstEnvelopeInEnvelopeDropdown()
@@ -435,10 +436,10 @@ export class InboxComposeComponent implements OnInit {
         this.handleReplyInPlaintext()
       }
 
-      this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
+      this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to
 
-      this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["to"])
+      this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["to"])
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
     }
   }

@@ -135,7 +135,7 @@ describe('InboxMessagesComponent', () => {
     component.currentAccount = "";
     component.searchText = '';
     component.inboxMessages = [];
-
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
@@ -179,8 +179,9 @@ describe('InboxMessagesComponent', () => {
   describe('addMailToInboxMessages', () => {
 
     it('should add senderIdenticon to each message', () => {
-      let addrIcon1 = mailchainService.generateIdenticon(address1);
-      let addrIcon2 = mailchainService.generateIdenticon(address2);
+      let protocol = 'ethereum'
+      let addrIcon1 = mailchainService.generateIdenticon(protocol, address1);
+      let addrIcon2 = mailchainService.generateIdenticon(protocol, address2);
 
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)

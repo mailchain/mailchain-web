@@ -1,6 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
+import { AddressesService } from 'src/app/services/mailchain/addresses/addresses.service';
 
 @Pipe({
   name: 'addressPipe',
@@ -10,19 +11,27 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 export class AddressPipe implements PipeTransform {
   constructor(
     private mailchainService: MailchainService,
+    private addressesService: AddressesService,
   ) { }
 
   /**
    * Filters and returns messages sent to a particular address using the 'to' field
    * @param value array of messages
-   * @param args the address to filter by
+   * @param args a hash: {
+      protocol: protocol_value,
+      address: address_value
+    }
    */
   transform(value: any, args: any): any {
-    var address = args;
+
+    let protocol = args['protocol']
+    let fromAddress = this.addressesService.handleAddressFormatting(args['address'], protocol);
 
     if (value) {
       return value.filter(conversation => {
-        return (address.toLowerCase() == this.mailchainService.parseAddressFromMailchain(conversation["headers"]["to"]).toLowerCase());
+        let toAddress = this.mailchainService.parseAddressFromMailchain(protocol, conversation["headers"]["to"])
+
+        return fromAddress == this.addressesService.handleAddressFormatting(toAddress, protocol);
       });
     }
   }

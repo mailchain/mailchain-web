@@ -46,14 +46,13 @@ export class AddressesService {
     return addresses
   }
 
-  handleAddressFormatting(address, chain) {
-    switch (chain) {
+  handleAddressFormatting(address, protocol) {
+    switch (protocol) {
       case 'ethereum':
-        return '0x' + address.toLowerCase()
+        return address.toLowerCase()
       case 'substrate':
       default:
-        return address.toLowerCase()
-        break;
+        return address
     }
   }
 

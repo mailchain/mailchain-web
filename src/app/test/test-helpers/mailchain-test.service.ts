@@ -130,8 +130,8 @@ export class MailchainTestService {
   public senderAddressServerResponse(): any {
     return {
       "addresses": [
-        "92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
-        "d5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
+        "0x92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
+        "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
       ]
     }
   };

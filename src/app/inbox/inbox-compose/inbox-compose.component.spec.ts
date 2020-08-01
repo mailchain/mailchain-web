@@ -88,6 +88,7 @@ describe('InboxComposeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InboxComposeComponent);
     component = fixture.componentInstance;
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
@@ -347,7 +348,6 @@ describe('InboxComposeComponent', () => {
 
   describe('resolveAddress', () => {
     describe('in ethereum', () => {
-
       it('should call nameserviceService.resolveName if given a name-like value', () => {
         spyOn(nameserviceService, 'resolveName').and.callThrough()
         component.currentProtocol = 'ethereum'
@@ -389,9 +389,9 @@ describe('InboxComposeComponent', () => {
           expect(res['body']).toEqual(expectedBody)
         })
       })
-    })
-    describe('in substrate', () => {
+    });
 
+    describe('in substrate', () => {
       it('should return an observable with body containing address hash if given an address-like value', async () => {
         component.currentProtocol = 'substrate'
         let obs = await component.resolveAddress(currentAccount)

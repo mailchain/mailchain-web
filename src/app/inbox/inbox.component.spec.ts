@@ -95,6 +95,7 @@ describe('InboxComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InboxComponent);
     component = fixture.componentInstance;
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
@@ -291,10 +292,10 @@ describe('InboxComponent', () => {
     it('should generate identicons for each fromAddress', () => {
       component.fromAddressesKeys = [currentAccount, currentAccount2]
       component.setAccountIdenticons()
+      let protocol = 'ethereum'
+      expect(component.accountIdenticons[currentAccount]).toEqual(mailchainService.generateIdenticon(protocol, currentAccount))
 
-      expect(component.accountIdenticons[currentAccount]).toEqual(mailchainService.generateIdenticon(currentAccount))
-
-      expect(component.accountIdenticons[currentAccount2]).toEqual(mailchainService.generateIdenticon(currentAccount2))
+      expect(component.accountIdenticons[currentAccount2]).toEqual(mailchainService.generateIdenticon(protocol, currentAccount2))
       component.fromAddresses
     });
   });
@@ -539,7 +540,8 @@ describe('InboxComponent', () => {
 
     it('should set the `senderIdenticon` field', () => {
       component.addMailToInboxMessages(message)
-      let identicon = mailchainService.generateIdenticon(message.headers.from)
+      let protocol = 'ethereum'
+      let identicon = mailchainService.generateIdenticon(protocol, message.headers.from)
       let obj = component.inboxMessages[0]
 
       expect(obj["senderIdenticon"]).toEqual(identicon)

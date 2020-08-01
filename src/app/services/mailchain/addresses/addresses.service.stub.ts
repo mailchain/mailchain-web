@@ -11,10 +11,21 @@ export class AddressesServiceStub {
     this.currentAccount2
   ];
 
-  constructor() { }
+  constructor(
+  ) { }
 
   async getAddresses(protocol, network) {
     return this.addresses
+  }
+
+  handleAddressFormatting(address, protocol) {
+    switch (protocol) {
+      case 'ethereum':
+        return address.toLowerCase()
+      case 'substrate':
+      default:
+        return address
+    }
   }
 
 }

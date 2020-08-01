@@ -12,8 +12,8 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 export class InboxMessageComponent implements OnInit {
   @Input() currentMessage: InboundMail = new InboundMail;
   @Input() inboxMessages: Array<any> = [];
-  @Input() currentProtocol: Array<any> = [];
-  @Input() currentNetwork: Array<any> = [];
+  @Input() currentProtocol: string;
+  @Input() currentNetwork: string;
   @Output() goToInboxMessages = new EventEmitter();
   @Output() replyToMessage = new EventEmitter();
 
@@ -79,7 +79,7 @@ export class InboxMessageComponent implements OnInit {
    * @param address formatted <0x...@network.protocol> address
    */
   public parseAddressFromMailchain(address) {
-    return this.mailchainService.parseAddressFromMailchain(address)
+    return this.mailchainService.parseAddressFromMailchain(this.currentProtocol, address)
   }
 
   /**

@@ -46,6 +46,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
       let uniqUnreadMsgs
 
       unreadMsgs = this.mailchainService.filterMessages(
+        this.currentProtocol,
         this.inboxMessages,
         {
           status: "ok",
@@ -108,7 +109,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * @param address formatted <0x...@network.protocol> address
    */
   private generateIdenticon(address) {
-    return this.mailchainService.generateIdenticon(address)
+    return this.mailchainService.generateIdenticon(this.currentProtocol, address)
   }
 
   /**
@@ -116,7 +117,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * @param address formatted <0x...@network.protocol> address
    */
   private parseAddressFromMailchain(address) {
-    return this.mailchainService.parseAddressFromMailchain(address)
+    return this.mailchainService.parseAddressFromMailchain(this.currentProtocol, address)
   }
 
   /**
@@ -200,21 +201,24 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * Dedupe message array - workaround for dupe messages @TODO: waiting on dupe bugfix in mailchain
    */
   getCurrentAccountInboxMessages() {
-    var inboxMessagesFilteredByAddress = this.addressPipe.transform(
-      this.inboxMessages,
-      this.currentAccount
-    )
-    var inboxMessagesFilteredByAddressSearch: Array<any> = this.searchPipe.transform(
-      inboxMessagesFilteredByAddress,
-      this.searchText
-    )
-    this.currentAccountInboxMessages = []
-    // Dedupe messages
-    this.currentAccountInboxMessages = this.mailchainService.dedupeMessagesByIds(inboxMessagesFilteredByAddressSearch)
+    if (this.currentProtocol && this.currentAccount) {
+      var inboxMessagesFilteredByAddress = this.addressPipe.transform(
+        this.inboxMessages, {
+        'protocol': this.currentProtocol,
+        'address': this.currentAccount
+      }
+      )
+      var inboxMessagesFilteredByAddressSearch: Array<any> = this.searchPipe.transform(
+        inboxMessagesFilteredByAddress,
+        this.searchText
+      )
+      this.currentAccountInboxMessages = []
+      // Dedupe messages
+      this.currentAccountInboxMessages = this.mailchainService.dedupeMessagesByIds(inboxMessagesFilteredByAddressSearch)
 
-    // fetch names for senders
-    this.resolveSendersFromMessages(this.currentAccountInboxMessages)
-
+      // fetch names for senders
+      this.resolveSendersFromMessages(this.currentAccountInboxMessages)
+    }
   }
 
   async ngOnChanges(event): Promise<void> {

@@ -54,7 +54,7 @@ describe('InboxMessageComponent', () => {
     component = fixture.componentInstance;
 
     component.currentMessage = mailchainTestService.inboundMessage();
-
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 

@@ -66,9 +66,9 @@ export class InboxComponent implements OnInit {
    * @param array [address: string,count: number]
    */
   onInboxCounter(array) {
-    var address: string = array[0]
+    var address: string = this.addressesService.handleAddressFormatting(array[0], this.currentProtocol)
     var count: number = array[1]
-    this.fromAddresses[address.toLowerCase()]["messageCount"]["inbox"] = count
+    this.fromAddresses[address]["messageCount"]["inbox"] = count
   }
 
   /**
@@ -147,7 +147,7 @@ export class InboxComponent implements OnInit {
    */
   setAccountIdenticons() {
     this.fromAddressesKeys.forEach(address => {
-      this.accountIdenticons[address] = this.mailchainService.generateIdenticon(address)
+      this.accountIdenticons[address] = this.mailchainService.generateIdenticon(this.currentProtocol, address)
     });
   }
 
@@ -221,6 +221,7 @@ export class InboxComponent implements OnInit {
    */
   public processUnreadMessagesInboxCounter(address, messages) {
     let unreadMsgs = this.mailchainService.filterMessages(
+      this.currentProtocol,
       messages,
       { status: "ok", readState: false }
     )
@@ -236,6 +237,7 @@ export class InboxComponent implements OnInit {
    */
   public processInboxMessages(messages: Array<any>) {
     let validMessages = this.mailchainService.filterMessages(
+      this.currentProtocol,
       messages,
       { status: "ok" }
     )
@@ -287,7 +289,7 @@ export class InboxComponent implements OnInit {
    * @param decryptedMsg
    */
   addMailToInboxMessages(decryptedMsg) {
-    decryptedMsg.senderIdenticon = this.mailchainService.generateIdenticon(decryptedMsg.headers.from)
+    decryptedMsg.senderIdenticon = this.mailchainService.generateIdenticon(this.currentProtocol, decryptedMsg.headers.from)
     var msg = {
       ...new InboundMail,
       ...decryptedMsg
