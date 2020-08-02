@@ -260,7 +260,7 @@ describe('InboxComponent', () => {
     it('should populate the fromAddresses', async () => {
       await component.setFromAddressList()
 
-      expect(Object.keys(component.fromAddresses)).toEqual(addresses)
+      expect(Object.keys(component.fromAddresses)).toEqual(mailchainTestService.senderAddresses())
     });
     it('should set the label to the address value', async () => {
       await component.setFromAddressList()

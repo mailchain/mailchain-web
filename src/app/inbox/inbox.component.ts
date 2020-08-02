@@ -66,7 +66,8 @@ export class InboxComponent implements OnInit {
    * @param array [address: string,count: number]
    */
   onInboxCounter(array) {
-    var address: string = this.addressesService.handleAddressFormatting(array[0], this.currentProtocol)
+    // TODO: fix encoding
+    var address: string = this.addressesService.handleAddressFormattingByProtocol(array[0], this.currentProtocol)
     var count: number = array[1]
     this.fromAddresses[address]["messageCount"]["inbox"] = count
   }

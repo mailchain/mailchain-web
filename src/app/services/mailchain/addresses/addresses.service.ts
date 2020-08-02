@@ -40,13 +40,39 @@ export class AddressesService {
       httpOptions
       // TODO handle failure
     ).toPromise();
+
     res["body"]["addresses"].forEach(address => {
-      addresses.push(this.handleAddressFormatting(address, protocol))
+      addresses.push(
+        this.handleAddressFormatting(
+          address["value"],
+          address["encoding"]
+        )
+      )
     });
     return addresses
   }
 
-  handleAddressFormatting(address, protocol) {
+  /**
+   * handleAddressFormatting
+   * @param address 
+   * @param encoding "hex/0x-prefix" | "base58/plain"
+   */
+  handleAddressFormatting(address, encoding) {
+    switch (encoding) {
+      case 'hex/0x-prefix':
+        return address.toLowerCase()
+      case 'base58/plain':
+      default:
+        return address
+    }
+  }
+
+  /**
+   * handleAddressFormattingByProtocol
+   * @param address 
+   * @param protocol "ethereum" | "substrate""
+   */
+  handleAddressFormattingByProtocol(address, protocol) {
     switch (protocol) {
       case 'ethereum':
         return address.toLowerCase()

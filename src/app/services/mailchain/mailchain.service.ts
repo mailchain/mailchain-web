@@ -26,14 +26,21 @@ export class MailchainService {
     var outboundMail = new OutboundMail
     let keytype: string = this.getPublicKeyKindByProtocol(protocol)
 
-    outboundMail.message["body"] = mailObj["body"]
+
     outboundMail.message["headers"]["from"] = mailObj["from"]
     outboundMail.message["headers"]["reply-to"] = mailObj["from"] //TODO: handle reply-to
     outboundMail.message["headers"]["to"] = mailObj["to"]
-    outboundMail.message["public-key"] = mailObj["publicKey"]
-    outboundMail.message["public-key-kind"] = keytype
+
     outboundMail.message["subject"] = mailObj["subject"]
+    outboundMail.message["body"] = mailObj["body"]
+
+    outboundMail.message["public-key"] = mailObj["publicKey"]
+    outboundMail.message["public-key-encoding"] = mailObj["publicKeyEncoding"]
+    outboundMail.message["public-key-kind"] = mailObj["publicKeyKind"]
+
     outboundMail["envelope"] = envelope
+    // TODO: add method to select encryption types, exlcuding noop
+    outboundMail["encryption-method-name"] = mailObj["supportedEncryptionTypes"].filter(a => a != "noop")[0]
 
     switch (contentType) {
       case "html":

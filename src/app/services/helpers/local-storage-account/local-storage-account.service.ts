@@ -23,7 +23,9 @@ export class LocalStorageAccountService {
     } else {
       let protocol = await this.localStorageProtocolService.getCurrentProtocol()
       let network = await this.localStorageServerService.getCurrentNetwork()
+
       var addresses = await this.addressesService.getAddresses(protocol, network);
+
       var address = addresses.length ? addresses[0] : ""
       this.setCurrentAccount(address)
       return address

@@ -6,6 +6,7 @@ import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.s
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
 import { ProtocolsService } from '../protocols/protocols.service';
+import { AddressesServiceStub } from './addresses.service.stub';
 
 
 describe('AddressesService', () => {
@@ -21,9 +22,9 @@ describe('AddressesService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        AddressesService,
         HttpHelpersService,
         { provide: ProtocolsService, useClass: ProtocolsServiceStub },
+        { provide: AddressesService, useClass: AddressesServiceStub },
       ],
       imports: [HttpClientTestingModule]
     });
@@ -32,7 +33,7 @@ describe('AddressesService', () => {
     mailchainTestService = TestBed.get(MailchainTestService);
     httpTestingController = TestBed.get(HttpTestingController);
 
-    serverResponse = mailchainTestService.senderAddressServerResponse()
+    serverResponse = mailchainTestService.senderAddressesEthereumObserveResponse()
     expectedAddresses = mailchainTestService.senderAddresses()
   });
 
@@ -51,14 +52,11 @@ describe('AddressesService', () => {
     expect(addressesService).toBeTruthy();
   });
 
-  it('should get an array of sender addresses', () => {
-    addressesService.getAddresses('ethereum', 'mainnet').then(res => {
-      expect(res).toEqual(expectedAddresses)
+  it('should get an array of sender addresses', async () => {
+    let result
+    await addressesService.getAddresses('ethereum', 'mainnet').then(res => {
+      result = res
     });
-
-    // handle open connections
-    const req = httpTestingController.expectOne(desiredUrl);
-    expect(req.request.method).toBe("GET");
-    req.flush(serverResponse);
+    expect(result).toEqual(expectedAddresses)
   });
 });

@@ -24,7 +24,7 @@ export class ProtocolsServiceStub {
   }
 
   public getProtocolsResponse() {
-    return of(this.mailchainTestService.protocolsObserveResponse)
+    return of(this.mailchainTestService.protocolsObserveResponse())
   }
 
 }

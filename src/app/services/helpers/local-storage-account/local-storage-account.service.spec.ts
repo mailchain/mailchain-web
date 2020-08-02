@@ -10,9 +10,7 @@ import { ProtocolsServiceStub } from '../../mailchain/protocols/protocols.servic
 describe('LocalStorageAccountService', () => {
 
   let localStorageAccountService: LocalStorageAccountService;
-  const currentAccount = '0x0123456789012345678901234567890123456789';
-  const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
-  const addresses = [currentAccount, currentAccount2];
+  const currentAccount = '0x92d8f10248c6a3953cc3692a894655ad05d61efb';
 
   const newAddr = '0x12345678901234567890123456789012'
 

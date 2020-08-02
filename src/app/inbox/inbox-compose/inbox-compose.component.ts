@@ -469,6 +469,10 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe(res => {
 
       this.model.publicKey = res["body"]["public-key"]
+      this.model.publicKeyEncoding = res["body"]["public-key-encoding"]
+      this.model.publicKeyKind = res["body"]["public-key-kind"]
+      this.model.supportedEncryptionTypes = res["body"]["supported-encryption-types"]
+
       var outboundMail = this.generateMessage(this.model, this.inputContentType, this.envelopeType, this.currentProtocol)
 
       this.sendMessage(outboundMail).subscribe(res => {

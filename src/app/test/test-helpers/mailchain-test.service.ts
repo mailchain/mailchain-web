@@ -127,11 +127,31 @@ export class MailchainTestService {
     }
   }
 
-  public senderAddressServerResponse(): any {
+  public publicKeyHexZeroXResponse(): any {
+    return {
+      "body":
+      {
+        "public-key": "0x1234567890",
+        "public-key-encoding": "hex/0x-prefix",
+        "public-key-kind": "secp256k1",
+        "supported-encryption-types": ["aes256cbc", "noop"]
+      }
+    }
+  }
+
+  public senderAddressEthereumServerResponse(): any {
     return {
       "addresses": [
-        "0x92D8F10248C6A3953CC3692A894655AD05D61EFB", // uppercase
-        "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6" // lowercase
+        { "value": "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6", "encoding": "hex/0x-prefix" }, // lowercase
+        { "value": "0x92D8F10248C6A3953CC3692A894655AD05D61EFB", "encoding": "hex/0x-prefix" }, // uppercase
+      ]
+    }
+  };
+
+  public senderAddressSubstrateServerResponse(): any {
+    return {
+      "addresses": [
+        { "value": "5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2", "encoding": "base58/plain" },
       ]
     }
   };
@@ -139,11 +159,11 @@ export class MailchainTestService {
   public senderAddresses(): Array<any> {
     return [
       "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
-      "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+      "0x0123456789012345678901234567890123456789"
     ]
   }
 
-  public senderAddressesObserveResponse() {
+  public senderAddressesEthereumObserveResponse() {
     return {
       "headers": {
         "normalizedNames": {},
@@ -151,13 +171,33 @@ export class MailchainTestService {
       },
       "status": 200,
       "statusText": "OK",
-      "url": "http://127.0.0.1:8080/api/addresses",
+      "url": "http://127.0.0.1:8080/api/addresses?protocol=ethereum&network=mainnet",
       "ok": true,
       "type": 4,
       "body": {
         "addresses": [
-          "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
-          "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+          { "value": "0x92d8f10248c6a3953cc3692a894655ad05d61efb", "encoding": "hex/0x-prefix" },
+          { "value": "0x0123456789012345678901234567890123456789", "encoding": "hex/0x-prefix" },
+        ]
+      }
+    }
+  }
+
+  public senderAddressesSubstrateObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses?protocol=substrate&network=edgeware-mainnet",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "addresses": [
+          { "value": "5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2", "encoding": "base58/plain" },
+
         ]
       }
     }
@@ -273,7 +313,7 @@ export class MailchainTestService {
       },
       "status": 200,
       "statusText": "OK",
-      "url": "http://127.0.0.1:8080/api/addresses",
+      "url": "http://127.0.0.1:8080/api/protocols",
       "ok": true,
       "type": 4,
       "body": this.protocolsServerResponse()
@@ -288,7 +328,7 @@ export class MailchainTestService {
       },
       "status": 200,
       "statusText": "OK",
-      "url": "http://127.0.0.1:8080/api/addresses",
+      "url": "http://127.0.0.1:8080/api/protocols",
       "ok": true,
       "type": 4,
       "body": {

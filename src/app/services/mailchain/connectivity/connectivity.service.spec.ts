@@ -233,7 +233,7 @@ describe('ConnectivityService', () => {
   describe('getApiAddressAvailability', () => {
 
     it('should return the number of configured addresses', async () => {
-      let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
+      let expectedAddressesObs = of(mailchainTestService.senderAddressesEthereumObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
       await connectivityService.getApiAddressAvailability().then(res => {
@@ -260,7 +260,7 @@ describe('ConnectivityService', () => {
       // TODO add test for error scenario
     });
     it('should return status "ok" when client is running and configured', async () => {
-      let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
+      let expectedAddressesObs = of(mailchainTestService.senderAddressesEthereumObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
       await connectivityService.getApiAddressAvailability().then(res => {
