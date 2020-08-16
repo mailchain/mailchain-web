@@ -25,7 +25,7 @@ export class AddressPipe implements PipeTransform {
   transform(value: any, args: any): any {
 
     let protocol = args['protocol']
-    let fromAddress = this.addressesService.handleAddressFormatting(args['address'], protocol);
+    let fromAddress = this.addressesService.handleAddressFormattingByProtocol(args['address'], protocol);
 
     if (value) {
       return value.filter(conversation => {

@@ -17,7 +17,6 @@ describe('PublicKeyService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        // PublicKeyService,
         LocalStorageProtocolService,
         HttpHelpersService,
         PublicKeyService,

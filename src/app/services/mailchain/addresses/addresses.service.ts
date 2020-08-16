@@ -62,6 +62,7 @@ export class AddressesService {
       case 'hex/0x-prefix':
         return address.toLowerCase()
       case 'base58/plain':
+        return address
       default:
         return address
     }
@@ -73,10 +74,12 @@ export class AddressesService {
    * @param protocol "ethereum" | "substrate""
    */
   handleAddressFormattingByProtocol(address, protocol) {
+
     switch (protocol) {
       case 'ethereum':
         return address.toLowerCase()
       case 'substrate':
+        return address
       default:
         return address
     }
