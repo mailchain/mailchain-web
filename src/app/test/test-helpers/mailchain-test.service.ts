@@ -157,9 +157,21 @@ export class MailchainTestService {
   };
 
   public senderAddresses(): Array<any> {
+    // call senderAddressesEthereum
+    return this.senderAddressesHex0xPrefix()
+  }
+
+  public senderAddressesHex0xPrefix(): Array<any> {
     return [
       "0x92d8f10248c6a3953cc3692a894655ad05d61efb",
       "0x0123456789012345678901234567890123456789"
+    ]
+  }
+
+  public senderAddressesBase58Plain(): Array<any> {
+    return [
+      "5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2",
+      "5F4HMyes8GNWzpSDjTPSh61Aw6RTaWmZKwKvszocwqbsdn4h"
     ]
   }
 
