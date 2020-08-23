@@ -4,6 +4,8 @@ import { ConnectivityService } from './services/mailchain/connectivity/connectiv
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalConnectivityErrorComponent } from './modals/modal-connectivity-error/modal-connectivity-error.component';
 import { errorMessages } from './services/helpers/error-messages/error-messages'
+import { LocalStorageProtocolService } from './services/helpers/local-storage-protocol/local-storage-protocol.service';
+import { LocalStorageServerService } from './services/helpers/local-storage-server/local-storage-server.service';
 
 @Component({
   selector: 'app-root',
@@ -14,16 +16,20 @@ import { errorMessages } from './services/helpers/error-messages/error-messages'
 export class AppComponent implements OnInit {
   public version: string = environment.version;
   public title = 'Mailchain Inbox';
-  public apiConnectivityInfo = {};
   public apiVersionInfo = {};
   public errorTitle: string = ""
   public errorMessage: string = ""
   public apiVersion = "";
   public modalConnectivityError: BsModalRef;
 
+  public currentNetwork: String;
+  public currentProtocol: String;
+
   constructor(
     private connectivityService: ConnectivityService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageServerService: LocalStorageServerService,
   ) {
 
   }
@@ -33,39 +39,50 @@ export class AppComponent implements OnInit {
   }
 
   public async ngOnInit() {
-    await this.handleApiAvailability()
+    this.currentNetwork = await this.localStorageServerService.getCurrentNetwork()
+    this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol()
+
+    await this.handleApiProtocolsAvailability()
+    await this.handleApiAddressesAvailability()
     await this.handleWebConnectivity()
     this.setApiVersion()
   }
 
   /**
-   * handleApiAvailability checks if the client is available.
+   * handleApiAddressesAvailability checks if the client is available.
    * Displays an error modal if not able to connect or hides the error modal if able to connect
    */
-  public async handleApiAvailability() {
-    this.apiConnectivityInfo = await this.connectivityService.getApiAvailability();
+  public async handleApiProtocolsAvailability() {
+    let apiConnectivityInfo = await this.connectivityService.getApiProtocolsAvailability();
 
-    if (this.apiConnectivityInfo["status"] == "error") {
-      switch (this.apiConnectivityInfo["code"]) {
-        case 0:
-          // Could not connect to Mailchain client
-          this.handleErrorOnPage(
-            errorMessages.clientNotRunningErrorTitle,
-            errorMessages.clientNotRunningErrorMessage
-          )
-          break;
-
-        default:
-          // Something else happened
-          this.handleErrorOnPage(
-            errorMessages.unknownErrorTitle,
-            errorMessages.unknownErrorMessage
-          )
-          console.warn('please add a new error message for this code', this.apiConnectivityInfo["code"]);
-          break;
+    if (apiConnectivityInfo["status"] == "error") {
+      this.handleApiConnectivityError(apiConnectivityInfo)
+    } else if (apiConnectivityInfo["status"] == "ok") {
+      if (apiConnectivityInfo["protocols"] == 0) {
+        // No protocols are configured
+        this.handleErrorOnPage(
+          errorMessages.protocolConfigurationErrorTitle,
+          errorMessages.protocolConfigurationErrorMessage
+        )
+      } else {
+        if (this.modalConnectivityError) {
+          this.modalConnectivityError.hide()
+        }
       }
-    } else if (this.apiConnectivityInfo["status"] == "ok") {
-      if (this.apiConnectivityInfo["addresses"] == 0) {
+    }
+  }
+
+  /**
+   * handleApiAddressesAvailability checks if the client is available.
+   * Displays an error modal if not able to connect or hides the error modal if able to connect
+   */
+  public async handleApiAddressesAvailability() {
+    let apiConnectivityInfo = await this.connectivityService.getApiAddressAvailability();
+
+    if (apiConnectivityInfo["status"] == "error") {
+      this.handleApiConnectivityError(apiConnectivityInfo)
+    } else if (apiConnectivityInfo["status"] == "ok") {
+      if (apiConnectivityInfo["addresses"] == 0) {
         // No addresses are configured
         this.handleErrorOnPage(
           errorMessages.accountConfigurationErrorTitle,
@@ -76,6 +93,30 @@ export class AppComponent implements OnInit {
           this.modalConnectivityError.hide()
         }
       }
+    }
+  }
+
+  /**
+   * handleApiConnectivityError
+   */
+  handleApiConnectivityError(errorBlock) {
+    switch (errorBlock["code"]) {
+      case 0:
+        // Could not connect to Mailchain client
+        this.handleErrorOnPage(
+          errorMessages.clientNotRunningErrorTitle,
+          errorMessages.clientNotRunningErrorMessage
+        )
+        break;
+
+      default:
+        // Something else happened
+        this.handleErrorOnPage(
+          errorMessages.unknownErrorTitle,
+          errorMessages.unknownErrorMessage
+        )
+        console.warn('please add a new error message for this code', errorBlock["code"]);
+        break;
     }
   }
 

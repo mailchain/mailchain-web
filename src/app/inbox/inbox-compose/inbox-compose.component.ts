@@ -64,7 +64,9 @@ export class InboxComposeComponent implements OnInit {
     private envelopeService: EnvelopeService,
     private nameserviceService: NameserviceService,
     private modalService: BsModalService,
-  ) { }
+  ) {
+    this.initMail()
+  }
 
   /**
    * Initialize empty values for the message model
@@ -106,7 +108,7 @@ export class InboxComposeComponent implements OnInit {
    * Sets the available 'from' addresses
    */
   private async setFromAddressList() {
-    this.fromAddresses = await this.addressesService.getAddresses();
+    this.fromAddresses = await this.addressesService.getAddresses(this.currentProtocol, this.currentNetwork);
   }
 
   /**
@@ -121,7 +123,7 @@ export class InboxComposeComponent implements OnInit {
    * @param address the address 
    */
   public generateIdenticon(address) {
-    let icon = this.mailchainService.generateIdenticon(address);
+    let icon = this.mailchainService.generateIdenticon(this.currentProtocol, address);
 
     return icon == "" ? "assets/question-circle-regular.svg" : icon
   }
@@ -194,7 +196,10 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe((res) => {
       res.subscribe(val => {
         let address = val['body']['address']
-        if (this.mailchainService.validateEthAddress(address)) {
+        if (
+          (this.currentProtocol == 'ethereum' && this.mailchainService.validateEthAddress(address)) ||
+          (this.currentProtocol == 'substrate' && this.mailchainService.validateSubstrateAddress(address))
+        ) {
           this.model.to = address
           this.setRecipientLoadingIcon('valid')
           this.setRecipientLoadingText('valid address')
@@ -202,7 +207,6 @@ export class InboxComposeComponent implements OnInit {
           this.setRecipientLoadingIcon('invalid')
           this.setRecipientLoadingText('invalid address')
         }
-
       }, err => {
         this.setRecipientLoadingIcon('invalid')
         this.setRecipientLoadingText(err['error']['message'])
@@ -228,21 +232,33 @@ export class InboxComposeComponent implements OnInit {
   public async resolveAddress(value) {
     let returnObs
 
-    if (this.mailchainService.validateEnsName(value)) {
-      returnObs = await this.nameserviceService.resolveName(
-        this.currentProtocol,
-        this.currentNetwork,
-        value
-      )
-    } else if (this.mailchainService.validateEthAddress(value)) {
-      returnObs = of(
-        { body: { address: value } }
-      )
-    } else {
-      returnObs = of(
-        { body: { address: '' } }
-      )
-    }
+    if (this.currentProtocol == 'ethereum') {
+      if (this.mailchainService.validateEnsName(value)) {
+        returnObs = await this.nameserviceService.resolveName(
+          this.currentProtocol,
+          this.currentNetwork,
+          value
+        )
+      } else if (this.mailchainService.validateEthAddress(value)) {
+        returnObs = of(
+          { body: { address: value } }
+        )
+      } else {
+        returnObs = of(
+          { body: { address: '' } }
+        )
+      }
+    } else if (this.currentProtocol == 'substrate') {
+      if (this.mailchainService.validateSubstrateAddress(value)) {
+        returnObs = of(
+          { body: { address: value } }
+        )
+      } else {
+        returnObs = of(
+          { body: { address: '' } }
+        )
+      }
+    };
 
     return returnObs
 
@@ -305,7 +321,6 @@ export class InboxComposeComponent implements OnInit {
     await this.setFromAddressList()
     await this.setEnvelopeList()
     this.setContentTypeForView()
-    this.initMail()
     this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
     this.setFirstEnvelopeInEnvelopeDropdown()
@@ -421,10 +436,10 @@ export class InboxComposeComponent implements OnInit {
         this.handleReplyInPlaintext()
       }
 
-      this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["from"])
+      this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to
 
-      this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentMessage.headers["to"])
+      this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["to"])
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
     }
   }
@@ -454,7 +469,11 @@ export class InboxComposeComponent implements OnInit {
     ).subscribe(res => {
 
       this.model.publicKey = res["body"]["public-key"]
-      var outboundMail = this.generateMessage(this.model, this.inputContentType, this.envelopeType)
+      this.model.publicKeyEncoding = res["body"]["public-key-encoding"]
+      this.model.publicKeyKind = res["body"]["public-key-kind"]
+      this.model.supportedEncryptionTypes = res["body"]["supported-encryption-types"]
+
+      var outboundMail = this.generateMessage(this.model, this.inputContentType, this.envelopeType, this.currentProtocol)
 
       this.sendMessage(outboundMail).subscribe(res => {
         self.initMail();
@@ -475,8 +494,8 @@ export class InboxComposeComponent implements OnInit {
    * Builds the OutboundMail object for sending
    * @param mailObj The form Mail object
    */
-  private generateMessage(mailObj: Mail, inputContentType: string, envelope: string): OutboundMail {
-    return this.mailchainService.generateMail(mailObj, inputContentType, envelope)
+  private generateMessage(mailObj: Mail, inputContentType: string, envelope: string, protocol: string): OutboundMail {
+    return this.mailchainService.generateMail(mailObj, inputContentType, envelope, protocol)
   }
 
   /**
@@ -484,9 +503,10 @@ export class InboxComposeComponent implements OnInit {
    * @param outboundMail The OutboundMail object
    */
   private sendMessage(outboundMail: OutboundMail) {
+    let protocol = this.currentProtocol
     let network = this.currentNetwork
 
-    return this.sendService.sendMail(outboundMail, network)
+    return this.sendService.sendMail(outboundMail, protocol, network)
   }
 
   /**

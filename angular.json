@@ -84,6 +84,12 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "codeCoverage": true,
+            "codeCoverageExclude": [
+              "/**/*mock.ts",
+              "/**/*stub.ts",
+              "/**/test-helpers/**",
+              "src/test/**"
+            ],
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",

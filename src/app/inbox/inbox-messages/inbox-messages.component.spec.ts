@@ -8,6 +8,8 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { ReadService } from 'src/app/services/mailchain/messages/read.service';
 import { of } from 'rxjs';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
+import { ReadServiceStub } from 'src/app/services/mailchain/messages/read.service.stub';
+import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 
 describe('InboxMessagesComponent', () => {
   let component: InboxMessagesComponent;
@@ -16,37 +18,10 @@ describe('InboxMessagesComponent', () => {
   let readService: ReadService;
   let nameserviceService: NameserviceService
 
-  const address1 = "0x0000000000000000000000000000000000000001"
+  const address1 = "0x0123456789012345678901234567890123456789"
   const address2 = "0x0000000000000000000000000000000000000002"
   const addresses = [address1, address2]
 
-  class ReadServiceStub {
-    markRead(msgId) {
-      return of(["ok"])
-    }
-    markUnread(msgId) {
-      return of(["ok"])
-    }
-  }
-  /**
-   * Resolves address1: myname.eth
-   * Throws 404 error for address2
-   */
-  class NameserviceServiceStub {
-    resolveAddress(protocol, network, value) {
-      if (value == address1) {
-        return of(
-          {
-            "body": { name: "myname.eth" },
-            "ok": true
-          }
-        )
-      }
-      if (value == address2) {
-        return of({ "status": 404 })
-      }
-    }
-  }
 
   // id 00: unread & status ok;
   //        from: address 2
@@ -70,7 +45,7 @@ describe('InboxMessagesComponent', () => {
     {
       "headers": {
         "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
-        "to": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "to": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "message-id": "00"
       },
       "read": false,
@@ -80,7 +55,7 @@ describe('InboxMessagesComponent', () => {
     {
       "headers": {
         "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
-        "to": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "to": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "message-id": "01"
       },
       "read": false,
@@ -90,7 +65,7 @@ describe('InboxMessagesComponent', () => {
     {
       "headers": {
         "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
-        "to": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "to": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "message-id": "02"
       },
       "read": false,
@@ -99,7 +74,7 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
         "message-id": "03"
       },
@@ -109,7 +84,7 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
         "message-id": "04"
       },
@@ -119,7 +94,7 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+        "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
         "message-id": "05"
       },
@@ -160,7 +135,7 @@ describe('InboxMessagesComponent', () => {
     component.currentAccount = "";
     component.searchText = '';
     component.inboxMessages = [];
-
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
@@ -193,7 +168,7 @@ describe('InboxMessagesComponent', () => {
   describe('resolveSendersFromMessages', () => {
     it('should include resolved names in messagesNameRecords', () => {
       component.resolveSendersFromMessages(messages)
-      expect(component.messagesNameRecords[address1]).toEqual("myname.eth")
+      expect(component.messagesNameRecords[address1]).toEqual("myaddress.eth")
     })
     it('should not include unresolved names in messagesNameRecords', () => {
       component.resolveSendersFromMessages(messages)
@@ -204,8 +179,9 @@ describe('InboxMessagesComponent', () => {
   describe('addMailToInboxMessages', () => {
 
     it('should add senderIdenticon to each message', () => {
-      let addrIcon1 = mailchainService.generateIdenticon(address1);
-      let addrIcon2 = mailchainService.generateIdenticon(address2);
+      let protocol = 'ethereum'
+      let addrIcon1 = mailchainService.generateIdenticon(protocol, address1);
+      let addrIcon2 = mailchainService.generateIdenticon(protocol, address2);
 
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
@@ -247,7 +223,7 @@ describe('InboxMessagesComponent', () => {
     it('should NOT set a subject field if none is specified on the decrypted message', () => {
       let message = {
         "headers": {
-          "from": "<0x0000000000000000000000000000000000000001@ropsten.ethereum>",
+          "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
           "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
           "message-id": "05"
         },

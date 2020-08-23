@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AddressesService } from '../../mailchain/addresses/addresses.service';
+import { LocalStorageProtocolService } from '../local-storage-protocol/local-storage-protocol.service';
+import { LocalStorageServerService } from '../local-storage-server/local-storage-server.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +9,9 @@ import { AddressesService } from '../../mailchain/addresses/addresses.service';
 export class LocalStorageAccountService {
 
   constructor(
-    private addressesService: AddressesService
+    private addressesService: AddressesService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageServerService: LocalStorageServerService,
   ) { }
 
   /**
@@ -17,7 +21,11 @@ export class LocalStorageAccountService {
     if (sessionStorage['currentAccount'] && sessionStorage['currentAccount'] != "undefined") {
       return sessionStorage.getItem('currentAccount')
     } else {
-      var addresses = await this.addressesService.getAddresses();
+      let protocol = await this.localStorageProtocolService.getCurrentProtocol()
+      let network = await this.localStorageServerService.getCurrentNetwork()
+
+      var addresses = await this.addressesService.getAddresses(protocol, network);
+
       var address = addresses.length ? addresses[0] : ""
       this.setCurrentAccount(address)
       return address

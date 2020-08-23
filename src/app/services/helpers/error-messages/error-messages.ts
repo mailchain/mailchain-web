@@ -1,4 +1,8 @@
 export const errorMessages = {
+  // protocol configuration error
+  "protocolConfigurationErrorTitle": "Mailchain Configuration Error",
+  "protocolConfigurationErrorMessage": "<p>There are no protocols configured in the Mailchain client.</p><p>Run 'mailchain protocol help' in the console for further details or visit 'https://docs.mailchain.xyz/getting-started'",
+
   // account configuration error
   "accountConfigurationErrorTitle": "Mailchain Configuration Error",
   "accountConfigurationErrorMessage": "<p>There are no addresses configured in the Mailchain client.</p><p>Run 'mailchain account help' in the console for further details or visit 'https://docs.mailchain.xyz/getting-started'",

@@ -8,12 +8,15 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 import { AddressesService } from '../addresses/addresses.service';
+import { ProtocolsService } from '../protocols/protocols.service';
+import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
 
 describe('ConnectivityService', () => {
   let mailchainTestService: MailchainTestService
   let connectivityService: ConnectivityService;
   let versionService: VersionService;
   let addressesService: AddressesService;
+  let protocolsService: ProtocolsService;
   let http: HttpClient;
 
   beforeEach(() => {
@@ -22,7 +25,8 @@ describe('ConnectivityService', () => {
         ConnectivityService,
         HttpHelpersService,
         VersionService,
-        HttpClient
+        HttpClient,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [
         HttpClientTestingModule
@@ -33,6 +37,7 @@ describe('ConnectivityService', () => {
     mailchainTestService = TestBed.get(MailchainTestService);
     versionService = TestBed.get(VersionService);
     addressesService = TestBed.get(AddressesService);
+    protocolsService = TestBed.get(ProtocolsService);
     http = TestBed.get(HttpClient);
   });
 
@@ -198,13 +203,40 @@ describe('ConnectivityService', () => {
   });
 
 
-  describe('getApiAvailability', () => {
+  describe('getApiProtocolsAvailability', () => {
+
+    it('should return the number of configured protocols', async () => {
+      let expectedProtocolsObs = of(mailchainTestService.protocolsObserveResponse())
+      spyOn(protocolsService, 'getProtocolsResponse').and.returnValue(expectedProtocolsObs);
+
+      await connectivityService.getApiProtocolsAvailability().then(res => {
+        expect(res["protocols"]).toEqual(2)
+        expect(res["status"]).toEqual("ok")
+        expect(res["code"]).toEqual(200)
+        expect(res["message"]).toEqual("OK")
+      })
+    });
+
+    it('should return 0 protocols when none are configured', async () => {
+      let expectedProtocolsObs = of(mailchainTestService.protocolsObserveResponseNoProtocols())
+      spyOn(protocolsService, 'getProtocolsResponse').and.returnValue(expectedProtocolsObs);
+
+      await connectivityService.getApiProtocolsAvailability().then(res => {
+        expect(res["protocols"]).toEqual(0)
+        expect(res["status"]).toEqual("ok")
+        expect(res["code"]).toEqual(200)
+        expect(res["message"]).toEqual("OK")
+      })
+    });
+  });
+
+  describe('getApiAddressAvailability', () => {
 
     it('should return the number of configured addresses', async () => {
-      let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
+      let expectedAddressesObs = of(mailchainTestService.senderAddressesEthereumObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
-      await connectivityService.getApiAvailability().then(res => {
+      await connectivityService.getApiAddressAvailability().then(res => {
         expect(res["addresses"]).toEqual(2)
         expect(res["status"]).toEqual("ok")
         expect(res["code"]).toEqual(200)
@@ -216,7 +248,7 @@ describe('ConnectivityService', () => {
       let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponseNoAddress())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
-      await connectivityService.getApiAvailability().then(res => {
+      await connectivityService.getApiAddressAvailability().then(res => {
         expect(res["addresses"]).toEqual(0)
         expect(res["status"]).toEqual("ok")
         expect(res["code"]).toEqual(200)
@@ -228,10 +260,10 @@ describe('ConnectivityService', () => {
       // TODO add test for error scenario
     });
     it('should return status "ok" when client is running and configured', async () => {
-      let expectedAddressesObs = of(mailchainTestService.senderAddressesObserveResponse())
+      let expectedAddressesObs = of(mailchainTestService.senderAddressesEthereumObserveResponse())
       spyOn(addressesService, 'getAddressesResponse').and.returnValue(expectedAddressesObs);
 
-      await connectivityService.getApiAvailability().then(res => {
+      await connectivityService.getApiAddressAvailability().then(res => {
         expect(res["status"]).toEqual("ok")
       })
     });

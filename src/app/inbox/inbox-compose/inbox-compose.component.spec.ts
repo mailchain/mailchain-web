@@ -20,6 +20,11 @@ import { ModalConnectivityErrorComponent } from '../../modals/modal-connectivity
 import { NgModule } from '@angular/core';
 import { CKEditorModule, CKEditorComponent } from '@ckeditor/ckeditor5-angular';
 import { EnvelopeService } from 'src/app/services/mailchain/envelope/envelope.service';
+import { AddressesServiceStub } from 'src/app/services/mailchain/addresses/addresses.service.stub';
+import { EnvelopeServiceStub } from 'src/app/services/mailchain/envelope/envelope.service.stub';
+import { PublicKeyServiceStub } from 'src/app/services/mailchain/public-key/public-key.service.stub';
+import { SendServiceStub } from 'src/app/services/mailchain/messages/send.service.stub';
+import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 
 
 // Workaround:
@@ -40,46 +45,12 @@ describe('InboxComposeComponent', () => {
   let mailchainService: MailchainService
   let nameserviceService: NameserviceService
 
-  const currentAccount = '0x0123456789012345678901234567890123456789';
-  const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
+  const currentAccount = '0x92d8f10248c6a3953cc3692a894655ad05d61efb';
+  const currentAccount2 = '0x0123456789012345678901234567890123456789';
   const ensName = 'mailchain.eth';
   const addresses = [currentAccount, currentAccount2];
+
   let envelopes: Array<any>
-
-  class AddressesServiceStub {
-    getAddresses() {
-      return addresses
-    }
-  }
-
-  class EnvelopeServiceStub {
-    getEnvelope() {
-      if (envelopes) {
-        return envelopes // set envelope in test
-      } else {
-        return [{ "type": "0x01", "description": "Private Message Stored with MLI" }]
-      }
-
-    }
-  }
-  class PublicKeyServiceStub {
-    getPublicKeyFromAddress(publicAddress, network) {
-      return of(['1234567890'])
-    }
-  }
-  class SendServiceStub {
-    sendMail(outboundMail: OutboundMail, network: string) {
-      return of([])
-    }
-  }
-  class NameserviceServiceStub {
-    resolveName(value) {
-      return of(
-        { body: { address: currentAccount } }
-      )
-    }
-  }
-
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -117,6 +88,7 @@ describe('InboxComposeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InboxComposeComponent);
     component = fixture.componentInstance;
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
@@ -168,13 +140,6 @@ describe('InboxComposeComponent', () => {
             await component.ngOnInit();
             fixture.detectChanges()
             expect(component.envelopeType).toBe('0x01')
-          })
-
-          it('should initialize an envelope in the "envelope" field using an available envelop', async () => {
-            envelopes = mailchainTestService.envelopeTypeIpfs()
-            await component.ngOnInit();
-            fixture.detectChanges()
-            expect(component.envelopeType).toBe('0x02')
           })
 
           it('should populate the envelope_type dropdown with the first value if there are multiple envelopes available', async () => {
@@ -382,40 +347,58 @@ describe('InboxComposeComponent', () => {
   })
 
   describe('resolveAddress', () => {
-    it('should call nameserviceService.resolveName if given a name-like value', () => {
-      spyOn(nameserviceService, 'resolveName').and.callThrough()
-      component.resolveAddress(ensName)
-      expect(nameserviceService.resolveName).toHaveBeenCalled()
+    describe('in ethereum', () => {
+      it('should call nameserviceService.resolveName if given a name-like value', () => {
+        spyOn(nameserviceService, 'resolveName').and.callThrough()
+        component.currentProtocol = 'ethereum'
+        component.resolveAddress(ensName)
+        expect(nameserviceService.resolveName).toHaveBeenCalled()
 
-    })
-    it('should call nameserviceService.resolveName with params for protocol, network & name-like value', () => {
-      spyOn(nameserviceService, 'resolveName').and.callThrough()
-      component.resolveAddress(ensName)
-      expect(nameserviceService.resolveName).toHaveBeenCalledWith(
-        component.currentProtocol,
-        component.currentNetwork,
-        ensName
-      )
-    })
-    it('should return an observable with body containing address hash if given a name-like value', async () => {
-      let obs = await component.resolveAddress(ensName)
-      let expectedBody = { address: currentAccount }
-      obs.subscribe(res => {
-        expect(res['body']).toEqual(expectedBody)
       })
-    })
-    it('should return an observable with body containing address hash if given an address-like value', async () => {
-      let obs = await component.resolveAddress(currentAccount)
-      let expectedBody = { address: currentAccount }
-      obs.subscribe(res => {
-        expect(res['body']).toEqual(expectedBody)
+      it('should call nameserviceService.resolveName with params for protocol, network & name-like value ', () => {
+        spyOn(nameserviceService, 'resolveName').and.callThrough()
+        component.currentProtocol = 'ethereum'
+        component.resolveAddress(ensName)
+        expect(nameserviceService.resolveName).toHaveBeenCalledWith(
+          component.currentProtocol,
+          component.currentNetwork,
+          ensName
+        )
       })
-    })
-    it('should return an observable with body containing empty address hash if given a value that is not name-like or address-like', async () => {
-      let obs = await component.resolveAddress('string')
-      let expectedBody = { address: '' }
-      obs.subscribe(res => {
-        expect(res['body']).toEqual(expectedBody)
+      it('should return an observable with body containing address hash if given a name-like value', async () => {
+        component.currentProtocol = 'ethereum'
+        let obs = await component.resolveAddress(ensName)
+        let expectedBody = { address: "0x0123456789012345678901234567890123456789" }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
+      })
+      it('should return an observable with body containing address hash if given an address-like value', async () => {
+        component.currentProtocol = 'ethereum'
+        let obs = await component.resolveAddress(currentAccount)
+        let expectedBody = { address: currentAccount }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
+      })
+      it('should return an observable with body containing empty address hash if given a value that is not name-like or address-like', async () => {
+        component.currentProtocol = 'ethereum'
+        let obs = await component.resolveAddress('string')
+        let expectedBody = { address: '' }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
+      })
+    });
+
+    describe('in substrate', () => {
+      it('should return an observable with body containing address hash if given an address-like value', async () => {
+        component.currentProtocol = 'substrate'
+        let obs = await component.resolveAddress(currentAccount)
+        let expectedBody = { address: currentAccount }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
       })
     })
   })
@@ -453,48 +436,59 @@ describe('InboxComposeComponent', () => {
   });
 
   describe('onSubmit', () => {
-    let mail = new Mail
-    mail.to = ''
-    mail.from = ''
-    mail.subject = ''
-    mail.body = ''
-    mail.publicKey = "1234567890abcd"
+    let expectedMail = new Mail
+    expectedMail.to = ''
+    expectedMail.from = ''
+    expectedMail.subject = ''
+    expectedMail.body = ''
+    expectedMail.publicKey = "0x1234567890"
+    expectedMail.publicKeyEncoding = "hex/0x-prefix"
+    expectedMail.publicKeyKind = "secp256k1"
+    expectedMail.supportedEncryptionTypes = ["aes256cbc", "noop"]
 
     let outboundMail = new OutboundMail
     outboundMail.message = {
       body: 'This is a test message',
       headers: {
-        "from": '0x0123456789abcdef0123456789abcdef01234567',
-        "reply-to": '0x0123456789abcdef0123456789abcdef01234567',
-        "to": '0x0123456789012345678901234567890123456789'
+        "from": '0x0123456789012345678901234567890123456789',
+        "reply-to": '0x0123456789012345678901234567890123456789',
+        "to": '0x92d8f10248c6a3953cc3692a894655ad05d61efb'
       },
-      "public-key": "1234567890abcd",
+      "public-key": "0x1234567890",
+      "public-key-encoding": "hex/0x-prefix",
+      "public-key-kind": "secp256k1",
       subject: 'Test Message'
     }
-    // outboundMail.envelope = "0x01"
+    outboundMail.envelope = "0x05"
+    outboundMail["content-type"] = 'text/html; charset=\"UTF-8\"'
 
     beforeEach(() => {
       component.model.to = currentAccount
       component.model.from = currentAccount2
       component.model.subject = "Test Message"
       component.model.body = "This is a test message"
+      component.currentProtocol = 'ethereum'
       component.currentNetwork = 'testnet'
       component.envelopeType = "0x05"
 
-      spyOn(publicKeyService, "getPublicKeyFromAddress").and.callFake(() => {
-        return of({
-          "body": {
-            "public-key": '1234567890abcd'
-          }
-        })
-      });
-      spyOn(sendService, "sendMail").and.callFake(() => {
-        return of(['ok'])
-      });
 
-      spyOn(mailchainService, "generateMail").and.callFake(() => {
-        return outboundMail
-      })
+      spyOn(publicKeyService, "getPublicKeyFromAddress").and.callThrough()
+      // callFake(() => {
+      //   return of({
+      //     "body": {
+      //       "public-key": '1234567890abcd'
+      //     }
+      //   })
+      // });
+      spyOn(sendService, "sendMail").and.callThrough()
+      // callFake(() => {
+      //   return of(['ok'])
+      // });
+
+      spyOn(mailchainService, "generateMail").and.callThrough()
+      // .callFake(() => {
+      //   return outboundMail
+      // })
     })
 
     it('should get the public key for an address', async () => {
@@ -503,23 +497,23 @@ describe('InboxComposeComponent', () => {
       expect(publicKeyService.getPublicKeyFromAddress).toHaveBeenCalledWith(currentAccount, 'testnet')
     })
 
-    it('should send a message using the sendService', async () => {
+    it('should send a message using the sendService', () => {
 
       component.onSubmit();
-      expect(sendService.sendMail).toHaveBeenCalledWith(outboundMail, 'testnet')
+      expect(sendService.sendMail).toHaveBeenCalledWith(outboundMail, 'ethereum', 'testnet')
     })
 
     it('should generate a message', () => {
 
       component.onSubmit();
-      expect(mailchainService.generateMail).toHaveBeenCalledWith(mail, 'html', '0x05')
+      expect(mailchainService.generateMail).toHaveBeenCalledWith(expectedMail, 'html', '0x05', 'ethereum')
 
     })
 
     it('should reinitialize the message after sending', () => {
 
       component.onSubmit();
-      expect(component.model).toEqual(mail)
+      expect(component.model).toEqual(expectedMail)
     })
     it('should call returnToInboxMessages after sending', () => {
       spyOn(component, "returnToInboxMessages")

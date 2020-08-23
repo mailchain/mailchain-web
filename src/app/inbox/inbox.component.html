@@ -6,20 +6,13 @@
   </div>
   <div class="col-md-6">
     <div class="row">
-      <div class="col text-right">
-        <i class="fa fa-chain text-success"></i>&nbsp;
-        Network: {{currentNetwork}}
-        <a (click)="modalWindowNetwork.show()">
-          (change)
-        </a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col text-right">
-        <i class="fa fa-cog text-success"></i>&nbsp;
-        <a (click)="modalWindowSettings.show()">
-          Settings
-        </a>
+      <div class="col">
+        <div class="mb-s mt-2 pull-right">
+          <a class="btn btn-outline-primary btn-sm float-left ml-2" id="settings-btn" routerLink="settings">
+            <i class="fa fa-cog"></i>&nbsp;
+            Settings
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -85,95 +78,3 @@
 
 
 </div>
-
-<!-- modalWindowNetwork -->
-<div bsModal #modalWindowNetwork="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header flex-column">
-        <button (click)="modalWindowNetwork.hide()" aria-label="Close" class="close ml-auto" type="button">
-          <span aria-hidden="true">×</span>
-        </button>
-        <div class="col-12 text-center">
-          <h3 class="modal-title" id="accountModal">Network</h3>
-          <h5>Current Network:</h5>
-          <h5>{{currentNetwork}}</h5>
-        </div>
-        <p class="text-center text-muted mt-sm">
-          To change to a different network, please select one from the list below:
-        </p>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <select class="form-control" name="account" [(ngModel)]="currentNetwork" (change)="changeNetwork()">
-            <option *ngFor="let network of networks; let i = index" [value]="network.value">
-              {{network.label}}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="modalWindowNetwork.hide()">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- end modalWindowNetwork -->
-
-<!-- modalWindowSettings -->
-<div bsModal #modalWindowSettings="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header flex-column">
-        <button (click)="modalWindowSettings.hide()" aria-label="Close" class="close ml-auto" type="button">
-          <span aria-hidden="true">×</span>
-        </button>
-        <div class="col-12 text-center">
-          <h3 class="modal-title" id="accountModal">Server Settings</h3>
-          <h5>Current URL: <span>{{currentHost}}</span></h5>
-          <h5>Current Port: <span>{{currentPort}}</span></h5>
-          <h5></h5>
-        </div>
-      </div>
-      <form #serverSettingsForm="ngForm" id="serverSettingsForm"
-        (ngSubmit)="serverSettingsFormSubmit();modalWindowSettings.hide()" autocomplete="off">
-
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="serverSettingsWebProtocol">Web Protocol:</label>
-            <select class="input-transparent form-control" name="serverSettingsWebProtocol"
-              [(ngModel)]="serverSettings.webProtocol">
-              <option *ngFor="let webProtocol of currentWebProtocols; let i = index" [value]="webProtocol.value">
-                {{webProtocol.label}}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="serverSettingsHost">Host:</label>
-            <input type="text" id="serverSettingsHost" placeholder="e.g. localhost, 127.0.0.1"
-              [(ngModel)]="serverSettings.host" name="serverSettingsHost" class="input-transparent form-control">
-          </div>
-
-          <div class="form-group">
-            <label for="serverSettingsPort">Port:</label>
-            <input type="text" id="serverSettingsPort" placeholder="e.g. 8080" [(ngModel)]="serverSettings.port"
-              name="serverSettingsPort" class="input-transparent form-control">
-          </div>
-
-        </div>
-
-        <div class="modal-footer">
-          <div class="btn-group mr-2">
-            <button type="button" class="btn btn-outline-secondary" (click)="modalWindowSettings.hide()">Close</button>
-          </div>
-          <div class="btn-group mr-2">
-            <button type="submit" class="btn btn-success">&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;</button>
-          </div>
-        </div>
-
-      </form>
-    </div>
-  </div>
-</div>
-<!-- end modalWindowSettings -->

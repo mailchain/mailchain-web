@@ -1,0 +1,138 @@
+<div class="row">
+  <div class="col-md-6">
+    <h1 class="page-title text-primary inline">
+      <img src="../../assets/mailchain_logo_text.png" alt="Mailchain" class="header-logo">
+    </h1>
+    <div class="clearfix mb-xs">
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="row">
+      <div class="col">
+        <div class="mb-s mt-2 pull-right">
+          <a class="btn btn-outline-danger btn-sm float-left" id="back-btn" (click)="returnToInboxMessages()">
+            <i class="fa fa-chevron-left fa-lg"></i> Return To Messages
+          </a>
+          <a class="btn btn-outline-primary btn-sm float-left ml-2" id="save-btn" (click)="updateServerSettings()">
+            <i class="fa fa-save fa-lg"></i> Save Settings
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4 col-xl-3 col-12">
+    <div class="card">
+      <div class="card-header">
+        Settings
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-12 p-0 my-auto">
+              <a class="nav-link" [routerLink]="['/settings/']" fragment='mailchain-api-settings'>
+                Mailchain API Settings
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-12 p-0 my-auto">
+              <a class="nav-link" [routerLink]="['/settings/']" fragment='blockchain-settings'>
+                Blockchain Settings
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-12 p-0 my-auto">
+              <a class="nav-link" [routerLink]="['/settings/']" fragment='reset-settings'>
+                Reset Settings
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-6 col-xl-7 col-12">
+
+    <!--  -->
+    <form class="my-3">
+      <div id="mailchain-api-settings-div" class="my-4">
+        <h3 id="mailchain-api-settings" class="mb-3">Mailchain API Settings</h3>
+
+        <div class="form-group row">
+          <label for="apiProtocol" class="col-sm-3 col-form-label">API Protocol</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="apiProtocol" name="apiProtocol" [(ngModel)]="currentWebProtocol">
+              <option value="http">HTTP</option>
+              <option value="https">HTTPS</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="apiHost" class="col-sm-3 col-form-label">API Host URL</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control" id="apiHost" name="apiHost" [(ngModel)]="currentHost"
+              placeholder="e.g. localhost, 127.0.0.1, example.com">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="apiPort" class="col-sm-3 col-form-label">API Host Port</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="apiPort" name="apiPort" [(ngModel)]="currentPort"
+              placeholder="e.g. 8080">
+          </div>
+        </div>
+      </div>
+      <hr>
+
+      <div id="blockchain-settings-div" class="my-4">
+        <h3 id="blockchain-settings" class="mb-3">Blockchain Protocol Settings</h3>
+
+        <div class="form-group row">
+          <label for="blockchainProtocol" class="col-sm-3 col-form-label">Blockchain Protocol</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="blockchainProtocol" name="blockchainProtocol" [(ngModel)]="currentProtocol"
+              (ngModelChange)="changeProtocol()">
+              <option *ngFor="let protocol of protocols; let i = index" [value]="protocol">
+                {{protocol | titlecase}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="blockchainNetwork" class="col-sm-3 col-form-label">Blockchain Network</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="blockchainNetwork" name="blockchainNetwork" [(ngModel)]="currentNetwork">
+              <option *ngFor="let network of networks; let i = index" [value]="network.value">
+                {{network.label | titlecase}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+      <hr>
+    </form>
+    <div id="reset-settings-div" class="my-4">
+      <h3 id="reset-settings" class="mb-3">Reset Settings</h3>
+      <div class="form-group row">
+        <label for="resetSettings" class="col-sm-5 col-form-label">Reset Settings To Default</label>
+        <div class="col-sm-6">
+          <button type="button" class="btn btn-outline-danger btn-sm">Reset All Settings To Default</button>
+        </div>
+      </div>
+
+      <!-- Button with confirmation -->
+
+    </div>
+
+  </div>
+</div>
