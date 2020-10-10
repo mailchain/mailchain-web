@@ -275,7 +275,8 @@ describe('SettingsComponent', () => {
       component.currentProtocol = 'substrate'
       await component.setNetworkList()
       expect(component.networks).toEqual([
-        { label: "edgeware-berlin", value: "edgeware-berlin" },
+        { label: "edgeware-beresheet", value: "edgeware-beresheet" },
+        { label: "edgeware-local", value: "edgeware-local" },
         { label: "edgeware-mainnet", value: "edgeware-mainnet" },
       ])
 
