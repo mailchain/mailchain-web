@@ -27,6 +27,7 @@ import { MessagesServiceStub } from '../services/mailchain/messages/messages.ser
 import { ProtocolsServiceStub } from '../services/mailchain/protocols/protocols.service.stub';
 import { NameserviceServiceStub } from '../services/mailchain/nameservice/nameservice.service.stub';
 import { LocalStorageAccountServiceStub } from '../services/helpers/local-storage-account/local-storage-account.service.stub';
+import { LocalStorageNameserviceService } from '../services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -35,6 +36,7 @@ describe('InboxComponent', () => {
   let protocolsService: ProtocolsService
   let localStorageAccountService: LocalStorageAccountService
   let localStorageServerService: LocalStorageServerService
+  let localStorageNameserviceService: LocalStorageNameserviceService
   let mailchainService: MailchainService
   let nameserviceService: NameserviceService
   let addressesService: AddressesService
@@ -86,6 +88,7 @@ describe('InboxComponent', () => {
     protocolsService = TestBed.get(ProtocolsService);
     localStorageAccountService = TestBed.get(LocalStorageAccountService);
     localStorageServerService = TestBed.get(LocalStorageServerService);
+    localStorageNameserviceService = TestBed.get(LocalStorageNameserviceService);
     mailchainService = TestBed.get(MailchainService);
     nameserviceService = TestBed.get(NameserviceService);
     addressesService = TestBed.get(AddressesService);
@@ -212,7 +215,7 @@ describe('InboxComponent', () => {
   });
 
   describe('getServerSettings', () => {
-    it('should set the currentWebProtocol to the value foundin localStorage"', () => {
+    it('should set the currentWebProtocol to the value found in localStorage"', () => {
       let val = 'webProtocolVal'
 
       localStorageServerService.setCurrentWebProtocol(val)
@@ -222,7 +225,7 @@ describe('InboxComponent', () => {
       expect(component.currentWebProtocol).toEqual(val)
 
     });
-    it('should set the currentHost to the value foundin localStorage"', () => {
+    it('should set the currentHost to the value found in localStorage"', () => {
       let val = 'hostVal'
 
       localStorageServerService.setCurrentWebProtocol(val)
@@ -231,7 +234,7 @@ describe('InboxComponent', () => {
       component.getServerSettings()
       expect(component.currentWebProtocol).toEqual(val)
     });
-    it('should set the currentPort to the value foundin localStorage"', () => {
+    it('should set the currentPort to the value found in localStorage"', () => {
       let val = 'portVal'
 
       localStorageServerService.setCurrentWebProtocol(val)
@@ -239,6 +242,29 @@ describe('InboxComponent', () => {
 
       component.getServerSettings()
       expect(component.currentWebProtocol).toEqual(val)
+    });
+  });
+
+  describe('getNameserviceSettings', () => {
+    it('should clear the existing nameservice address enabled status', async () => {
+      spyOn(localStorageNameserviceService,'removeCurrentNameserviceAddressEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.removeCurrentNameserviceAddressEnabled).toHaveBeenCalled();
+    });
+    it('should lookup the nameservice address enabled status', async () => {
+      spyOn(localStorageNameserviceService,'setCurrentNameserviceAddressEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.setCurrentNameserviceAddressEnabled).toHaveBeenCalled();
+    });
+    it('should clear the existing nameservice domain enabled status', async () => {
+      spyOn(localStorageNameserviceService,'removeCurrentNameserviceDomainEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.removeCurrentNameserviceDomainEnabled).toHaveBeenCalled();
+    });
+    it('should lookup the nameservice domain enabled status', async () => {
+      spyOn(localStorageNameserviceService,'setCurrentNameserviceDomainEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.setCurrentNameserviceDomainEnabled).toHaveBeenCalled();
     });
   });
 

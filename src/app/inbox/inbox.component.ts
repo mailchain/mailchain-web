@@ -7,6 +7,7 @@ import { LocalStorageServerService } from '../services/helpers/local-storage-ser
 import { LocalStorageProtocolService } from '../services/helpers/local-storage-protocol/local-storage-protocol.service';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
+import { LocalStorageNameserviceService } from '../services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 @Component({
   selector: 'app-inbox',
@@ -42,7 +43,8 @@ export class InboxComponent implements OnInit {
   constructor(
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
-    private LocalStorageProtocolService: LocalStorageProtocolService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageNameserviceService: LocalStorageNameserviceService,
     private addressesService: AddressesService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
@@ -171,7 +173,8 @@ export class InboxComponent implements OnInit {
     try {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
-      this.currentProtocol = await this.LocalStorageProtocolService.getCurrentProtocol()
+      this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol()
+      this.updateNameserviceSettings()
       this.getServerSettings()
     } catch (error) {
       this.getServerSettings()
@@ -245,6 +248,13 @@ export class InboxComponent implements OnInit {
     validMessages.forEach(msg => this.addMailToInboxMessages(msg));
   }
 
+  /** clear and (re)sets the nameservice settings for the protocol */
+  public updateNameserviceSettings(){
+    this.localStorageNameserviceService.removeCurrentNameserviceAddressEnabled()
+    this.localStorageNameserviceService.removeCurrentNameserviceDomainEnabled()
+    this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled()
+    this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled()
+  }
 
   /**
    * setFetchingMessagesState

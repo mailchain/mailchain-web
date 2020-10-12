@@ -15,7 +15,7 @@ export class LocalStorageNameserviceService {
   ) { }
 
   /**
-   * Gets the current nameservice address enabled status.
+   * Gets the current nameservice address lookup enabled status.
    * If no value exists, it attempts to look it up via the protocolsService.
    */
   async getCurrentNameserviceAddressEnabled(){
@@ -24,21 +24,68 @@ export class LocalStorageNameserviceService {
     } else {
       let currentNetwork = this.localStorageServerService.getCurrentNetwork();
       let currentProtocol = await this.localStorageProtocolService.getCurrentProtocol();
-
-      let status = await this.protocolsService.getProtocolNetworkAttributes(currentProtocol,currentNetwork)
-
-      return this.setCurrentNameserviceAddressEnabled(status["nameservice-address-enabled"].toString())
+      if (![currentProtocol,currentNetwork].includes(undefined)) {
+        let status = await this.protocolsService.getProtocolNetworkAttributes(currentProtocol,currentNetwork)
+        return this.setCurrentNameserviceAddressEnabled(status["nameservice-address-enabled"].toString())
+      } else {
+        return this.setCurrentNameserviceAddressEnabled("false")
+      }
     }
   }
 
   /**
-   * Sets the current nameservice address enabled status.
+   * Sets the current nameservice address lookup enabled status.
    * @param status string: `true` | `false`
    */
   setCurrentNameserviceAddressEnabled(status: string) {
     let val = status.toString() == "true" ? "true" : "false"
     sessionStorage.setItem('currentNameserviceAddressEnabled', val);
     return val
+  }
+
+  /**
+   * Removes the nameservice address lookup enabled value
+   */
+  removeCurrentNameserviceAddressEnabled(){
+    sessionStorage.removeItem('currentNameserviceAddressEnabled')
+  }
+
+
+  /**
+   * Gets the current nameservice domain lookup enabled status.
+   * If no value exists, it attempts to look it up via the protocolsService.
+   */
+  async getCurrentNameserviceDomainEnabled(){
+    if (sessionStorage['currentNameserviceDomainEnabled'] && sessionStorage['currentNameserviceDomainEnabled'] != "undefined") {
+      return sessionStorage.getItem('currentNameserviceDomainEnabled')
+    } else {
+      let currentNetwork = this.localStorageServerService.getCurrentNetwork();
+      let currentProtocol = await this.localStorageProtocolService.getCurrentProtocol();
+
+      if (![currentProtocol,currentNetwork].includes(undefined)) {
+        let status = await this.protocolsService.getProtocolNetworkAttributes(currentProtocol,currentNetwork)
+        return this.setCurrentNameserviceDomainEnabled(status["nameservice-domain-enabled"].toString())
+      } else {
+        return this.setCurrentNameserviceDomainEnabled("false")
+      }      
+    }
+  }
+
+  /**
+   * Sets the current nameservice domain lookup enabled status.
+   * @param status string: `true` | `false`
+   */
+  setCurrentNameserviceDomainEnabled(status: string) {
+    let val = status.toString() == "true" ? "true" : "false"
+    sessionStorage.setItem('currentNameserviceDomainEnabled', val);
+    return val
+  }
+
+  /**
+   * Removes the nameservice domain lookup enabled value
+   */
+  removeCurrentNameserviceDomainEnabled(){
+    sessionStorage.removeItem('currentNameserviceDomainEnabled')
   }
 
 }
