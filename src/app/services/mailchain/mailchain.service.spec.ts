@@ -7,10 +7,13 @@ import { Mail } from 'src/app/models/mail';
 import { HttpClientModule } from '@angular/common/http';
 import { NameserviceService } from './nameservice/nameservice.service';
 import * as IdenticonImages from 'src/test/images.json'
+import { ProtocolsService } from './protocols/protocols.service';
+import { ProtocolsServiceStub } from './protocols/protocols.service.stub';
 
 describe('MailchainService', () => {
   let mailchainService: MailchainService;
   let nameserviceService: NameserviceService
+  let protocolsService: ProtocolsService;
 
   const address1 = "0x0000000000000000000000000000000000000001"
   const address2 = "0x0000000000000000000000000000000000000002"
@@ -40,10 +43,12 @@ describe('MailchainService', () => {
       providers: [
         MailchainService,
         { provide: NameserviceService, useClass: NameserviceServiceStub },
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ]
     });
 
     mailchainService = TestBed.get(MailchainService);
+    protocolsService = TestBed.get(ProtocolsService);
   });
 
   it('should be created', () => {
