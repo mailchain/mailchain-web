@@ -47,12 +47,13 @@ export class InboxMessageComponent implements OnInit {
    * Sets the name corresponding to messageNameRecords
    * @param addr address in format 0x1234...1234
    */
-  private resolveMessageNameRecords(addr) {
-    this.nameserviceService.resolveAddress(
+  private async resolveMessageNameRecords(addr) {
+    let obs = await this.nameserviceService.resolveAddress(
       this.currentProtocol,
       this.currentNetwork,
       addr
-    ).subscribe(res => {
+    )
+    obs.subscribe(res => {
       if (res['ok']) {
         this.messageNameRecords[addr] = res['body']['name']
       }

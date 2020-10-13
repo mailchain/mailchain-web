@@ -191,8 +191,9 @@ export class MailchainService {
 
     uniqSenders = this.dedupeMessagesBySender(protocol, validMsgs);
 
-    uniqSenders.forEach((address: string | number) => {
-      this.nameserviceService.resolveAddress(protocol, network, address).subscribe(res => {
+    uniqSenders.forEach(async (address: string | number) => {
+      let obs = await this.nameserviceService.resolveAddress(protocol, network, address)
+      obs.subscribe(res => {
         if (res['ok']) {
           output[address] = res['body']['name']
         }

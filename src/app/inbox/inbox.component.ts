@@ -158,8 +158,9 @@ export class InboxComponent implements OnInit {
    * Lookup name records for addresses
    */
   setAccountNameRecords() {
-    this.fromAddressesKeys.forEach(address => {
-      this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address).subscribe(res => {
+    this.fromAddressesKeys.forEach(async address => {
+      let obs = await this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address)
+      obs.subscribe(res => {
         if (res['ok']) {
           this.accountNameRecord[address] = res['body']['name']
         }

@@ -52,10 +52,10 @@ describe('NameserviceService', () => {
   });
 
   describe('resolveName', () => {
-    it('should add the right params to the request', () => {
+    it('should add the right params to the request', async () => {
 
       let resResponse = mailchainTestService.resolveNameResponse()
-      let response = nameserviceService.resolveName(protocol, network, name)
+      let response = await nameserviceService.resolveName(protocol, network, name)
 
       response.subscribe()
 
@@ -70,10 +70,10 @@ describe('NameserviceService', () => {
       req.flush(resResponse);
     });
 
-    it('should resolve a public address from a name', () => {
+    it('should resolve a public address from a name', async () => {
 
       let resResponse = mailchainTestService.resolveNameResponse()
-      let response = nameserviceService.resolveName(protocol, network, name)
+      let response = await nameserviceService.resolveName(protocol, network, name)
 
       response.subscribe(res => {
         expect(res['url']).toEqual(expectedResolveNameUrlWithParams)
@@ -90,10 +90,10 @@ describe('NameserviceService', () => {
   });
 
   describe('resolveAddress', () => {
-    it('should add the right params to the request', () => {
+    it('should add the right params to the request', async () => {
 
       let resResponse = mailchainTestService.resolveAddressResponse()
-      let response = nameserviceService.resolveAddress(protocol, network, address)
+      let response = await nameserviceService.resolveAddress(protocol, network, address)
 
       response.subscribe()
 
@@ -108,10 +108,10 @@ describe('NameserviceService', () => {
       req.flush(resResponse);
     });
 
-    it('should resolve a name from a public address', () => {
+    it('should resolve a name from a public address', async () => {
 
       let resResponse = mailchainTestService.resolveAddressResponse()
-      let response = nameserviceService.resolveAddress(protocol, network, address)
+      let response = await nameserviceService.resolveAddress(protocol, network, address)
 
       response.subscribe(res => {
         expect(res['url']).toEqual(expectedResolveAddressUrlWithParams)
