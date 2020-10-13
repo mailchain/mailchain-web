@@ -210,8 +210,8 @@ describe('MailchainService', () => {
       { "headers": { "from": address2 }, "status": "ok" },
     ]
 
-    it('should handle multiple messages', () => {
-      let res = mailchainService.resolveSendersFromMessages("ethereum", "testnet", messages)
+    it('should handle multiple messages', async () => {
+      let res = await mailchainService.resolveSendersFromMessages("ethereum", "testnet", messages)
 
       expect(res["0x0000000000000000000000000000000000000001"]).toEqual('myname.eth')
       expect(res["0x0000000000000000000000000000000000000002"]).toEqual(undefined)

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } fro
 import { InboundMail } from 'src/app/models/inbound-mail';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
+import { LocalStorageNameserviceService } from 'src/app/services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 @Component({
   selector: '[inbox-message]',
@@ -22,6 +23,7 @@ export class InboxMessageComponent implements OnInit {
   constructor(
     private nameserviceService: NameserviceService,
     private mailchainService: MailchainService,
+    private localStorageNameserviceService: LocalStorageNameserviceService,
   ) { }
   /**
    * Go back to the inbox-messages view
@@ -30,8 +32,8 @@ export class InboxMessageComponent implements OnInit {
     this.goToInboxMessages.emit('');
   }
 
-  ngOnInit() {
-    this.resolveNamesFromMessage()
+  async ngOnInit() {
+    await this.resolveNamesFromMessage()
     this.getViewForContentType()
   }
 
@@ -64,15 +66,17 @@ export class InboxMessageComponent implements OnInit {
    * resolveNamesFromMessages looks up the 'to' and 'from' name
    * records according to the currentNetwork and currentProtocol
    */
-  private resolveNamesFromMessage() {
-    [
-      this.currentMessage["headers"]["to"],
-      this.currentMessage["headers"]["from"]
-    ].forEach(element => {
-      let parsedAddr = this.parseAddressFromMailchain(element)
-      this.resolveMessageNameRecords(parsedAddr)
-    });
+  private async resolveNamesFromMessage() {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
 
+      [
+        this.currentMessage["headers"]["to"],
+        this.currentMessage["headers"]["from"]
+      ].forEach(async element => {
+        let parsedAddr = this.parseAddressFromMailchain(element)
+        await this.resolveMessageNameRecords(parsedAddr)
+      });
+    };
   }
 
   /**

@@ -157,15 +157,17 @@ export class InboxComponent implements OnInit {
   /**
    * Lookup name records for addresses
    */
-  setAccountNameRecords() {
-    this.fromAddressesKeys.forEach(async address => {
-      let obs = await this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address)
-      obs.subscribe(res => {
-        if (res['ok']) {
-          this.accountNameRecord[address] = res['body']['name']
-        }
-      })
-    });
+  async setAccountNameRecords() {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
+      await this.fromAddressesKeys.forEach(async address => {
+        let obs = await this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address)
+        obs.subscribe(res => {
+          if (res['ok']) {
+            this.accountNameRecord[address] = res['body']['name']
+          }
+        })
+      });
+    };
   }
 
   async ngOnInit(): Promise<void> {

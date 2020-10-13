@@ -166,12 +166,12 @@ describe('InboxMessagesComponent', () => {
   });
 
   describe('resolveSendersFromMessages', () => {
-    it('should include resolved names in messagesNameRecords', () => {
-      component.resolveSendersFromMessages(messages)
+    it('should include resolved names in messagesNameRecords', async () => {
+      await component.resolveSendersFromMessages(messages)
       expect(component.messagesNameRecords[address1]).toEqual("myaddress.eth")
     })
-    it('should not include unresolved names in messagesNameRecords', () => {
-      component.resolveSendersFromMessages(messages)
+    it('should not include unresolved names in messagesNameRecords', async () => {
+      await component.resolveSendersFromMessages(messages)
       expect(component.messagesNameRecords[address2]).toEqual(undefined)
     })
   })
@@ -546,9 +546,9 @@ describe('InboxMessagesComponent', () => {
         component.addMailToInboxMessages(msg)
       })
     })
-    it('should set currentAccountInboxMessages to the currently selected account', () => {
+    it('should set currentAccountInboxMessages to the currently selected account', async () => {
       component.currentAccount = address2
-      component.getCurrentAccountInboxMessages()
+      await component.getCurrentAccountInboxMessages()
 
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[3],
@@ -556,19 +556,19 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[5]
       ])
     })
-    it('should filter currentAccountInboxMessages based on search text', () => {
+    it('should filter currentAccountInboxMessages based on search text', async () => {
       component.currentAccount = address2
       component.searchText = "Message 04"
-      component.getCurrentAccountInboxMessages()
+      await component.getCurrentAccountInboxMessages()
 
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[4]
       ])
     })
-    it('should dedupe currentAccountInboxMessages', () => {
+    it('should dedupe currentAccountInboxMessages', async () => {
       component.currentAccount = address2
       component.inboxMessages.push(component.inboxMessages[4])
-      component.getCurrentAccountInboxMessages()
+      await component.getCurrentAccountInboxMessages()
 
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[3],

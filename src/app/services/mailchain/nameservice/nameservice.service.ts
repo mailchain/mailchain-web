@@ -4,7 +4,7 @@ import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.serv
 
 import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
 import { LocalStorageNameserviceService } from '../../helpers/local-storage-nameservice/local-storage-nameservice.service';
-import { Observable } from 'rxjs';
+import { observable, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +34,7 @@ export class NameserviceService {
   * @param name the name to lookup
    */
   public async resolveName(protocol, network, name) {
-    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled() == "true") {
       var httpOptions = this.httpHelpersService.getHttpOptions([
         ['protocol', protocol],
         ['network', network],
@@ -45,7 +45,10 @@ export class NameserviceService {
         httpOptions
         // TODO: handle failure
       );
-    }
+    } else {
+      console.warn("resolveName", protocol, network, name);
+      return new Observable
+    };
   };
 
   /**
@@ -53,7 +56,7 @@ export class NameserviceService {
    * @param address the public address
    */
   public async resolveAddress(protocol, network, address) {
-    if (await this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled() == "true") {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
       var httpOptions = this.httpHelpersService.getHttpOptions([
         ['protocol', protocol],
         ['network', network],
@@ -64,6 +67,9 @@ export class NameserviceService {
         httpOptions
         // TODO: handle failure
       );
+    } else {
+      console.warn("resolveAddress", protocol, network, address);
+      return new Observable
     };
   }
 

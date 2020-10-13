@@ -6,12 +6,16 @@ import { NameserviceService } from './nameservice.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 import { MailchainTestService } from '../../../test/test-helpers/mailchain-test.service';
+import { ProtocolsService } from '../protocols/protocols.service';
+import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
 
 describe('NameserviceService', () => {
 
   let nameserviceService: NameserviceService;
   let httpTestingController: HttpTestingController;
-  let mailchainTestService: MailchainTestService
+  let mailchainTestService: MailchainTestService;
+  let protocolsService: ProtocolsService;
+
 
   let address: String = "0x0000000000000000000000000000000000000022"
   let protocol: String = "ethereum"
@@ -27,6 +31,7 @@ describe('NameserviceService', () => {
         NameserviceService,
         HttpHelpersService,
         MailchainTestService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [HttpClientTestingModule]
     });
@@ -34,6 +39,8 @@ describe('NameserviceService', () => {
     nameserviceService = TestBed.get(NameserviceService);
     httpTestingController = TestBed.get(HttpTestingController);
     mailchainTestService = TestBed.get(MailchainTestService);
+    protocolsService = TestBed.get(ProtocolsService);
+
 
   });
 
@@ -53,17 +60,16 @@ describe('NameserviceService', () => {
 
   describe('resolveName', () => {
     it('should add the right params to the request', async () => {
-
       let resResponse = mailchainTestService.resolveNameResponse()
       let response = await nameserviceService.resolveName(protocol, network, name)
-
+      
       response.subscribe()
 
       // handle open connections      
       const req = httpTestingController.expectOne(expectedResolveNameUrlWithParams);
 
       expect(req.request.method).toBe("GET");
-
+      
       expect(req.request.params.get('protocol')).toEqual(protocol);
       expect(req.request.params.get('network')).toEqual(network);
 

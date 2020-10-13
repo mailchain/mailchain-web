@@ -327,9 +327,9 @@ describe('InboxComponent', () => {
   });
 
   describe('setAccountNameRecords', () => {
-    it('should lookup a name each fromAddress', () => {
+    it('should lookup a name each fromAddress', async () => {
       component.fromAddressesKeys = [currentAccount, currentAccount2]
-      component.setAccountNameRecords()
+      await component.setAccountNameRecords()
 
       expect(component.accountNameRecord[currentAccount]).toEqual(currentAccountNameLookup)
 

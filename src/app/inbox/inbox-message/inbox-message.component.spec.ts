@@ -83,103 +83,103 @@ describe('InboxMessageComponent', () => {
 
   describe('ngOnInit', () => {
     describe('resolveNamesFromMessage', () => {
-      it('should resolve the To field when there is a resolvable name', () => {
+      it('should resolve the To field when there is a resolvable name', async () => {
         component.currentMessage["headers"]["to"] = mcAddress1
-        component.ngOnInit()
+        await component.ngOnInit()
         expect(component.messageNameRecords[address1]).toEqual('myaddress.eth')
       })
-      it('should NOT resolve the To field when there is NOT a resolvable name', () => {
+      it('should NOT resolve the To field when there is NOT a resolvable name', async () => {
         component.currentMessage["headers"]["to"] = mcAddress2
-        component.ngOnInit()
+        await component.ngOnInit()
         expect(component.messageNameRecords[address2]).toEqual(undefined)
       })
-      it('should resolve the From field when there is a resolvable name', () => {
+      it('should resolve the From field when there is a resolvable name', async () => {
         component.currentMessage["headers"]["from"] = mcAddress1
-        component.ngOnInit()
+        await component.ngOnInit()
         expect(component.messageNameRecords[address1]).toEqual('myaddress.eth')
       })
-      it('should NOT resolve the From field when there is NOT a resolvable name', () => {
+      it('should NOT resolve the From field when there is NOT a resolvable name', async () => {
         component.currentMessage["headers"]["from"] = mcAddress2
-        component.ngOnInit()
+        await component.ngOnInit()
         expect(component.messageNameRecords[address2]).toEqual(undefined)
       })
     });
   });
 
   describe('getViewForContentType', () => {
-    it('should call getViewForContentType when the content-type is plaintext ', () => {
+    it('should call getViewForContentType when the content-type is plaintext ', async () => {
       spyOn(component, 'getViewForContentType')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.getViewForContentType).toHaveBeenCalled()
     })
 
-    it('should call getViewForContentType when the content-type is text/plain; charset="UTF-8"', () => {
+    it('should call getViewForContentType when the content-type is text/plain; charset="UTF-8"', async () => {
       spyOn(component, 'getViewForContentType')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.getViewForContentType).toHaveBeenCalled()
     })
 
-    it('should call getViewForContentType when the content-type is unknown', () => {
+    it('should call getViewForContentType when the content-type is unknown', async () => {
       spyOn(component, 'getViewForContentType')
 
       component.currentMessage["headers"]["content-type"] = 'unknown'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.getViewForContentType).toHaveBeenCalled()
     })
   })
 
   describe('addMessageText', () => {
-    it('should call addMessageText when the content-type is plaintext ', () => {
+    it('should call addMessageText when the content-type is plaintext ', async () => {
       spyOn(component, 'addMessageText')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageText).toHaveBeenCalled()
     })
 
-    it('should NOT call addMessageText when the content-type is text/html; charset="UTF-8" ', () => {
+    it('should NOT call addMessageText when the content-type is text/html; charset="UTF-8" ', async () => {
       spyOn(component, 'addMessageText')
 
       component.currentMessage["headers"]["content-type"] = 'text/html; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageText).not.toHaveBeenCalled()
     })
 
-    it('should call addMessageText when the content-type is unknown ', () => {
+    it('should call addMessageText when the content-type is unknown ', async () => {
       spyOn(component, 'addMessageText')
 
       component.currentMessage["headers"]["content-type"] = 'unknown'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageText).toHaveBeenCalled()
     })
 
   })
   describe('addMessageIframe', () => {
-    it('should NOT call addMessageIframe when the content-type is plaintext ', () => {
+    it('should NOT call addMessageIframe when the content-type is plaintext ', async () => {
       spyOn(component, 'addMessageIframe')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageIframe).not.toHaveBeenCalled()
     })
 
-    it('should call addMessageIframe when the content-type is text/html; charset="UTF-8" ', () => {
+    it('should call addMessageIframe when the content-type is text/html; charset="UTF-8" ', async () => {
       spyOn(component, 'addMessageIframe')
 
       component.currentMessage["headers"]["content-type"] = 'text/html; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageIframe).toHaveBeenCalled()
     })
 
-    it('should NOT call addMessageIframe when the content-type is unknown ', () => {
+    it('should NOT call addMessageIframe when the content-type is unknown ', async () => {
       spyOn(component, 'addMessageIframe')
 
       component.currentMessage["headers"]["content-type"] = 'unknown'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageIframe).not.toHaveBeenCalled()
     })
 
