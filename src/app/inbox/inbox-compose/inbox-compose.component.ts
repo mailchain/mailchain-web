@@ -145,8 +145,10 @@ export class InboxComposeComponent implements OnInit {
       this.setRecipientLoadingText()
       this.resetModelToField()
     }
-    this.currentRecipientValue = event.target.value
-    this.recipientAddressChanged.next(event.target.value);
+    if (event.target.value && event.target.value.length > 0) {
+      this.currentRecipientValue = event.target.value.trim();
+      this.recipientAddressChanged.next(event.target.value);
+    }
   }
 
   /**
