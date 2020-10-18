@@ -103,6 +103,7 @@ describe('InboxComponent', () => {
   });
 
   afterEach(() => {
+    localStorageServerService.removeCurrentNetwork();
     fixture.destroy();
   })
 
@@ -328,13 +329,14 @@ describe('InboxComponent', () => {
 
   describe('setAccountNameRecords', () => {
     it('should lookup a name each fromAddress', async () => {
+      localStorageServerService.setCurrentNetwork("mainnet")
+      
+      await component.updateNameserviceSettings()
       component.fromAddressesKeys = [currentAccount, currentAccount2]
       await component.setAccountNameRecords()
-
+      
       expect(component.accountNameRecord[currentAccount]).toEqual(currentAccountNameLookup)
-
       expect(component.accountNameRecord[currentAccount2]).toEqual(currentAccount2NameLookup)
-
     });
   });
 

@@ -177,7 +177,7 @@ export class InboxComponent implements OnInit {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
       this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol()
-      this.updateNameserviceSettings()
+      await this.updateNameserviceSettings()
       this.getServerSettings()
     } catch (error) {
       this.getServerSettings()
@@ -252,11 +252,11 @@ export class InboxComponent implements OnInit {
   }
 
   /** clear and (re)sets the nameservice settings for the protocol */
-  public updateNameserviceSettings(){
-    this.localStorageNameserviceService.removeCurrentNameserviceAddressEnabled()
-    this.localStorageNameserviceService.removeCurrentNameserviceDomainEnabled()
-    this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled()
-    this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled()
+  public async updateNameserviceSettings(){
+    await this.localStorageNameserviceService.removeCurrentNameserviceAddressEnabled()
+    await this.localStorageNameserviceService.removeCurrentNameserviceDomainEnabled()
+    await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled()
+    await this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled()
   }
 
   /**

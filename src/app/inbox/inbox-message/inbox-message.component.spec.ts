@@ -10,6 +10,8 @@ import { of } from 'rxjs';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
+import { LocalStorageServerServiceStub } from 'src/app/services/helpers/local-storage-server/local-storage-server.service.stub';
+import { LocalStorageServerService } from 'src/app/services/helpers/local-storage-server/local-storage-server.service';
 
 describe('InboxMessageComponent', () => {
 
@@ -17,6 +19,7 @@ describe('InboxMessageComponent', () => {
   let fixture: ComponentFixture<InboxMessageComponent>;
   let mailchainService: MailchainService;
   let nameserviceService: NameserviceService;
+  let localStorageServerService: LocalStorageServerService;
 
   let mailchainTestService: MailchainTestService
 
@@ -34,6 +37,7 @@ describe('InboxMessageComponent', () => {
         HttpHelpersService,
         MailchainService,
         { provide: NameserviceService, useClass: NameserviceServiceStub },
+        { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
       ],
       imports: [
         ModalModule.forRoot(),
@@ -44,12 +48,14 @@ describe('InboxMessageComponent', () => {
     })
       .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
+    localStorageServerService = TestBed.get(LocalStorageServerService);
     nameserviceService = TestBed.get(NameserviceService);
     mailchainService = TestBed.get(MailchainService);
 
   }));
 
   beforeEach(() => {
+    
     fixture = TestBed.createComponent(InboxMessageComponent);
     component = fixture.componentInstance;
 
