@@ -313,7 +313,7 @@ export class MailchainTestService {
   }
 
   public protocolsServerResponse(): any {
-    return { "protocols": [{ "name": "ethereum", "networks": [{ "name": "goerli", "id": "" }, { "name": "kovan", "id": "" }, { "name": "mainnet", "id": "" }, { "name": "rinkeby", "id": "" }, { "name": "ropsten", "id": "" }] }, { "name": "substrate", "networks": [{ "name": "edgeware-berlin", "id": "7" }, { "name": "edgeware-mainnet", "id": "7" }] }] }
+    return {"protocols":[{"name":"ethereum","networks":[{"name":"goerli","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"kovan","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"mainnet","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"rinkeby","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"ropsten","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true}]},{"name":"substrate","networks":[{"name":"edgeware-beresheet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-local","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-mainnet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false}]}]}
   }
 
 
