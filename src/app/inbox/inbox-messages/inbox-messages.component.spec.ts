@@ -10,13 +10,17 @@ import { of } from 'rxjs';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { ReadServiceStub } from 'src/app/services/mailchain/messages/read.service.stub';
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
+import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/protocols.service.stub';
 
 describe('InboxMessagesComponent', () => {
   let component: InboxMessagesComponent;
   let fixture: ComponentFixture<InboxMessagesComponent>;
   let mailchainService: MailchainService
   let readService: ReadService;
-  let nameserviceService: NameserviceService
+  let nameserviceService: NameserviceService;
+  let protocolsService: ProtocolsService;
+
 
   const address1 = "0x0123456789012345678901234567890123456789"
   const address2 = "0x0000000000000000000000000000000000000002"
@@ -113,6 +117,7 @@ describe('InboxMessagesComponent', () => {
       providers: [
         HttpHelpersService,
         MailchainService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: ReadService, useClass: ReadServiceStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub },
 
@@ -124,6 +129,7 @@ describe('InboxMessagesComponent', () => {
     })
       .compileComponents();
     mailchainService = TestBed.get(MailchainService);
+    protocolsService = TestBed.get(ProtocolsService);
     readService = TestBed.get(ReadService);
     nameserviceService = TestBed.get(NameserviceService);
 

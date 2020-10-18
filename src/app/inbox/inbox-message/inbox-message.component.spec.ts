@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 import { LocalStorageServerServiceStub } from 'src/app/services/helpers/local-storage-server/local-storage-server.service.stub';
 import { LocalStorageServerService } from 'src/app/services/helpers/local-storage-server/local-storage-server.service';
+import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/protocols.service.stub';
 
 describe('InboxMessageComponent', () => {
 
@@ -20,6 +22,7 @@ describe('InboxMessageComponent', () => {
   let mailchainService: MailchainService;
   let nameserviceService: NameserviceService;
   let localStorageServerService: LocalStorageServerService;
+  let protocolsService: ProtocolsService;
 
   let mailchainTestService: MailchainTestService
 
@@ -36,6 +39,7 @@ describe('InboxMessageComponent', () => {
       providers: [
         HttpHelpersService,
         MailchainService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub },
         { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
       ],
@@ -48,6 +52,7 @@ describe('InboxMessageComponent', () => {
     })
       .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
+    protocolsService = TestBed.get(ProtocolsService);
     localStorageServerService = TestBed.get(LocalStorageServerService);
     nameserviceService = TestBed.get(NameserviceService);
     mailchainService = TestBed.get(MailchainService);
