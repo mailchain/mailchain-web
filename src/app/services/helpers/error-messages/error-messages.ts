@@ -15,7 +15,7 @@ export const errorMessages = {
   "connectionErrorTitle": "Connection Error",
 
   // unknown error
-  "unknownErrorMessage": "<p>An unkown error occured.</p><p>Please raise an issue on <a href=\"https://github.com/mailchain/mailchain-web/issues\" target=\"_blank\">Github</a> to get some help.</p>",
+  "unknownErrorMessage": "<p>An unknown error occurred.</p><p>Please raise an issue on <a href=\"https://github.com/mailchain/mailchain-web/issues\" target=\"_blank\">Github</a> to get some help.</p>",
   "unknownErrorTitle": "Unknown Error",
 
   // update available

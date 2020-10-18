@@ -5,6 +5,7 @@ import { applicationApiConfig } from 'src/environments/environment';
 import { NameserviceService } from './nameservice/nameservice.service';
 import { stringify } from '@angular/compiler/src/util';
 import { Mail } from 'src/app/models/mail';
+import { LocalStorageNameserviceService } from '../helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ import { Mail } from 'src/app/models/mail';
 export class MailchainService {
 
   constructor(
-    private nameserviceService: NameserviceService
+    private nameserviceService: NameserviceService,
+    private localStorageNameserviceService: LocalStorageNameserviceService
   ) { }
 
   /**
@@ -176,7 +178,7 @@ export class MailchainService {
    * @param network e.g. mainnet
    * @param messagesArray the message array
    */
-  resolveSendersFromMessages(protocol: string, network: string, messagesArray: { headers: { from: string; }; status: string; }[]) {
+  async resolveSendersFromMessages(protocol: string, network: string, messagesArray: { headers: { from: string; }; status: string; }[]) {
     let uniqSenders: any[]
     let validMsgs: any[]
     let output = {}
@@ -189,16 +191,18 @@ export class MailchainService {
       }
     )
 
-    uniqSenders = this.dedupeMessagesBySender(protocol, validMsgs);
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
+      uniqSenders = this.dedupeMessagesBySender(protocol, validMsgs);
 
-    uniqSenders.forEach((address: string | number) => {
-      this.nameserviceService.resolveAddress(protocol, network, address).subscribe(res => {
-        if (res['ok']) {
-          output[address] = res['body']['name']
-        }
-      })
-    });
-
+      await uniqSenders.forEach(async (address: string | number) => {
+        let obs = await this.nameserviceService.resolveAddress(protocol, network, address)
+        obs.subscribe(res => {
+          if (res['ok']) {
+            output[address] = res['body']['name']
+          }
+        })
+      });
+    }
     return output
   }
 

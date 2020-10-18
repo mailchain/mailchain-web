@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { applicationApiConfig } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,14 @@ export class LocalStorageServerServiceStub {
   ) { }
 
   getCurrentNetwork() {
-    return this.localStorageCurrentNetwork
+    if (sessionStorage['currentNetwork'] && sessionStorage['currentNetwork'] != "undefined") {
+      return sessionStorage.getItem('currentNetwork')
+    } else {
+      var networks = applicationApiConfig.networks
+      var network = networks.length ? networks[0] : ""
+      this.setCurrentNetwork(network)
+      return network
+    }
   }
 
   setCurrentNetwork(network: string) {

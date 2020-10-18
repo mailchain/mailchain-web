@@ -10,13 +10,17 @@ import { of } from 'rxjs';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { ReadServiceStub } from 'src/app/services/mailchain/messages/read.service.stub';
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
+import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/protocols.service.stub';
 
 describe('InboxMessagesComponent', () => {
   let component: InboxMessagesComponent;
   let fixture: ComponentFixture<InboxMessagesComponent>;
   let mailchainService: MailchainService
   let readService: ReadService;
-  let nameserviceService: NameserviceService
+  let nameserviceService: NameserviceService;
+  let protocolsService: ProtocolsService;
+
 
   const address1 = "0x0123456789012345678901234567890123456789"
   const address2 = "0x0000000000000000000000000000000000000002"
@@ -113,6 +117,7 @@ describe('InboxMessagesComponent', () => {
       providers: [
         HttpHelpersService,
         MailchainService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: ReadService, useClass: ReadServiceStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub },
 
@@ -124,6 +129,7 @@ describe('InboxMessagesComponent', () => {
     })
       .compileComponents();
     mailchainService = TestBed.get(MailchainService);
+    protocolsService = TestBed.get(ProtocolsService);
     readService = TestBed.get(ReadService);
     nameserviceService = TestBed.get(NameserviceService);
 
@@ -166,12 +172,12 @@ describe('InboxMessagesComponent', () => {
   });
 
   describe('resolveSendersFromMessages', () => {
-    it('should include resolved names in messagesNameRecords', () => {
-      component.resolveSendersFromMessages(messages)
+    it('should include resolved names in messagesNameRecords', async () => {
+      await component.resolveSendersFromMessages(messages)
       expect(component.messagesNameRecords[address1]).toEqual("myaddress.eth")
     })
-    it('should not include unresolved names in messagesNameRecords', () => {
-      component.resolveSendersFromMessages(messages)
+    it('should not include unresolved names in messagesNameRecords', async () => {
+      await component.resolveSendersFromMessages(messages)
       expect(component.messagesNameRecords[address2]).toEqual(undefined)
     })
   })
@@ -546,9 +552,9 @@ describe('InboxMessagesComponent', () => {
         component.addMailToInboxMessages(msg)
       })
     })
-    it('should set currentAccountInboxMessages to the currently selected account', () => {
+    it('should set currentAccountInboxMessages to the currently selected account', async () => {
       component.currentAccount = address2
-      component.getCurrentAccountInboxMessages()
+      await component.getCurrentAccountInboxMessages()
 
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[3],
@@ -556,19 +562,19 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[5]
       ])
     })
-    it('should filter currentAccountInboxMessages based on search text', () => {
+    it('should filter currentAccountInboxMessages based on search text', async () => {
       component.currentAccount = address2
       component.searchText = "Message 04"
-      component.getCurrentAccountInboxMessages()
+      await component.getCurrentAccountInboxMessages()
 
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[4]
       ])
     })
-    it('should dedupe currentAccountInboxMessages', () => {
+    it('should dedupe currentAccountInboxMessages', async () => {
       component.currentAccount = address2
       component.inboxMessages.push(component.inboxMessages[4])
-      component.getCurrentAccountInboxMessages()
+      await component.getCurrentAccountInboxMessages()
 
       expect(component.currentAccountInboxMessages).toEqual([
         component.inboxMessages[3],
