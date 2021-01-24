@@ -21,7 +21,7 @@
     "@angular/router": "~8.2.14",
     "@ckeditor/ckeditor5-angular": "^1.2.3",
     "@ckeditor/ckeditor5-build-classic": "github:mailchain/ckeditor5-build-classic#mailchain_stable",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.1",
     "core-js": "^2.6.11",
     "ethereum-blockies-base64": "^1.0.2",
     "font-awesome": "^4.7.0",
