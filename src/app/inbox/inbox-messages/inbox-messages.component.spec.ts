@@ -245,15 +245,22 @@ describe('InboxMessagesComponent', () => {
       let protocol = 'ethereum'
       let addrIcon1 = mailchainService.generateIdenticon(protocol, address1);
       let addrIcon2 = mailchainService.generateIdenticon(protocol, address2);
-      let addrIcon3 = mailchainService.generateIdenticon(protocol, address3);
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
 
       component.inboxMessages.forEach((val, index) => {
-        expect(val['senderIdenticon']).toEqual(
-          [3,4,5].includes(index) ? addrIcon1 : addrIcon2
-        )
+        let icon
+        
+        if ( [0,1,2, 6,7,].includes(index) ){
+          icon = addrIcon2
+        } else if ([3,4,5].includes(index)) {
+          icon = addrIcon1
+        } else if ([8,9].includes(index)) {
+          icon = '' // SUBSTRATE not supported
+        };
+
+        expect(val['senderIdenticon']).toEqual(icon);
       });
     });
 
