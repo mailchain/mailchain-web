@@ -12,6 +12,7 @@ import { ReadServiceStub } from 'src/app/services/mailchain/messages/read.servic
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
 import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/protocols.service.stub';
+import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 
 describe('InboxMessagesComponent', () => {
   let component: InboxMessagesComponent;
@@ -20,6 +21,7 @@ describe('InboxMessagesComponent', () => {
   let readService: ReadService;
   let nameserviceService: NameserviceService;
   let protocolsService: ProtocolsService;
+  let mailchainTestService: MailchainTestService
 
 
   const address1 = "0x0123456789012345678901234567890123456789"
@@ -52,6 +54,12 @@ describe('InboxMessagesComponent', () => {
   // id 07: addresses lowercase;
   //        from: address 2
   //        to:   address 3
+  // id 08: addresses lowercase (SUBSTRATE);
+  //        from: substrate address 1
+  //        to:   substrate address 2
+  // id 09: TO address uppercase (SUBSTRATE);
+  //        from: substrate address 1
+  //        to:   substrate address 2
   
   const messages = [
     {
@@ -134,6 +142,26 @@ describe('InboxMessagesComponent', () => {
       "status": "ok",
       "subject": "Message 07"
     },
+    {
+      "headers": {
+        "from": "<5F4HMyes8GNWzpSDjTPSh61Aw6RTaWmZKwKvszocwqbsdn4h@edgeware-mainnet.substrate>",
+        "to": "<5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2@edgeware-mainnet.substrate>",
+        "message-id": "08"
+      },
+      "read": false,
+      "status": "ok",
+      "subject": "Message 08"
+    },
+    {
+      "headers": {
+        "from": "<5F4HMyes8GNWzpSDjTPSh61Aw6RTaWmZKwKvszocwqbsdn4h@edgeware-mainnet.substrate>",
+        "to": "<5CALGJUDDDRXW6KQXJY2F5HFKMEEGHVTUPQYDWDSBKU42DV2@edgeware-mainnet.substrate>",
+        "message-id": "09"
+      },
+      "read": false,
+      "status": "ok",
+      "subject": "Message 09"
+    },
   ]
 
 
@@ -160,6 +188,7 @@ describe('InboxMessagesComponent', () => {
     protocolsService = TestBed.get(ProtocolsService);
     readService = TestBed.get(ReadService);
     nameserviceService = TestBed.get(NameserviceService);
+    mailchainTestService = TestBed.get(MailchainTestService);
 
   }));
 
@@ -610,6 +639,32 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[5]
       ])
     })
+
+    describe('and case sensitivity', () => {
+      describe('for ethereum', () => {
+        it('should be case insensitive', async () => {
+          component.currentAccount = address3
+          await component.getCurrentAccountInboxMessages()
+
+          expect(component.currentAccountInboxMessages).toEqual([
+            component.inboxMessages[6],
+            component.inboxMessages[7]
+          ])
+          
+        });
+      });
+      describe('for substrate', () => {
+        it('should be case sensitive', async () => {
+          component.currentAccount = "5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2"
+          component.currentProtocol = "substrate"
+          await component.getCurrentAccountInboxMessages()
+
+          expect(component.currentAccountInboxMessages).toEqual([
+            component.inboxMessages[8]
+          ])
+        });
+      });
+    });
   });
   describe('ngOnChanges', () => {
     xit('should selectNone if "event" contains "currentAccount"', () => {
