@@ -12,6 +12,7 @@ import { ReadServiceStub } from 'src/app/services/mailchain/messages/read.servic
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
 import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
 import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/protocols.service.stub';
+import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.service';
 
 describe('InboxMessagesComponent', () => {
   let component: InboxMessagesComponent;
@@ -20,11 +21,13 @@ describe('InboxMessagesComponent', () => {
   let readService: ReadService;
   let nameserviceService: NameserviceService;
   let protocolsService: ProtocolsService;
+  let mailchainTestService: MailchainTestService
 
 
   const address1 = "0x0123456789012345678901234567890123456789"
-  const address2 = "0x0000000000000000000000000000000000000002"
-  const addresses = [address1, address2]
+  const address2 = "0xbbb0000000000000000000000000000000000000"
+  const address3 = "0xabc000000000000000000000000000000000000a"
+  const addresses = [address1, address2, address3]
 
 
   // id 00: unread & status ok;
@@ -45,10 +48,23 @@ describe('InboxMessagesComponent', () => {
   // id 05: read & status error;
   //        from: address 1
   //        to:   address 2
+  // id 06: addresses uppercase;
+  //        from: address 2
+  //        to:   address 3
+  // id 07: addresses lowercase;
+  //        from: address 2
+  //        to:   address 3
+  // id 08: addresses lowercase (SUBSTRATE);
+  //        from: substrate address 1
+  //        to:   substrate address 2
+  // id 09: TO address uppercase (SUBSTRATE);
+  //        from: substrate address 1
+  //        to:   substrate address 2
+  
   const messages = [
     {
       "headers": {
-        "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "from": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
         "to": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "message-id": "00"
       },
@@ -58,7 +74,7 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "from": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
         "to": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "message-id": "01"
       },
@@ -68,7 +84,7 @@ describe('InboxMessagesComponent', () => {
     },
     {
       "headers": {
-        "from": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "from": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
         "to": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
         "message-id": "02"
       },
@@ -79,7 +95,7 @@ describe('InboxMessagesComponent', () => {
     {
       "headers": {
         "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
-        "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "to": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
         "message-id": "03"
       },
       "read": false,
@@ -89,7 +105,7 @@ describe('InboxMessagesComponent', () => {
     {
       "headers": {
         "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
-        "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "to": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
         "message-id": "04"
       },
       "read": true,
@@ -99,13 +115,53 @@ describe('InboxMessagesComponent', () => {
     {
       "headers": {
         "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
-        "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+        "to": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
         "message-id": "05"
       },
       "read": true,
       "status": "error",
       "subject": "Message 05"
-    }
+    },
+    {
+      "headers": {
+        "from": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
+        "to": "<0xABC000000000000000000000000000000000000A@ropsten.ethereum>",
+        "message-id": "06"
+      },
+      "read": false,
+      "status": "ok",
+      "subject": "Message 06"
+    },
+    {
+      "headers": {
+        "from": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
+        "to": "<0xabc000000000000000000000000000000000000a@ropsten.ethereum>",
+        "message-id": "07"
+      },
+      "read": false,
+      "status": "ok",
+      "subject": "Message 07"
+    },
+    {
+      "headers": {
+        "from": "<5F4HMyes8GNWzpSDjTPSh61Aw6RTaWmZKwKvszocwqbsdn4h@edgeware-mainnet.substrate>",
+        "to": "<5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2@edgeware-mainnet.substrate>",
+        "message-id": "08"
+      },
+      "read": false,
+      "status": "ok",
+      "subject": "Message 08"
+    },
+    {
+      "headers": {
+        "from": "<5F4HMyes8GNWzpSDjTPSh61Aw6RTaWmZKwKvszocwqbsdn4h@edgeware-mainnet.substrate>",
+        "to": "<5CALGJUDDDRXW6KQXJY2F5HFKMEEGHVTUPQYDWDSBKU42DV2@edgeware-mainnet.substrate>",
+        "message-id": "09"
+      },
+      "read": false,
+      "status": "ok",
+      "subject": "Message 09"
+    },
   ]
 
 
@@ -132,6 +188,7 @@ describe('InboxMessagesComponent', () => {
     protocolsService = TestBed.get(ProtocolsService);
     readService = TestBed.get(ReadService);
     nameserviceService = TestBed.get(NameserviceService);
+    mailchainTestService = TestBed.get(MailchainTestService);
 
   }));
 
@@ -188,15 +245,22 @@ describe('InboxMessagesComponent', () => {
       let protocol = 'ethereum'
       let addrIcon1 = mailchainService.generateIdenticon(protocol, address1);
       let addrIcon2 = mailchainService.generateIdenticon(protocol, address2);
-
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
 
       component.inboxMessages.forEach((val, index) => {
-        expect(val['senderIdenticon']).toEqual(
-          index <= 2 ? addrIcon2 : addrIcon1
-        )
+        let icon
+        
+        if ( [0,1,2, 6,7,].includes(index) ){
+          icon = addrIcon2
+        } else if ([3,4,5].includes(index)) {
+          icon = addrIcon1
+        } else if ([8,9].includes(index)) {
+          icon = '' // SUBSTRATE not supported
+        };
+
+        expect(val['senderIdenticon']).toEqual(icon);
       });
     });
 
@@ -230,7 +294,7 @@ describe('InboxMessagesComponent', () => {
       let message = {
         "headers": {
           "from": "<0x0123456789012345678901234567890123456789@ropsten.ethereum>",
-          "to": "<0x0000000000000000000000000000000000000002@ropsten.ethereum>",
+          "to": "<0xbbb0000000000000000000000000000000000000@ropsten.ethereum>",
           "message-id": "05"
         },
         "read": true,
@@ -582,6 +646,32 @@ describe('InboxMessagesComponent', () => {
         component.inboxMessages[5]
       ])
     })
+
+    describe('and case sensitivity', () => {
+      describe('for ethereum', () => {
+        it('should be case insensitive', async () => {
+          component.currentAccount = address3
+          await component.getCurrentAccountInboxMessages()
+
+          expect(component.currentAccountInboxMessages).toEqual([
+            component.inboxMessages[6],
+            component.inboxMessages[7]
+          ])
+          
+        });
+      });
+      describe('for substrate', () => {
+        it('should be case sensitive', async () => {
+          component.currentAccount = "5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2"
+          component.currentProtocol = "substrate"
+          await component.getCurrentAccountInboxMessages()
+
+          expect(component.currentAccountInboxMessages).toEqual([
+            component.inboxMessages[8]
+          ])
+        });
+      });
+    });
   });
   describe('ngOnChanges', () => {
     xit('should selectNone if "event" contains "currentAccount"', () => {
