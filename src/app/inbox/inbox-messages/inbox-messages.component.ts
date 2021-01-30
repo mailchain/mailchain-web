@@ -67,8 +67,8 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
    * resolveSendersFromMessages of messages by name according to the currentNetwork and currentProtocol
    * @param messagesArray the array of messages
    */
-  resolveSendersFromMessages(messagesArray) {
-    this.messagesNameRecords = this.mailchainService.resolveSendersFromMessages(
+  async resolveSendersFromMessages(messagesArray) {
+    this.messagesNameRecords = await this.mailchainService.resolveSendersFromMessages(
       this.currentProtocol,
       this.currentNetwork,
       messagesArray
@@ -193,14 +193,14 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
 
 
   async ngOnInit(): Promise<void> {
-    this.getCurrentAccountInboxMessages()
+    await this.getCurrentAccountInboxMessages()
   }
 
   /**
    * Get the inbox messages, filtered by 'currently selected account' > 'searchtext'.
    * Dedupe message array - workaround for dupe messages @TODO: waiting on dupe bugfix in mailchain
    */
-  getCurrentAccountInboxMessages() {
+  async getCurrentAccountInboxMessages() {
     if (this.currentProtocol && this.currentAccount) {
       var inboxMessagesFilteredByAddress = this.addressPipe.transform(
         this.inboxMessages, {
@@ -217,7 +217,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
       this.currentAccountInboxMessages = this.mailchainService.dedupeMessagesByIds(inboxMessagesFilteredByAddressSearch)
 
       // fetch names for senders
-      this.resolveSendersFromMessages(this.currentAccountInboxMessages)
+      await this.resolveSendersFromMessages(this.currentAccountInboxMessages)
     }
   }
 
@@ -226,7 +226,7 @@ export class InboxMessagesComponent implements OnInit, OnChanges {
     if ('currentAccount' in event) {
       this.selectNone()
     }
-    this.getCurrentAccountInboxMessages()
+    await this.getCurrentAccountInboxMessages()
   }
 
 }

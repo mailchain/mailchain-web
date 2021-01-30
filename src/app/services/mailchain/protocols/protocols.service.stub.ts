@@ -23,6 +23,14 @@ export class ProtocolsServiceStub {
     return ["ethereum", "substrate"]
   }
 
+  async getProtocolNetworkAttributes(protocol: string, network: string) {
+    let res = this.mailchainTestService.protocolsServerResponse()
+    let attributes = {}
+    let p = res["protocols"].find(el => el["name"] == protocol)
+    attributes = p["networks"].find(nw => nw["name"] == network)
+    return attributes
+  }
+
   public getProtocolsResponse() {
     return of(this.mailchainTestService.protocolsObserveResponse())
   }

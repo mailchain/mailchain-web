@@ -167,7 +167,8 @@ describe('SettingsComponent', () => {
       component.networks = []
       await component.setCurrentNetwork()
 
-      expect(component.currentNetwork).toBe(undefined)
+      // expect(component.currentNetwork).toBe(undefined) // this is not undefined while applicationApiConfig is in use by localstorage (see https://github.com/mailchain/mailchain-web/issues/217)
+      expect(component.currentNetwork).toBe('mainnet')
     });
   });
 
@@ -275,7 +276,8 @@ describe('SettingsComponent', () => {
       component.currentProtocol = 'substrate'
       await component.setNetworkList()
       expect(component.networks).toEqual([
-        { label: "edgeware-berlin", value: "edgeware-berlin" },
+        { label: "edgeware-beresheet", value: "edgeware-beresheet" },
+        { label: "edgeware-local", value: "edgeware-local" },
         { label: "edgeware-mainnet", value: "edgeware-mainnet" },
       ])
 

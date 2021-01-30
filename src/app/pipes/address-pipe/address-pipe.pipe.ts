@@ -30,8 +30,8 @@ export class AddressPipe implements PipeTransform {
     if (value) {
       return value.filter(conversation => {
         let toAddress = this.mailchainService.parseAddressFromMailchain(protocol, conversation["headers"]["to"])
-
-        return fromAddress == this.addressesService.handleAddressFormatting(toAddress, protocol);
+        
+        return fromAddress == this.addressesService.handleAddressFormattingByProtocol(toAddress, protocol);
       });
     }
   }

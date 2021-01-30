@@ -44,6 +44,18 @@ export class ProtocolsService {
   }
 
   /**
+   * Helper function to get and return the protocol & network attributes
+   */
+  async getProtocolNetworkAttributes(protocol: string, network: string) {
+    let attributes = {}
+    await this.getProtocols().toPromise().then(res => {
+      let p = res["protocols"].find(el => el["name"] == protocol)
+      attributes = p["networks"].find(nw => nw["name"] == network)
+    })
+    return attributes
+  }
+
+  /**
    * Returns the protocols response with status codes
    */
   public getProtocolsResponse() {

@@ -5,6 +5,7 @@ import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.s
 
 import { ProtocolsService } from './protocols.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
+import { of } from 'rxjs';
 
 describe('ProtocolsService', () => {
 
@@ -48,15 +49,47 @@ describe('ProtocolsService', () => {
     });
   });
 
-  it('should get an array of protocols and networks', () => {
-    protocolsService.getProtocols().subscribe(res => {
-      expect(res).toEqual(serverResponse)
+  
+  describe('getProtocols', () => {
+    it('should get an array of protocols and networks', () => {
+      protocolsService.getProtocols().subscribe(res => {
+        expect(res).toEqual(serverResponse)
+      });
+  
+      // handle open connections
+      const req = httpTestingController.expectOne(desiredUrl);
+      expect(req.request.method).toBe("GET");
+      req.flush(serverResponse);
     });
+  });
 
-    // handle open connections
-    const req = httpTestingController.expectOne(desiredUrl);
-    expect(req.request.method).toBe("GET");
-    req.flush(serverResponse);
+  describe('getProtocolsByName', () => {
+    it('should get the protocols by name', async () => {
+      spyOn(protocolsService,'getProtocols').and.returnValue(of(mailchainTestService.protocolsServerResponse()))
+      expect(await protocolsService.getProtocolsByName()).toEqual(["ethereum","substrate"])
+    });
+  });
+
+  describe('getProtocolNetworkAttributes', () => {
+    it('should return the attributes for a protocol network', async () => {
+      spyOn(protocolsService,'getProtocols').and.returnValue(of(mailchainTestService.protocolsServerResponse()))
+      expect(await protocolsService.getProtocolNetworkAttributes("ethereum","mainnet")).toEqual(
+        {
+          "name": "mainnet",
+          "id": "",
+          "nameservice-domain-enabled": true,
+          "nameservice-address-enabled": true
+        }
+      )
+      expect(await protocolsService.getProtocolNetworkAttributes("substrate","edgeware-mainnet")).toEqual(
+        {
+          "name": "edgeware-mainnet",
+          "id": "7",
+          "nameservice-domain-enabled": false,
+          "nameservice-address-enabled": false
+        }
+      )
+    });
   });
 
 });

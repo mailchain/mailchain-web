@@ -7,6 +7,7 @@ import { LocalStorageServerService } from '../services/helpers/local-storage-ser
 import { LocalStorageProtocolService } from '../services/helpers/local-storage-protocol/local-storage-protocol.service';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
+import { LocalStorageNameserviceService } from '../services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 @Component({
   selector: 'app-inbox',
@@ -42,7 +43,8 @@ export class InboxComponent implements OnInit {
   constructor(
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
-    private LocalStorageProtocolService: LocalStorageProtocolService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageNameserviceService: LocalStorageNameserviceService,
     private addressesService: AddressesService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
@@ -155,14 +157,17 @@ export class InboxComponent implements OnInit {
   /**
    * Lookup name records for addresses
    */
-  setAccountNameRecords() {
-    this.fromAddressesKeys.forEach(address => {
-      this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address).subscribe(res => {
-        if (res['ok']) {
-          this.accountNameRecord[address] = res['body']['name']
-        }
-      })
-    });
+  async setAccountNameRecords() {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
+      await this.fromAddressesKeys.forEach(async address => {
+        let obs = await this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address)
+        obs.subscribe(res => {
+          if (res['ok']) {
+            this.accountNameRecord[address] = res['body']['name']
+          }
+        })
+      });
+    };
   }
 
   async ngOnInit(): Promise<void> {
@@ -171,7 +176,8 @@ export class InboxComponent implements OnInit {
     try {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
-      this.currentProtocol = await this.LocalStorageProtocolService.getCurrentProtocol()
+      this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol()
+      await this.updateNameserviceSettings()
       this.getServerSettings()
     } catch (error) {
       this.getServerSettings()
@@ -245,6 +251,13 @@ export class InboxComponent implements OnInit {
     validMessages.forEach(msg => this.addMailToInboxMessages(msg));
   }
 
+  /** clear and (re)sets the nameservice settings for the protocol */
+  public async updateNameserviceSettings(){
+    await this.localStorageNameserviceService.removeCurrentNameserviceAddressEnabled()
+    await this.localStorageNameserviceService.removeCurrentNameserviceDomainEnabled()
+    await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled()
+    await this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled()
+  }
 
   /**
    * setFetchingMessagesState
