@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
-import { LocalStorageProtocolService } from '../../helpers/local-storage-protocol/local-storage-protocol.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 @Injectable({
@@ -10,14 +9,11 @@ import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.serv
 export class AddressesService {
 
   private url: string
-  private protocol: string
-  private network: string
 
   constructor(
     private http: HttpClient,
     private httpHelpersService: HttpHelpersService,
     private localStorageServerService: LocalStorageServerService,
-    private localStorageProtocolService: LocalStorageProtocolService,
   ) {
     this.initUrl()
   }
@@ -25,19 +21,17 @@ export class AddressesService {
   /**
    * Initialize URL from local storage
    */
-  initUrl() {
-    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`,
-      this.protocol = this.localStorageProtocolService.getCurrentProtocol()
-    this.network = this.localStorageServerService.getCurrentNetwork()
+  async initUrl() {
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
   }
 
   /**
    * Get and return the public addresses from my wallet to send from
    */
-  async getAddresses() {
+  async getAddresses(protocol, network) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol', this.protocol],
-      ['network', this.network]
+      ['protocol', protocol],
+      ['network', network]
     ])
 
     var addresses = []
@@ -46,28 +40,58 @@ export class AddressesService {
       httpOptions
       // TODO handle failure
     ).toPromise();
+
     res["body"]["addresses"].forEach(address => {
-      addresses.push(this.handleAddressFormatting(address, 'ethereum'))
+      addresses.push(
+        this.handleAddressFormatting(
+          address["value"],
+          address["encoding"]
+        )
+      )
     });
     return addresses
   }
 
-  handleAddressFormatting(address, chain) {
-    switch (chain) {
-      case 'ethereum':
-        return '0x' + address.toLowerCase()
+  /**
+   * handleAddressFormatting
+   * @param address 
+   * @param encoding "hex/0x-prefix" | "base58/plain"
+   */
+  handleAddressFormatting(address, encoding) {
+    switch (encoding) {
+      case 'hex/0x-prefix':
+        return address.toLowerCase()
+      case 'base58/plain':
+        return address
       default:
-        break;
+        return address
+    }
+  }
+
+  /**
+   * handleAddressFormattingByProtocol
+   * @param address 
+   * @param protocol "ethereum" | "substrate""
+   */
+  handleAddressFormattingByProtocol(address, protocol) {
+
+    switch (protocol) {
+      case 'ethereum':
+        return address.toLowerCase()
+      case 'substrate':
+        return address
+      default:
+        return address
     }
   }
 
   /**
    * Returns the addresses response with status codes
    */
-  public getAddressesResponse() {
+  public getAddressesResponse(protocol, network) {
     var httpOptions = this.httpHelpersService.getHttpOptions([
-      ['protocol', this.protocol],
-      ['network', this.network]
+      ['protocol', protocol],
+      ['network', network]
     ])
 
     return this.http.get(

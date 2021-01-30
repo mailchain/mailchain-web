@@ -6,12 +6,16 @@ import { NameserviceService } from './nameservice.service';
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 import { MailchainTestService } from '../../../test/test-helpers/mailchain-test.service';
+import { ProtocolsService } from '../protocols/protocols.service';
+import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
 
 describe('NameserviceService', () => {
 
   let nameserviceService: NameserviceService;
   let httpTestingController: HttpTestingController;
-  let mailchainTestService: MailchainTestService
+  let mailchainTestService: MailchainTestService;
+  let protocolsService: ProtocolsService;
+
 
   let address: String = "0x0000000000000000000000000000000000000022"
   let protocol: String = "ethereum"
@@ -27,6 +31,7 @@ describe('NameserviceService', () => {
         NameserviceService,
         HttpHelpersService,
         MailchainTestService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [HttpClientTestingModule]
     });
@@ -34,6 +39,8 @@ describe('NameserviceService', () => {
     nameserviceService = TestBed.get(NameserviceService);
     httpTestingController = TestBed.get(HttpTestingController);
     mailchainTestService = TestBed.get(MailchainTestService);
+    protocolsService = TestBed.get(ProtocolsService);
+
 
   });
 
@@ -52,28 +59,27 @@ describe('NameserviceService', () => {
   });
 
   describe('resolveName', () => {
-    it('should add the right params to the request', () => {
-
+    it('should add the right params to the request', async () => {
       let resResponse = mailchainTestService.resolveNameResponse()
-      let response = nameserviceService.resolveName(protocol, network, name)
-
+      let response = await nameserviceService.resolveName(protocol, network, name)
+      
       response.subscribe()
 
       // handle open connections      
       const req = httpTestingController.expectOne(expectedResolveNameUrlWithParams);
 
       expect(req.request.method).toBe("GET");
-
+      
       expect(req.request.params.get('protocol')).toEqual(protocol);
       expect(req.request.params.get('network')).toEqual(network);
 
       req.flush(resResponse);
     });
 
-    it('should resolve a public address from a name', () => {
+    it('should resolve a public address from a name', async () => {
 
       let resResponse = mailchainTestService.resolveNameResponse()
-      let response = nameserviceService.resolveName(protocol, network, name)
+      let response = await nameserviceService.resolveName(protocol, network, name)
 
       response.subscribe(res => {
         expect(res['url']).toEqual(expectedResolveNameUrlWithParams)
@@ -90,10 +96,10 @@ describe('NameserviceService', () => {
   });
 
   describe('resolveAddress', () => {
-    it('should add the right params to the request', () => {
+    it('should add the right params to the request', async () => {
 
       let resResponse = mailchainTestService.resolveAddressResponse()
-      let response = nameserviceService.resolveAddress(protocol, network, address)
+      let response = await nameserviceService.resolveAddress(protocol, network, address)
 
       response.subscribe()
 
@@ -108,10 +114,10 @@ describe('NameserviceService', () => {
       req.flush(resResponse);
     });
 
-    it('should resolve a name from a public address', () => {
+    it('should resolve a name from a public address', async () => {
 
       let resResponse = mailchainTestService.resolveAddressResponse()
-      let response = nameserviceService.resolveAddress(protocol, network, address)
+      let response = await nameserviceService.resolveAddress(protocol, network, address)
 
       response.subscribe(res => {
         expect(res['url']).toEqual(expectedResolveAddressUrlWithParams)

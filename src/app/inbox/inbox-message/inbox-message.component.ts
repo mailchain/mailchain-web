@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } fro
 import { InboundMail } from 'src/app/models/inbound-mail';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
+import { LocalStorageNameserviceService } from 'src/app/services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 @Component({
   selector: '[inbox-message]',
@@ -12,8 +13,8 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 export class InboxMessageComponent implements OnInit {
   @Input() currentMessage: InboundMail = new InboundMail;
   @Input() inboxMessages: Array<any> = [];
-  @Input() currentProtocol: Array<any> = [];
-  @Input() currentNetwork: Array<any> = [];
+  @Input() currentProtocol: string;
+  @Input() currentNetwork: string;
   @Output() goToInboxMessages = new EventEmitter();
   @Output() replyToMessage = new EventEmitter();
 
@@ -22,6 +23,7 @@ export class InboxMessageComponent implements OnInit {
   constructor(
     private nameserviceService: NameserviceService,
     private mailchainService: MailchainService,
+    private localStorageNameserviceService: LocalStorageNameserviceService,
   ) { }
   /**
    * Go back to the inbox-messages view
@@ -30,8 +32,8 @@ export class InboxMessageComponent implements OnInit {
     this.goToInboxMessages.emit('');
   }
 
-  ngOnInit() {
-    this.resolveNamesFromMessage()
+  async ngOnInit() {
+    await this.resolveNamesFromMessage()
     this.getViewForContentType()
   }
 
@@ -47,12 +49,13 @@ export class InboxMessageComponent implements OnInit {
    * Sets the name corresponding to messageNameRecords
    * @param addr address in format 0x1234...1234
    */
-  private resolveMessageNameRecords(addr) {
-    this.nameserviceService.resolveAddress(
+  private async resolveMessageNameRecords(addr) {
+    let obs = await this.nameserviceService.resolveAddress(
       this.currentProtocol,
       this.currentNetwork,
       addr
-    ).subscribe(res => {
+    )
+    obs.subscribe(res => {
       if (res['ok']) {
         this.messageNameRecords[addr] = res['body']['name']
       }
@@ -63,15 +66,17 @@ export class InboxMessageComponent implements OnInit {
    * resolveNamesFromMessages looks up the 'to' and 'from' name
    * records according to the currentNetwork and currentProtocol
    */
-  private resolveNamesFromMessage() {
-    [
-      this.currentMessage["headers"]["to"],
-      this.currentMessage["headers"]["from"]
-    ].forEach(element => {
-      let parsedAddr = this.parseAddressFromMailchain(element)
-      this.resolveMessageNameRecords(parsedAddr)
-    });
+  private async resolveNamesFromMessage() {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
 
+      [
+        this.currentMessage["headers"]["to"],
+        this.currentMessage["headers"]["from"]
+      ].forEach(async element => {
+        let parsedAddr = this.parseAddressFromMailchain(element)
+        await this.resolveMessageNameRecords(parsedAddr)
+      });
+    };
   }
 
   /**
@@ -79,7 +84,7 @@ export class InboxMessageComponent implements OnInit {
    * @param address formatted <0x...@network.protocol> address
    */
   public parseAddressFromMailchain(address) {
-    return this.mailchainService.parseAddressFromMailchain(address)
+    return this.mailchainService.parseAddressFromMailchain(this.currentProtocol, address)
   }
 
   /**

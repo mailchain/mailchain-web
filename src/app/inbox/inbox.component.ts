@@ -3,14 +3,11 @@ import { LocalStorageAccountService } from '../services/helpers/local-storage-ac
 import { MailchainService } from '../services/mailchain/mailchain.service';
 import { MessagesService } from '../services/mailchain/messages/messages.service';
 import { InboundMail } from '../models/inbound-mail';
-import { NgForm } from '@angular/forms';
 import { LocalStorageServerService } from '../services/helpers/local-storage-server/local-storage-server.service';
 import { LocalStorageProtocolService } from '../services/helpers/local-storage-protocol/local-storage-protocol.service';
-import { ActivatedRoute } from '@angular/router';
 import { AddressesService } from '../services/mailchain/addresses/addresses.service';
-import { ProtocolsService } from '../services/mailchain/protocols/protocols.service';
-import { throwError } from 'rxjs';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
+import { LocalStorageNameserviceService } from '../services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 @Component({
   selector: 'app-inbox',
@@ -43,16 +40,14 @@ export class InboxComponent implements OnInit {
   public accountIdenticons: any = {};
   public accountNameRecord: any = {};
 
-
   constructor(
     private localStorageAccountService: LocalStorageAccountService,
     private localStorageServerService: LocalStorageServerService,
-    private LocalStorageProtocolService: LocalStorageProtocolService,
+    private localStorageProtocolService: LocalStorageProtocolService,
+    private localStorageNameserviceService: LocalStorageNameserviceService,
     private addressesService: AddressesService,
-    private protocolsService: ProtocolsService,
     private mailchainService: MailchainService,
     private messagesService: MessagesService,
-    private activatedRoute: ActivatedRoute,
     private nameserviceService: NameserviceService,
   ) { }
 
@@ -73,9 +68,10 @@ export class InboxComponent implements OnInit {
    * @param array [address: string,count: number]
    */
   onInboxCounter(array) {
-    var address: string = array[0]
+    // TODO: fix encoding
+    var address: string = this.addressesService.handleAddressFormattingByProtocol(array[0], this.currentProtocol)
     var count: number = array[1]
-    this.fromAddresses[address.toLowerCase()]["messageCount"]["inbox"] = count
+    this.fromAddresses[address]["messageCount"]["inbox"] = count
   }
 
   /**
@@ -112,102 +108,6 @@ export class InboxComponent implements OnInit {
   }
 
   /**
-   * Changes the network and fetches mails for that network.
-   */
-  changeNetwork() {
-    if (this.inboxPartial != 'messages') {
-      this.changeView('messages');
-    }
-    this.localStorageServerService.setCurrentNetwork(this.currentNetwork)
-    this.getMails()
-  }
-
-  /**
-   * Removes the session storage currentAccount setting
-   */
-  removeCurrentAccount() {
-    this.localStorageAccountService.removeCurrentAccount()
-  }
-
-  /**
-   * Removes the session storage currentNetwork setting
-   */
-  removeCurrentNetwork() {
-    this.localStorageServerService.removeCurrentNetwork()
-  }
-
-  /**
-   * Changes the server settings in the client from form data.
-   * @param form is the settings form submitted from the view
-   */
-  public serverSettingsFormSubmit() {
-
-    var webProtocol = this.serverSettings["webProtocol"]
-    var host = this.serverSettings["host"]
-    var port = this.serverSettings["port"]
-    var settingsHash = {}
-
-    if (webProtocol != undefined && webProtocol != this.currentWebProtocol) {
-      settingsHash["web-protocol"] = webProtocol
-    }
-    if (host != undefined && host != this.currentHost) {
-      settingsHash["host"] = host
-    }
-    if (port != undefined && port != this.currentPort) {
-      settingsHash["port"] = port
-    }
-    this.updateServerSettings(settingsHash)
-  }
-
-  /**
-   * Updates the server settings and reloads the current path. The reload is intended to remove url params and reload a clean component.
-   * @param settingsHash the server settings hash
-   * `{ "web-protocol": "http"|"https", "host": "127.0.0.1", "port": "8080" }`
-   */
-  async updateServerSettings(settingsHash: any) {
-    let serverSettingsChanged: boolean = false
-
-    if (
-      settingsHash["web-protocol"] != undefined &&
-      settingsHash["web-protocol"] != this.currentWebProtocol
-    ) {
-      this.localStorageServerService.setCurrentWebProtocol(settingsHash["web-protocol"])
-      serverSettingsChanged = true
-    }
-    if (
-      settingsHash["host"] != undefined &&
-      settingsHash["host"] != this.currentHost
-    ) {
-      this.localStorageServerService.setCurrentHost(settingsHash["host"])
-      serverSettingsChanged = true
-    }
-    if (
-      settingsHash["port"] != undefined &&
-      settingsHash["port"] != this.currentPort
-    ) {
-      this.localStorageServerService.setCurrentPort(settingsHash["port"])
-      serverSettingsChanged = true
-    }
-
-    if (serverSettingsChanged) {
-      this.removeCurrentAccount();
-      this.removeCurrentNetwork();
-
-      this.windowReload()
-    }
-
-  }
-
-  /**
-   * Reload the window with the original path.
-   * Used to remove url params and reload a clean component
-   */
-  public windowReload() {
-    let path = window.location.pathname
-    window.location.replace(path)
-  }
-
-  /**
    * Retrieve the current server settings for the inbox
    */
   public getServerSettings() {
@@ -232,7 +132,7 @@ export class InboxComponent implements OnInit {
    *   inbox: default 0
    */
   async setFromAddressList() {
-    this.fromAddressesKeys = await this.addressesService.getAddresses();
+    this.fromAddressesKeys = await this.addressesService.getAddresses(this.currentProtocol, this.currentNetwork);
 
     this.fromAddressesKeys.forEach(address => {
       this.fromAddresses[address] = {
@@ -246,94 +146,28 @@ export class InboxComponent implements OnInit {
   }
 
   /**
-   * Set the list of networks in the dropdown
-   */
-  setNetworkList() {
-    let protocols
-    this.protocolsService.getProtocols().subscribe(res => {
-      protocols = res["protocols"]
-      if (protocols.length > 0) {
-        protocols.forEach(protocol => {
-          if (protocol["name"] == "ethereum") {
-            protocol["networks"].forEach(network => {
-              this.networks.push({
-                label: network["name"],
-                value: network["name"],
-              })
-            });
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Set the list of web protocols in the server settings dropdown
-   */
-  setCurrentWebProtocolsList() {
-    var currentWebProtocols = this.mailchainService.getWebProtocols();
-    currentWebProtocols.forEach(network => {
-      this.currentWebProtocols.push({
-        label: network,
-        value: network,
-      })
-    });
-  }
-
-  /**
    * Fetch account identicons for all fromAddresses and set the address value in accountIdenticons.
    */
   setAccountIdenticons() {
     this.fromAddressesKeys.forEach(address => {
-      this.accountIdenticons[address] = this.mailchainService.generateIdenticon(address)
+      this.accountIdenticons[address] = this.mailchainService.generateIdenticon(this.currentProtocol, address)
     });
   }
 
   /**
    * Lookup name records for addresses
    */
-  setAccountNameRecords() {
-    this.fromAddressesKeys.forEach(address => {
-      this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address).subscribe(res => {
-        if (res['ok']) {
-          this.accountNameRecord[address] = res['body']['name']
-        }
-      })
-    });
-  }
-
-  /**
-   * Initiates the server settings form with default values. Default values are retrieved from local storage
-   */
-  setupServerSettingsForm() {
-    this.serverSettings = {
-      webProtocol: this.currentWebProtocol,
-      host: this.currentHost,
-      port: this.currentPort
-    }
-  }
-
-  /**
-   * Checks for server setting query params in the url. If present, it will call updateServerSettings with the relevant settings
-   * e.g. http://localhost:4200/#/?web-protocol=http&host=127.0.0.1&port=8080
-   * web-protocol=http
-   * host=127.0.0.1
-   * port=8080
-   */
-  checkServerSettingsInQueryParams() {
-    let serverParams: any[] = ["web-protocol", "host", "port"]
-    let serverSettings: any = {}
-    let serverSettingsPresent: boolean = false
-
-    this.activatedRoute.queryParamMap.subscribe(paramsAsMap => {
-      paramsAsMap.keys.filter(v => serverParams.includes(v)).forEach(val => {
-        serverSettingsPresent = true
-        serverSettings[val] = paramsAsMap["params"][val]
-      })
-      if (serverSettingsPresent) {
-        this.updateServerSettings(serverSettings)
-      }
-    })
+  async setAccountNameRecords() {
+    if (await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled() == "true") {
+      await this.fromAddressesKeys.forEach(async address => {
+        let obs = await this.nameserviceService.resolveAddress(this.currentProtocol, this.currentNetwork, address)
+        obs.subscribe(res => {
+          if (res['ok']) {
+            this.accountNameRecord[address] = res['body']['name']
+          }
+        })
+      });
+    };
   }
 
   async ngOnInit(): Promise<void> {
@@ -342,20 +176,15 @@ export class InboxComponent implements OnInit {
     try {
       this.currentAccount = await this.localStorageAccountService.getCurrentAccount()
       this.currentNetwork = this.localStorageServerService.getCurrentNetwork()
-      this.currentProtocol = await this.LocalStorageProtocolService.getCurrentProtocol()
+      this.currentProtocol = await this.localStorageProtocolService.getCurrentProtocol()
+      await this.updateNameserviceSettings()
       this.getServerSettings()
     } catch (error) {
       this.getServerSettings()
       // @TODO add error handling for failure to reach server
       console.warn("error: " + error);
       console.warn("error: it doesn't look like your application is running. Please check your settings.");
-
     }
-    await this.checkServerSettingsInQueryParams()
-
-    this.setCurrentWebProtocolsList()
-    this.setNetworkList()
-    this.setupServerSettingsForm()
 
     await this.setFromAddressList()
     this.getMails()
@@ -376,7 +205,7 @@ export class InboxComponent implements OnInit {
 
     this.fromAddressesKeys.forEach(address => {
       var self = this
-      this.messagesService.getMessages(address, this.currentNetwork).subscribe(function (res) {
+      this.messagesService.getMessages(address, this.currentProtocol, this.currentNetwork).subscribe(function (res) {
 
         self.processUnreadMessagesInboxCounter(address, res["body"]["messages"])
         self.processInboxMessages(res["body"]["messages"])
@@ -399,6 +228,7 @@ export class InboxComponent implements OnInit {
    */
   public processUnreadMessagesInboxCounter(address, messages) {
     let unreadMsgs = this.mailchainService.filterMessages(
+      this.currentProtocol,
       messages,
       { status: "ok", readState: false }
     )
@@ -414,12 +244,20 @@ export class InboxComponent implements OnInit {
    */
   public processInboxMessages(messages: Array<any>) {
     let validMessages = this.mailchainService.filterMessages(
+      this.currentProtocol,
       messages,
       { status: "ok" }
     )
     validMessages.forEach(msg => this.addMailToInboxMessages(msg));
   }
 
+  /** clear and (re)sets the nameservice settings for the protocol */
+  public async updateNameserviceSettings(){
+    await this.localStorageNameserviceService.removeCurrentNameserviceAddressEnabled()
+    await this.localStorageNameserviceService.removeCurrentNameserviceDomainEnabled()
+    await this.localStorageNameserviceService.getCurrentNameserviceAddressEnabled()
+    await this.localStorageNameserviceService.getCurrentNameserviceDomainEnabled()
+  }
 
   /**
    * setFetchingMessagesState
@@ -465,7 +303,7 @@ export class InboxComponent implements OnInit {
    * @param decryptedMsg
    */
   addMailToInboxMessages(decryptedMsg) {
-    decryptedMsg.senderIdenticon = this.mailchainService.generateIdenticon(decryptedMsg.headers.from)
+    decryptedMsg.senderIdenticon = this.mailchainService.generateIdenticon(this.currentProtocol, decryptedMsg.headers.from)
     var msg = {
       ...new InboundMail,
       ...decryptedMsg

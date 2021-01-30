@@ -74,14 +74,14 @@ describe('AppComponent', () => {
 
   });
 
-  describe('handleApiAvailability', () => {
+  describe('handleApiAddressesAvailability', () => {
     it('should handle connection refused error', async () => {
-      spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilityConnectionRefused())
+      spyOn(connectivityService, 'getApiAddressAvailability').and.returnValue(mailchainTestService.getApiAddressAvailabilityConnectionRefused())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
 
-      await component.handleApiAvailability()
+      await component.handleApiAddressesAvailability()
 
       expect(component.errorTitle).toEqual(errorMessages.clientNotRunningErrorTitle)
       expect(component.errorMessage).toEqual(errorMessages.clientNotRunningErrorMessage)
@@ -89,12 +89,12 @@ describe('AppComponent', () => {
     });
 
     it('should handle unknown error', async () => {
-      spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilityErrorUnknown())
+      spyOn(connectivityService, 'getApiAddressAvailability').and.returnValue(mailchainTestService.getApiAddressAvailabilityErrorUnknown())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
 
-      await component.handleApiAvailability()
+      await component.handleApiAddressesAvailability()
 
       expect(component.errorTitle).toEqual(errorMessages.unknownErrorTitle)
       expect(component.errorMessage).toEqual(errorMessages.unknownErrorMessage)
@@ -102,12 +102,12 @@ describe('AppComponent', () => {
     });
 
     it('should handle status ok, with 0 addresses, error', async () => {
-      spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilitySuccessNoAddresses())
+      spyOn(connectivityService, 'getApiAddressAvailability').and.returnValue(mailchainTestService.getApiAddressAvailabilitySuccessNoAddresses())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
 
-      await component.handleApiAvailability()
+      await component.handleApiAddressesAvailability()
 
       expect(component.errorTitle).toEqual(errorMessages.accountConfigurationErrorTitle)
       expect(component.errorMessage).toEqual(errorMessages.accountConfigurationErrorMessage)
@@ -115,12 +115,12 @@ describe('AppComponent', () => {
     });
 
     it('should handle status ok, with addresses', async () => {
-      spyOn(connectivityService, 'getApiAvailability').and.returnValue(mailchainTestService.getApiAvailabilitySuccess())
+      spyOn(connectivityService, 'getApiAddressAvailability').and.returnValue(mailchainTestService.getApiAddressAvailabilitySuccess())
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")
 
-      await component.handleApiAvailability()
+      await component.handleApiAddressesAvailability()
 
       expect(component.errorTitle).toEqual("")
       expect(component.errorMessage).toEqual("")

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LocalStorageServerService } from '../../helpers/local-storage-server/local-storage-server.service';
+import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class ProtocolsService {
 
   constructor(
     private http: HttpClient,
+    private httpHelpersService: HttpHelpersService,
     private localStorageServerService: LocalStorageServerService,
   ) {
     this.initUrl()
@@ -20,14 +22,48 @@ export class ProtocolsService {
    * Initialize URL from local storage
    */
   initUrl() {
-    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
+    this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api/protocols`
   }
 
   /**
    * Get and return the protocols configured on the api application
    */
   getProtocols() {
-    return this.http.get(this.url + `/protocols`);
+    return this.http.get(this.url);
   }
 
+  /**
+   * Helper function to get and return the protocols by name
+   */
+  async getProtocolsByName() {
+    let protocols: Array<any>
+    await this.getProtocols().toPromise().then(res => {
+      protocols = res["protocols"].map(el => el["name"])
+    })
+    return protocols
+  }
+
+  /**
+   * Helper function to get and return the protocol & network attributes
+   */
+  async getProtocolNetworkAttributes(protocol: string, network: string) {
+    let attributes = {}
+    await this.getProtocols().toPromise().then(res => {
+      let p = res["protocols"].find(el => el["name"] == protocol)
+      attributes = p["networks"].find(nw => nw["name"] == network)
+    })
+    return attributes
+  }
+
+  /**
+   * Returns the protocols response with status codes
+   */
+  public getProtocolsResponse() {
+    var httpOptions = this.httpHelpersService.getHttpOptions()
+
+    return this.http.get(
+      this.url,
+      httpOptions
+    )
+  }
 }

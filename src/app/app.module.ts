@@ -13,6 +13,7 @@ import { SearchPipe } from './pipes/search-pipe/search-pipe.pipe';
 import { AddressPipe } from './pipes/address-pipe/address-pipe.pipe';
 import { LocationStrategy, HashLocationStrategy, APP_BASE_HREF } from '@angular/common';
 import { ModalConnectivityErrorComponent } from './modals/modal-connectivity-error/modal-connectivity-error.component';
+import { SettingsComponent } from './settings/settings/settings.component';
 
 @NgModule({
   declarations: [

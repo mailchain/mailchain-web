@@ -24,9 +24,9 @@ export class PublicKeyService {
   /**
    * Initialize URL from local storage
    */
-  initUrl() {
+  async initUrl() {
     this.url = `${this.localStorageServerService.getCurrentServerDetails()}/api`
-    this.protocol = this.localStorageProtocolService.getCurrentProtocol()
+    this.protocol = await this.localStorageProtocolService.getCurrentProtocol()
 
   }
 

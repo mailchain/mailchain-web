@@ -21,6 +21,13 @@ import { MailchainService } from '../services/mailchain/mailchain.service';
 import { ActivatedRoute } from '@angular/router';
 import { NameserviceService } from '../services/mailchain/nameservice/nameservice.service';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { LocalStorageServerServiceStub } from '../services/helpers/local-storage-server/local-storage-server.service.stub';
+import { AddressesServiceStub } from '../services/mailchain/addresses/addresses.service.stub';
+import { MessagesServiceStub } from '../services/mailchain/messages/messages.service.stub';
+import { ProtocolsServiceStub } from '../services/mailchain/protocols/protocols.service.stub';
+import { NameserviceServiceStub } from '../services/mailchain/nameservice/nameservice.service.stub';
+import { LocalStorageAccountServiceStub } from '../services/helpers/local-storage-account/local-storage-account.service.stub';
+import { LocalStorageNameserviceService } from '../services/helpers/local-storage-nameservice/local-storage-nameservice.service';
 
 describe('InboxComponent', () => {
   let component: InboxComponent;
@@ -29,144 +36,24 @@ describe('InboxComponent', () => {
   let protocolsService: ProtocolsService
   let localStorageAccountService: LocalStorageAccountService
   let localStorageServerService: LocalStorageServerService
+  let localStorageNameserviceService: LocalStorageNameserviceService
   let mailchainService: MailchainService
   let nameserviceService: NameserviceService
+  let addressesService: AddressesService
   let activatedRoute: any
   let networkList: any
   let currentWebProtocolsList: any
   let inboundMessage: any
 
-  const currentProtocol: string = "ethereum"
   const currentAccount = '0x0123456789012345678901234567890123456789';
   const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
   const currentAccountNameLookup = 'myaddress.eth';
   const currentAccount2NameLookup = 'someaddress.myaddress.eth';
 
-  const currentNetwork = 'testnet';
   const currentWebProtocol = 'https';
   const currentHost = 'example.com';
   const currentPort = '8080';
   const addresses = [currentAccount, currentAccount2];
-
-  let localStorageCurrentWebProtocol: string
-  let localStorageCurrentPort: string
-  let localStorageCurrentHost: string
-  let localStorageCurrentAccount: string
-  let localStorageCurrentNetwork: string
-  let localStorageCurrentProtocol: string
-
-  class LocalStorageAccountServiceStub {
-    getCurrentAccount() {
-      return localStorageCurrentAccount
-    }
-    setCurrentAccount(address) {
-      localStorageCurrentAccount = address
-    }
-    removeCurrentAccount() {
-      localStorageCurrentAccount = undefined
-    }
-  }
-
-  class LocalStorageServerServiceStub {
-    getCurrentWebProtocol() {
-      return localStorageCurrentWebProtocol
-    }
-    setCurrentWebProtocol(protocol) {
-      localStorageCurrentWebProtocol = protocol
-    }
-    getCurrentHost() {
-      return localStorageCurrentHost
-    }
-    setCurrentHost(host) {
-      localStorageCurrentHost = host
-    }
-    getCurrentPort() {
-      return localStorageCurrentPort
-    }
-    setCurrentPort(port) {
-      localStorageCurrentPort = port
-    }
-    getCurrentNetwork() {
-      return localStorageCurrentNetwork
-    }
-    getCurrentProtocol() {
-      return localStorageCurrentProtocol
-    }
-    setCurrentNetwork(network) {
-      localStorageCurrentNetwork = network
-    }
-    getCurrentServerDetails() {
-      return `${currentWebProtocol}://${currentHost}:${currentPort}`
-    }
-    removeCurrentNetwork() {
-      localStorageCurrentNetwork = undefined
-    }
-  }
-  class AddressesServiceStub {
-    getAddresses() {
-      return addresses
-    }
-  }
-  class MessagesServiceStub {
-    getMessages() {
-      let messages = mailchainTestService.messagesResponse
-      return of(messages)
-    }
-  }
-  class ProtocolsServiceStub {
-    getProtocols() {
-      return of(mailchainTestService.protocolsServerResponse())
-    }
-  }
-  class NameserviceServiceStub {
-    resolveAddress(protocol, network, value) {
-      let returnVals = {}
-      returnVals[currentAccount] = currentAccountNameLookup,
-        returnVals[currentAccount2] = currentAccount2NameLookup
-
-      return of(
-        {
-          "body": { name: returnVals[value] },
-          "ok": true
-        }
-      )
-    }
-  }
-
-  class ActivatedRouteStub {
-    //Observable that contains a map of the parameters
-    private subjectParamMap = new BehaviorSubject(convertToParamMap(this.testParamMap));
-    paramMap = this.subjectParamMap.asObservable();
-
-    private _testParamMap: ParamMap;
-    get testParamMap() {
-      return this._testParamMap;
-    }
-    set testParamMap(params: {}) {
-      this._testParamMap = convertToParamMap(params);
-      this.subjectParamMap.next(this._testParamMap);
-    }
-
-    //Observable that contains a map of the query parameters
-    private subjectQueryParamMap = new BehaviorSubject(convertToParamMap(this.testParamMap));
-    queryParamMap = this.subjectQueryParamMap.asObservable();
-
-    private _testQueryParamMap: ParamMap;
-    get testQueryParamMap() {
-      return this._testQueryParamMap;
-    }
-    set testQueryParamMap(params: {}) {
-      this._testQueryParamMap = convertToParamMap(params);
-      this.subjectQueryParamMap.next(this._testQueryParamMap);
-    }
-
-    get snapshot() {
-      return {
-        paramMap: this.testParamMap,
-        queryParamMap: this.testQueryParamMap
-      }
-    }
-  }
 
   beforeEach(async(() => {
 
@@ -184,7 +71,6 @@ describe('InboxComponent', () => {
         { provide: AddressesService, useClass: AddressesServiceStub },
         { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: MessagesService, useClass: MessagesServiceStub },
-        { provide: ActivatedRoute, useClass: ActivatedRouteStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub }
 
       ],
@@ -202,36 +88,28 @@ describe('InboxComponent', () => {
     protocolsService = TestBed.get(ProtocolsService);
     localStorageAccountService = TestBed.get(LocalStorageAccountService);
     localStorageServerService = TestBed.get(LocalStorageServerService);
+    localStorageNameserviceService = TestBed.get(LocalStorageNameserviceService);
     mailchainService = TestBed.get(MailchainService);
     nameserviceService = TestBed.get(NameserviceService);
+    addressesService = TestBed.get(AddressesService);
 
   }));
 
   beforeEach(() => {
-    /* Set Values */
-    localStorageCurrentWebProtocol = currentWebProtocol
-    localStorageCurrentPort = currentPort
-    localStorageCurrentHost = currentHost
-    localStorageCurrentAccount = currentAccount
-    localStorageCurrentNetwork = currentNetwork
-    localStorageCurrentProtocol = currentProtocol
-
-    /* End Set Values */
-
-
     fixture = TestBed.createComponent(InboxComponent);
     component = fixture.componentInstance;
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
   afterEach(() => {
+    localStorageServerService.removeCurrentNetwork();
     fixture.destroy();
   })
 
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
-
 
   describe('composeMessage', () => {
 
@@ -337,194 +215,8 @@ describe('InboxComponent', () => {
     });
   });
 
-  describe('changeNetwork', () => {
-    it('should change inboxPartial to "messages" if not already "messages"', () => {
-      component.inboxPartial = "compose"
-      component.changeNetwork()
-      expect(component.inboxPartial).toEqual("messages")
-    });
-
-    it('should trigger the "getMails" function', async () => {
-      spyOn(component, 'getMails');
-
-      component.changeNetwork();
-      expect(component.getMails).toHaveBeenCalled();
-    });
-
-    it('should set the localStorage value for currentNetwork to network value', async () => {
-      expect(await localStorageServerService.getCurrentNetwork()).not.toEqual('myTestNet')
-
-      component.currentNetwork = 'myTestNet';
-      component.changeNetwork();
-
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual('myTestNet')
-    });
-  });
-
-  describe('removeCurrentAccount', () => {
-    it('should call the localStorageAccountService.removeCurrentAccount function', () => {
-      spyOn(localStorageAccountService, 'removeCurrentAccount');
-
-      component.removeCurrentAccount();
-      expect(localStorageAccountService.removeCurrentAccount).toHaveBeenCalled();
-    });
-  });
-
-  describe('removeCurrentNetwork', () => {
-    it('should call the localStorageServerService.removeCurrentNetwork function', () => {
-      spyOn(localStorageServerService, 'removeCurrentNetwork');
-
-      component.removeCurrentNetwork();
-      expect(localStorageServerService.removeCurrentNetwork).toHaveBeenCalled();
-    });
-  });
-
-  describe('serverSettingsFormSubmit', () => {
-    beforeEach(() => {
-      spyOn(component, 'windowReload').and.callFake(function () { });
-    });
-
-    xit('should set the webProtocol value from the form', async () => {
-      // issue related to undefined 'messages' - needs a deep dive
-      await component.ngOnInit()
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('https')
-      expect(component.serverSettings["webProtocol"]).toEqual('https')
-
-      component.serverSettings["webProtocol"] = 'http'
-      component.serverSettingsFormSubmit()
-
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('http')
-
-    });
-    xit('should set the host value from the form', async () => {
-
-    });
-    xit('should set the port value from the form', async () => {
-
-    });
-    xit('should NOT set the values that are not defined in the form', async () => {
-
-    });
-    xit('should call updateServerSettings with the settingsHash', async () => {
-
-    });
-
-  });
-  describe('updateServerSettings', () => {
-    beforeEach(() => {
-      spyOn(component, 'windowReload').and.callFake(function () { });
-    });
-
-    it('should set the webProtocol value from the settingsHash', async () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      component.updateServerSettings(settingsHash)
-
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual('customproto')
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-    it('should set the host value from the settingsHash', async () => {
-      let settingsHash = {
-        "host": "example.com"
-      }
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentHost()).toEqual('example.com')
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-    it('should set the port value from the settingsHash', async () => {
-      let settingsHash = {
-        "port": "8888"
-      }
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentPort()).toEqual('8888')
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-
-    it('should reload the current path if serverSettings are changed"', () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(component.windowReload).toHaveBeenCalled();
-    });
-    it('should NOT reload the current path if serverSettings are NOT changed"', () => {
-      let settingsHash = {}
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(component.windowReload).not.toHaveBeenCalled();
-    });
-    it('should remove the currentAccount if serverSettings are changed"', async () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      localStorageAccountService.setCurrentAccount("accountVal")
-      expect(await localStorageAccountService.getCurrentAccount()).toEqual("accountVal")
-
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(await localStorageAccountService.getCurrentAccount()).toBeUndefined()
-    });
-    it('should NOT remove the currentAccount if serverSettings are NOT NOT changed"', async () => {
-      let settingsHash = {}
-      localStorageAccountService.setCurrentAccount("accountVal")
-      expect(await localStorageAccountService.getCurrentAccount()).toEqual("accountVal")
-
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(await localStorageAccountService.getCurrentAccount()).toEqual("accountVal");
-    });
-
-    it('should remove the currentNetwork if serverSettings are changed"', async () => {
-      let settingsHash = {
-        "web-protocol": "customproto"
-      }
-      localStorageServerService.setCurrentNetwork("networkVal")
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual("networkVal")
-
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentNetwork()).toBeUndefined()
-    });
-    it('should NOT remove the currentNetwork if serverSettings are NOT changed"', async () => {
-      let settingsHash = {}
-      localStorageServerService.setCurrentNetwork("networkVal")
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual("networkVal")
-
-      component.updateServerSettings(settingsHash)
-      fixture.detectChanges();
-
-      expect(await localStorageServerService.getCurrentNetwork()).toEqual("networkVal");
-    });
-
-  });
-
-
-  describe('windowReload', () => {
-    xit('should reload the component with the same path', () => {
-      // TODO
-    });
-
-    xit('should remove any params in the url', () => {
-      // TODO
-    });
-  });
-
   describe('getServerSettings', () => {
-    it('should set the currentWebProtocol to the value foundin localStorage"', () => {
+    it('should set the currentWebProtocol to the value found in localStorage"', () => {
       let val = 'webProtocolVal'
 
       localStorageServerService.setCurrentWebProtocol(val)
@@ -534,7 +226,7 @@ describe('InboxComponent', () => {
       expect(component.currentWebProtocol).toEqual(val)
 
     });
-    it('should set the currentHost to the value foundin localStorage"', () => {
+    it('should set the currentHost to the value found in localStorage"', () => {
       let val = 'hostVal'
 
       localStorageServerService.setCurrentWebProtocol(val)
@@ -543,7 +235,7 @@ describe('InboxComponent', () => {
       component.getServerSettings()
       expect(component.currentWebProtocol).toEqual(val)
     });
-    it('should set the currentPort to the value foundin localStorage"', () => {
+    it('should set the currentPort to the value found in localStorage"', () => {
       let val = 'portVal'
 
       localStorageServerService.setCurrentWebProtocol(val)
@@ -551,6 +243,29 @@ describe('InboxComponent', () => {
 
       component.getServerSettings()
       expect(component.currentWebProtocol).toEqual(val)
+    });
+  });
+
+  describe('getNameserviceSettings', () => {
+    it('should clear the existing nameservice address enabled status', async () => {
+      spyOn(localStorageNameserviceService,'removeCurrentNameserviceAddressEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.removeCurrentNameserviceAddressEnabled).toHaveBeenCalled();
+    });
+    it('should lookup the nameservice address enabled status', async () => {
+      spyOn(localStorageNameserviceService,'setCurrentNameserviceAddressEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.setCurrentNameserviceAddressEnabled).toHaveBeenCalled();
+    });
+    it('should clear the existing nameservice domain enabled status', async () => {
+      spyOn(localStorageNameserviceService,'removeCurrentNameserviceDomainEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.removeCurrentNameserviceDomainEnabled).toHaveBeenCalled();
+    });
+    it('should lookup the nameservice domain enabled status', async () => {
+      spyOn(localStorageNameserviceService,'setCurrentNameserviceDomainEnabled').and.callThrough();
+      await component.updateNameserviceSettings();
+      expect(localStorageNameserviceService.setCurrentNameserviceDomainEnabled).toHaveBeenCalled();
     });
   });
 
@@ -572,15 +287,7 @@ describe('InboxComponent', () => {
     it('should populate the fromAddresses', async () => {
       await component.setFromAddressList()
 
-      expect(Object.keys(component.fromAddresses)).toEqual(addresses)
-    });
-    it('should add a new address then this has been added ', async () => {
-      addresses.push("0x0000000000abcdef0123456789abcdef00000000")
-      await component.setFromAddressList()
-
-      expect(Object.keys(component.fromAddresses)).toEqual(addresses)
-      addresses.pop()
-
+      expect(Object.keys(component.fromAddresses)).toEqual(mailchainTestService.senderAddresses())
     });
     it('should set the label to the address value', async () => {
       await component.setFromAddressList()
@@ -608,140 +315,29 @@ describe('InboxComponent', () => {
     });
   });
 
-  describe('setNetworkList', () => {
-    beforeEach(() => {
-      networkList = mailchainTestService.networkList();
-    });
-
-    it('should populate the network list', () => {
-      expect(component.networks).toEqual([]);
-      component.setNetworkList()
-      expect(component.networks).toEqual(networkList)
-    });
-  });
-
-  describe('setCurrentWebProtocolsList', () => {
-    beforeEach(() => {
-      currentWebProtocolsList = mailchainTestService.currentWebProtocolsList()
-    });
-
-    it('should populate the web protocols', () => {
-      expect(component.currentWebProtocols).toEqual([]);
-      component.setCurrentWebProtocolsList()
-      expect(component.currentWebProtocols).toEqual(currentWebProtocolsList)
-    });
-
-  });
-
   describe('setAccountIdenticons', () => {
     it('should generate identicons for each fromAddress', () => {
       component.fromAddressesKeys = [currentAccount, currentAccount2]
       component.setAccountIdenticons()
+      let protocol = 'ethereum'
+      expect(component.accountIdenticons[currentAccount]).toEqual(mailchainService.generateIdenticon(protocol, currentAccount))
 
-      expect(component.accountIdenticons[currentAccount]).toEqual(mailchainService.generateIdenticon(currentAccount))
-
-      expect(component.accountIdenticons[currentAccount2]).toEqual(mailchainService.generateIdenticon(currentAccount2))
+      expect(component.accountIdenticons[currentAccount2]).toEqual(mailchainService.generateIdenticon(protocol, currentAccount2))
       component.fromAddresses
     });
   });
 
   describe('setAccountNameRecords', () => {
-    it('should lookup a name each fromAddress', () => {
+    it('should lookup a name each fromAddress', async () => {
+      localStorageServerService.setCurrentNetwork("mainnet")
+      
+      await component.updateNameserviceSettings()
       component.fromAddressesKeys = [currentAccount, currentAccount2]
-      component.setAccountNameRecords()
-
+      await component.setAccountNameRecords()
+      
       expect(component.accountNameRecord[currentAccount]).toEqual(currentAccountNameLookup)
-
       expect(component.accountNameRecord[currentAccount2]).toEqual(currentAccount2NameLookup)
-
     });
-  });
-
-  describe('setupServerSettingsForm', () => {
-    it('should initialize values for the form', () => {
-      let obj = {
-        webProtocol: currentWebProtocol,
-        host: currentHost,
-        port: currentPort
-      }
-
-      expect(component.serverSettings).toEqual({})
-
-      component.currentWebProtocol = currentWebProtocol
-      component.currentHost = currentHost
-      component.currentPort = currentPort
-      component.setupServerSettingsForm()
-
-      expect(component.serverSettings).toEqual(obj)
-    });
-  });
-  describe('checkServerSettingsInQueryParams', () => {
-    let wpVal = 'zttps'
-    let hostVal = 'someexample.com'
-    let portVal = '2019'
-
-    beforeEach(() => {
-      activatedRoute = fixture.debugElement.injector.get(ActivatedRoute) as any;
-
-
-      spyOn(component, 'windowReload').and.callFake(function () { });
-      // activatedRoute.testParamMap = {category: 'api-02'};
-      // activatedRoute.testQueryParamMap = {period:'2018',size:'14'};
-    })
-
-    it('should update serverSettings if params are present', () => {
-      activatedRoute.testQueryParamMap = {
-        "web-protocol": wpVal,
-        "host": hostVal,
-        "port": portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual(wpVal)
-      expect(localStorageServerService.getCurrentHost()).toEqual(hostVal)
-      expect(localStorageServerService.getCurrentPort()).toEqual(portVal)
-    });
-
-    it('should NOT update webProtocol serverSettings if webProtocol param is NOT present', () => {
-      let originalVal = localStorageServerService.getCurrentWebProtocol()
-
-      activatedRoute.testQueryParamMap = {
-        // "web-protocol":wpVal,
-        "host": hostVal,
-        "port": portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentWebProtocol()).not.toEqual(wpVal)
-      expect(localStorageServerService.getCurrentWebProtocol()).toEqual(originalVal)
-    });
-    it('should NOT update host serverSettings if host param is NOT present', () => {
-      let originalVal = localStorageServerService.getCurrentHost()
-
-      activatedRoute.testQueryParamMap = {
-        "web-protocol": wpVal,
-        // "host":hostVal,
-        "port": portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentHost()).not.toEqual(hostVal)
-      expect(localStorageServerService.getCurrentHost()).toEqual(originalVal)
-    });
-    it('should NOT update port serverSettings if port param is NOT present', () => {
-      let originalVal = localStorageServerService.getCurrentPort()
-
-      activatedRoute.testQueryParamMap = {
-        "web-protocol": wpVal,
-        "host": hostVal,
-        // "port":portVal
-      };
-
-      component.checkServerSettingsInQueryParams()
-      expect(localStorageServerService.getCurrentPort()).not.toEqual(portVal)
-      expect(localStorageServerService.getCurrentPort()).toEqual(originalVal)
-    });
-
   });
 
   describe('getMails', () => {
@@ -972,7 +568,8 @@ describe('InboxComponent', () => {
 
     it('should set the `senderIdenticon` field', () => {
       component.addMailToInboxMessages(message)
-      let identicon = mailchainService.generateIdenticon(message.headers.from)
+      let protocol = 'ethereum'
+      let identicon = mailchainService.generateIdenticon(protocol, message.headers.from)
       let obj = component.inboxMessages[0]
 
       expect(obj["senderIdenticon"]).toEqual(identicon)

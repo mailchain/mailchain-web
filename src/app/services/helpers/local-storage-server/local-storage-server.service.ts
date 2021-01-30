@@ -28,7 +28,7 @@ export class LocalStorageServerService {
    * Sets the current network for the user
    * @param network is the public network
    */
-  setCurrentNetwork(network) {
+  setCurrentNetwork(network: string) {
     sessionStorage.setItem('currentNetwork', network);
   }
 
@@ -57,7 +57,7 @@ export class LocalStorageServerService {
    * Sets the current web protocol for the mailchain application
    * @param webProtocol is the server web protocol e.g. http or https
    */
-  setCurrentWebProtocol(webProtocol) {
+  setCurrentWebProtocol(webProtocol: string) {
     sessionStorage.setItem('currentWebProtocol', webProtocol);
   }
 
@@ -78,7 +78,7 @@ export class LocalStorageServerService {
    * Sets the current host for the mailchain application
    * @param host is the server host e.g. 127.0.0.1
    */
-  setCurrentHost(host) {
+  setCurrentHost(host: string) {
     sessionStorage.setItem('currentHost', host);
   }
 
@@ -100,7 +100,7 @@ export class LocalStorageServerService {
    * Sets the current port for the mailchain application
    * @param port is the server port e.g. 8080
    */
-  setCurrentPort(port) {
+  setCurrentPort(port: string) {
     sessionStorage.setItem('currentPort', port);
   }
 

@@ -3,28 +3,23 @@ import { TestBed, async } from '@angular/core/testing';
 import { LocalStorageAccountService } from './local-storage-account.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AddressesService } from '../../mailchain/addresses/addresses.service';
+import { AddressesServiceStub } from '../../mailchain/addresses/addresses.service.stub';
+import { ProtocolsService } from '../../mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from '../../mailchain/protocols/protocols.service.stub';
 
 describe('LocalStorageAccountService', () => {
 
   let localStorageAccountService: LocalStorageAccountService;
-  const currentAccount = '0x0123456789012345678901234567890123456789';
-  const currentAccount2 = '0x0123456789abcdef0123456789abcdef01234567';
-  const addresses = [currentAccount, currentAccount2];
+  const currentAccount = '0x92d8f10248c6a3953cc3692a894655ad05d61efb';
 
   const newAddr = '0x12345678901234567890123456789012'
-
-
-  class AddressesServiceStub {
-    getAddresses() {
-      return addresses
-    }
-  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         LocalStorageAccountService,
         { provide: AddressesService, useClass: AddressesServiceStub },
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
       ],
       imports: [HttpClientModule]
     });

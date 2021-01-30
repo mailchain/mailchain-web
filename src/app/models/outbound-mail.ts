@@ -7,8 +7,8 @@ export class OutboundMail {
       "to": ""
     },
     "public-key": "",
-    "public-key-encoding": "hex/0x-prefix",
-    "public-key-kind": "secp256k1",
+    "public-key-encoding": "",
+    "public-key-kind": "",
     "subject": ""
   };
   public "envelope": string = "";

@@ -9,6 +9,11 @@ import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
 import { of } from 'rxjs';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
 import { HttpClientModule } from '@angular/common/http';
+import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
+import { LocalStorageServerServiceStub } from 'src/app/services/helpers/local-storage-server/local-storage-server.service.stub';
+import { LocalStorageServerService } from 'src/app/services/helpers/local-storage-server/local-storage-server.service';
+import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
+import { ProtocolsServiceStub } from 'src/app/services/mailchain/protocols/protocols.service.stub';
 
 describe('InboxMessageComponent', () => {
 
@@ -16,32 +21,15 @@ describe('InboxMessageComponent', () => {
   let fixture: ComponentFixture<InboxMessageComponent>;
   let mailchainService: MailchainService;
   let nameserviceService: NameserviceService;
+  let localStorageServerService: LocalStorageServerService;
+  let protocolsService: ProtocolsService;
 
   let mailchainTestService: MailchainTestService
 
-  const address1 = "0x0000000000000000000000000000000000000001"
+  const address1 = "0x0123456789012345678901234567890123456789"
   const mcAddress1 = "<" + address1 + "@ropsten.ethereum>"
   const address2 = "0x0000000000000000000000000000000000000002"
   const mcAddress2 = "<" + address2 + "@ropsten.ethereum>"
-
-  /**
- * Resolves address1: myname.eth
- * Throws 404 error for address2
- */
-  class NameserviceServiceStub {
-    resolveAddress(protocol, network, value) {
-      if (value == address1) {
-        return of(
-          {
-            "body": { name: "myname.eth" },
-            "ok": true
-          }
-        )
-      } else {
-        return of({ "status": 404 })
-      }
-    }
-  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -51,7 +39,9 @@ describe('InboxMessageComponent', () => {
       providers: [
         HttpHelpersService,
         MailchainService,
+        { provide: ProtocolsService, useClass: ProtocolsServiceStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub },
+        { provide: LocalStorageServerService, useClass: LocalStorageServerServiceStub },
       ],
       imports: [
         ModalModule.forRoot(),
@@ -62,17 +52,20 @@ describe('InboxMessageComponent', () => {
     })
       .compileComponents();
     mailchainTestService = TestBed.get(MailchainTestService);
+    protocolsService = TestBed.get(ProtocolsService);
+    localStorageServerService = TestBed.get(LocalStorageServerService);
     nameserviceService = TestBed.get(NameserviceService);
     mailchainService = TestBed.get(MailchainService);
 
   }));
 
   beforeEach(() => {
+    
     fixture = TestBed.createComponent(InboxMessageComponent);
     component = fixture.componentInstance;
 
     component.currentMessage = mailchainTestService.inboundMessage();
-
+    component.currentProtocol = 'ethereum'
     fixture.detectChanges();
   });
 
@@ -101,103 +94,103 @@ describe('InboxMessageComponent', () => {
 
   describe('ngOnInit', () => {
     describe('resolveNamesFromMessage', () => {
-      it('should resolve the To field when there is a resolvable name', () => {
+      it('should resolve the To field when there is a resolvable name', async () => {
         component.currentMessage["headers"]["to"] = mcAddress1
-        component.ngOnInit()
-        expect(component.messageNameRecords[address1]).toEqual('myname.eth')
+        await component.ngOnInit()
+        expect(component.messageNameRecords[address1]).toEqual('myaddress.eth')
       })
-      it('should NOT resolve the To field when there is NOT a resolvable name', () => {
+      it('should NOT resolve the To field when there is NOT a resolvable name', async () => {
         component.currentMessage["headers"]["to"] = mcAddress2
-        component.ngOnInit()
+        await component.ngOnInit()
         expect(component.messageNameRecords[address2]).toEqual(undefined)
       })
-      it('should resolve the From field when there is a resolvable name', () => {
+      it('should resolve the From field when there is a resolvable name', async () => {
         component.currentMessage["headers"]["from"] = mcAddress1
-        component.ngOnInit()
-        expect(component.messageNameRecords[address1]).toEqual('myname.eth')
+        await component.ngOnInit()
+        expect(component.messageNameRecords[address1]).toEqual('myaddress.eth')
       })
-      it('should NOT resolve the From field when there is NOT a resolvable name', () => {
+      it('should NOT resolve the From field when there is NOT a resolvable name', async () => {
         component.currentMessage["headers"]["from"] = mcAddress2
-        component.ngOnInit()
+        await component.ngOnInit()
         expect(component.messageNameRecords[address2]).toEqual(undefined)
       })
     });
   });
 
   describe('getViewForContentType', () => {
-    it('should call getViewForContentType when the content-type is plaintext ', () => {
+    it('should call getViewForContentType when the content-type is plaintext ', async () => {
       spyOn(component, 'getViewForContentType')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.getViewForContentType).toHaveBeenCalled()
     })
 
-    it('should call getViewForContentType when the content-type is text/plain; charset="UTF-8"', () => {
+    it('should call getViewForContentType when the content-type is text/plain; charset="UTF-8"', async () => {
       spyOn(component, 'getViewForContentType')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.getViewForContentType).toHaveBeenCalled()
     })
 
-    it('should call getViewForContentType when the content-type is unknown', () => {
+    it('should call getViewForContentType when the content-type is unknown', async () => {
       spyOn(component, 'getViewForContentType')
 
       component.currentMessage["headers"]["content-type"] = 'unknown'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.getViewForContentType).toHaveBeenCalled()
     })
   })
 
   describe('addMessageText', () => {
-    it('should call addMessageText when the content-type is plaintext ', () => {
+    it('should call addMessageText when the content-type is plaintext ', async () => {
       spyOn(component, 'addMessageText')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageText).toHaveBeenCalled()
     })
 
-    it('should NOT call addMessageText when the content-type is text/html; charset="UTF-8" ', () => {
+    it('should NOT call addMessageText when the content-type is text/html; charset="UTF-8" ', async () => {
       spyOn(component, 'addMessageText')
 
       component.currentMessage["headers"]["content-type"] = 'text/html; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageText).not.toHaveBeenCalled()
     })
 
-    it('should call addMessageText when the content-type is unknown ', () => {
+    it('should call addMessageText when the content-type is unknown ', async () => {
       spyOn(component, 'addMessageText')
 
       component.currentMessage["headers"]["content-type"] = 'unknown'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageText).toHaveBeenCalled()
     })
 
   })
   describe('addMessageIframe', () => {
-    it('should NOT call addMessageIframe when the content-type is plaintext ', () => {
+    it('should NOT call addMessageIframe when the content-type is plaintext ', async () => {
       spyOn(component, 'addMessageIframe')
 
       component.currentMessage["headers"]["content-type"] = 'text/plain; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageIframe).not.toHaveBeenCalled()
     })
 
-    it('should call addMessageIframe when the content-type is text/html; charset="UTF-8" ', () => {
+    it('should call addMessageIframe when the content-type is text/html; charset="UTF-8" ', async () => {
       spyOn(component, 'addMessageIframe')
 
       component.currentMessage["headers"]["content-type"] = 'text/html; charset="UTF-8"'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageIframe).toHaveBeenCalled()
     })
 
-    it('should NOT call addMessageIframe when the content-type is unknown ', () => {
+    it('should NOT call addMessageIframe when the content-type is unknown ', async () => {
       spyOn(component, 'addMessageIframe')
 
       component.currentMessage["headers"]["content-type"] = 'unknown'
-      component.ngOnInit()
+      await component.ngOnInit()
       expect(component.addMessageIframe).not.toHaveBeenCalled()
     })
 

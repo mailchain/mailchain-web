@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, ExtraOptions } from '@angular/router';
 import { InboxComponent } from './inbox/inbox.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,14 +11,18 @@ import { InboxComposeComponent } from './inbox/inbox-compose/inbox-compose.compo
 import { InboxMessageComponent } from './inbox/inbox-message/inbox-message.component';
 import { InboxMessagesComponent } from './inbox/inbox-messages/inbox-messages.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { SettingsComponent } from './settings/settings/settings.component';
 
 
 const routes: Routes = [
-  {
-    path: '',
-    component: InboxComponent,
-  }
+  { path: '', component: InboxComponent },
+  { path: 'settings', component: SettingsComponent }
+
 ];
+
+const routerOptions: ExtraOptions = {
+  anchorScrolling: 'enabled',
+};
 
 @NgModule({
   declarations: [
@@ -26,6 +30,7 @@ const routes: Routes = [
     InboxMessagesComponent,
     InboxMessageComponent,
     InboxComposeComponent,
+    SettingsComponent,
   ],
   imports: [
     FormsModule,
@@ -34,7 +39,7 @@ const routes: Routes = [
     ModalModule.forRoot(),
     CommonModule,
     CKEditorModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, routerOptions)
   ],
   providers: [HttpHelpersService],
   exports: [RouterModule]
