@@ -21,7 +21,7 @@
     "@angular/router": "~8.2.14",
     "@ckeditor/ckeditor5-angular": "^1.2.3",
     "@ckeditor/ckeditor5-build-classic": "github:mailchain/ckeditor5-build-classic#mailchain_stable",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.1",
     "core-js": "^2.6.11",
     "ethereum-blockies-base64": "^1.0.2",
     "font-awesome": "^4.7.0",
@@ -29,11 +29,12 @@
     "jquery": "^3.5.1",
     "ngx-bootstrap": "^3.2.0",
     "popper.js": "^1.16.1",
-    "rxjs": "~6.5.5",
+    "rxjs": "~6.6.0",
     "semver": "^6.3.0",
     "webpack": "^5.0.0",
     "tslib": "^1.13.0",
-    "zone.js": "~0.10.3"
+    "webpack": "^4.44.0",
+    "zone.js": "^0.11.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.25",
@@ -45,7 +46,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.10.54",
     "codelyzer": "^5.0.1",
-    "elliptic": "^6.5.2",
+    "elliptic": "^6.5.3",
     "jasmine-core": "^3.5.0",
     "jasmine-spec-reporter": "^5.0.2",
     "karma": "^4.4.1",
