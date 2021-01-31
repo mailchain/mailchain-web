@@ -22,7 +22,7 @@
     "@ckeditor/ckeditor5-angular": "^1.2.3",
     "@ckeditor/ckeditor5-build-classic": "github:mailchain/ckeditor5-build-classic#mailchain_stable",
     "bootstrap": "^4.5.1",
-    "core-js": "^2.6.11",
+    "core-js": "^2.6.12",
     "ethereum-blockies-base64": "^1.0.2",
     "font-awesome": "^4.7.0",
     "glyphicons-halflings": "^1.9.1",
