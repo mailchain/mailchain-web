@@ -291,6 +291,19 @@ describe('InboxComposeComponent', () => {
       component.recipientResolve(event)
       expect(component.currentRecipientValue).toEqual("alice.eth")
     })
+    it('should trim whitespace from currentRecipientValue', () => {
+      let event = { target: { value: " alice.eth " } }
+
+      component.recipientResolve(event)
+      expect(component.currentRecipientValue).toEqual("alice.eth")
+    })
+    it('should trim whitespace from the call to recipientAddressChanged', () => {
+      let event = { target: { value: " alice.eth " } }
+      spyOn(component.recipientAddressChanged, 'next').and.callThrough()
+
+      component.recipientResolve(event)
+      expect(component.recipientAddressChanged.next).toHaveBeenCalledWith("alice.eth")
+    })
     xit('should call the resolveAddress thru the private recipientAddressChanged subscription next function with the event.target.value', () => {
       let event = { target: { value: "alice.eth" } }
       spyOn(component, 'resolveAddress').and.callThrough()
