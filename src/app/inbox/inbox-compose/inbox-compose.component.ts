@@ -39,7 +39,7 @@ export class InboxComposeComponent implements OnInit {
   private subscription
   public currentRecipientValue
 
-  private recipientAddressChanged = new Subject<string>();
+  public recipientAddressChanged = new Subject<string>();
   public recipientLoadingIcon = ""
   public recipientLoadingText = ""
   public messageToField = ""
@@ -136,19 +136,19 @@ export class InboxComposeComponent implements OnInit {
    * @param event the event from keyup
    */
   public recipientResolve(event) {
-    if (event.target.value == "") {
+    let eventVal = event.target.value.trim();
+    if (eventVal == "") {
       this.setRecipientLoadingIcon("clear")
       this.setRecipientLoadingText()
       this.resetModelToField()
-    } else if (this.currentRecipientValue != event.target.value) {
+    } else if (this.currentRecipientValue != eventVal) {
       this.setRecipientLoadingIcon("loading")
       this.setRecipientLoadingText()
       this.resetModelToField()
     }
-    if (event.target.value && event.target.value.length > 0) {
-      this.currentRecipientValue = event.target.value.trim();
-      this.recipientAddressChanged.next(event.target.value);
-    }
+    this.currentRecipientValue = eventVal
+    this.recipientAddressChanged.next(eventVal);
+
   }
 
   /**
