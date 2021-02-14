@@ -26,7 +26,7 @@ module.exports = function (config) {
       fixWebpackSourcePaths: true
     },
     // reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls', 'spec'],
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'coverage', 'coveralls'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
