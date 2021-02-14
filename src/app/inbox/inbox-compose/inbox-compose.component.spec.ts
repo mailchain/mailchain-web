@@ -579,13 +579,17 @@ describe('InboxComposeComponent', () => {
   describe('convertToPlainText', () => {
     it('should convert html to plain text when confirm box is OK', () => {
       spyOn(window, 'confirm').and.returnValue(true);
-      spyOn(document, 'getElementsByClassName').and.returnValue([{ "innerText": "Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message" }]);
+      let res = "Replying to a message<br><br>From: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum><br>Date: 2019-12-05T21:17:04Z<br>To: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum><br>Subject: Fw: another message<br><br>Sending a message"
+
+      let newDiv = document.createElement("div");
+      newDiv.innerHTML = `<div class="ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-blurred" lang="en" dir="ltr" role="textbox" aria-label="Rich Text Editor, main" contenteditable="true"><p>${res}</p></div>`
+      document.body.append(newDiv)
 
       component.convertToPlainText()
 
       expect(window.confirm).toHaveBeenCalled()
       expect(component.inputContentType).toEqual('plaintext')
-      expect(component.model.body).toBe("Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message")
+      expect(component.model.body).toBe('Replying to a message\n\nFrom: <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>\nDate: 2019-12-05T21:17:04Z\nTo: <0x92d8f10248c6a3953cc3692a894655ad05d61efb@ropsten.ethereum>\nSubject: Fw: another message\n\nSending a message')
 
     })
     it('should not convert html to plain text when confirm box is cancel', () => {

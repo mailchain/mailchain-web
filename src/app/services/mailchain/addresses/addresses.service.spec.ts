@@ -6,7 +6,7 @@ import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.s
 import { HttpHelpersService } from '../../helpers/http-helpers/http-helpers.service';
 import { ProtocolsServiceStub } from '../protocols/protocols.service.stub';
 import { ProtocolsService } from '../protocols/protocols.service';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 
 describe('AddressesService', () => {
@@ -54,8 +54,9 @@ describe('AddressesService', () => {
 
   describe('getAddresses', () => {
     beforeEach(() => {
+      let obs: Observable<any> = of(mailchainTestService.senderAddressesEthereumObserveResponse())
       spyOn(addressesService, 'getAddresses').and.returnValue(
-        of(mailchainTestService.senderAddressesEthereumObserveResponse()).toPromise()
+        obs.toPromise()
       )
     });
     it('should get an array of sender addresses', async () => {

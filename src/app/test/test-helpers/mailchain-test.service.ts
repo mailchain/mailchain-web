@@ -233,42 +233,42 @@ export class MailchainTestService {
   }
 
   public getApiAddressAvailabilitySuccess() {
-    return {
+    return Promise.resolve({
       "addresses": 2,
       "status": "ok",
       "code": 200,
       "message": "OK"
-    }
+    })
   }
 
   public getApiAddressAvailabilitySuccessNoAddresses() {
-    return {
+    return Promise.resolve({
       "addresses": 0,
       "status": "ok",
       "code": 200,
       "message": "OK"
-    }
+    })
   }
 
   public getApiAddressAvailabilityConnectionRefused() {
-    return {
+    return Promise.resolve({
       "addresses": 0,
       "status": "error",
       "code": 0,
       "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 0 Unknown Error"
-    }
+    })
   }
   public getApiAddressAvailabilityErrorUnknown() {
-    return {
+    return Promise.resolve({
       "addresses": 0,
       "status": "error",
       "code": 62,
       "message": "Http failure response for http://127.0.0.1:8080/api/addresses: 62 Unknown Error"
-    }
+    })
   }
 
   public apiVersionInfoOutdated() {
-    return {
+    return Promise.resolve({
       "status": "outdated",
       "errors": 0,
       "release-error": 0,
@@ -279,11 +279,11 @@ export class MailchainTestService {
       "client-error-message": "",
       "client-error-status": undefined,
       "client-version": "1.4.1",
-    }
+    })
   }
 
   public apiVersionInfoReleaseError() {
-    return {
+    return Promise.resolve({
       "status": "ok",
       "errors": 1,
       "release-error": 1,
@@ -294,11 +294,11 @@ export class MailchainTestService {
       "client-error": 0,
       "client-error-message": "",
       "client-error-status": undefined,
-    }
+    })
   }
 
   public apiVersionInfoClientError() {
-    return {
+    return Promise.resolve({
       "status": "ok",
       "errors": 1,
       "release-error": 0,
@@ -309,7 +309,7 @@ export class MailchainTestService {
       "client-error-message": "7 Some Client Error",
       "client-error-status": 7,
       "client-version": "unknown",
-    }
+    })
   }
 
   public protocolsServerResponse(): any {

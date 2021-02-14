@@ -5,7 +5,7 @@ import { MailchainTestService } from 'src/app/test/test-helpers/mailchain-test.s
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpHelpersService } from 'src/app/services/helpers/http-helpers/http-helpers.service';
 import { MailchainService } from 'src/app/services/mailchain/mailchain.service';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ProtocolsService } from 'src/app/services/mailchain/protocols/protocols.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -116,7 +116,7 @@ describe('SettingsComponent', () => {
 
   describe('setCurrentProtocol', () => {
     it('should set the component currentProtocol to value returned from localStorageProtocolService', async () => {
-      spyOn(localStorageProtocolService, 'getCurrentProtocol').and.returnValue('myProto')
+      spyOn(localStorageProtocolService, 'getCurrentProtocol').and.resolveTo('myProto')
       await component.setCurrentProtocol()
 
       expect(component.currentProtocol).toBe('myProto')
@@ -188,7 +188,8 @@ describe('SettingsComponent', () => {
         { label: 'myNetwork', value: 'myNetwork' },
         { label: 'othernet', value: 'othernet' }
       ]
-      spyOn(component, "setNetworkList").and.returnValue(of(''))
+      let obs: Observable<any> = of('')
+      spyOn(component, "setNetworkList").and.returnValue(obs.toPromise())
 
       await component.changeProtocol()
       component.changeProtocol()
@@ -202,7 +203,8 @@ describe('SettingsComponent', () => {
         { label: 'testnet', value: 'testnet' },
         { label: 'othernet', value: 'othernet' }
       ]
-      spyOn(component, "setNetworkList").and.returnValue(of(''))
+      let obs: Observable<any> = of('')
+      spyOn(component, "setNetworkList").and.returnValue(obs.toPromise())
 
       await component.changeProtocol()
       expect(component.currentNetwork).toBe('testnet')
