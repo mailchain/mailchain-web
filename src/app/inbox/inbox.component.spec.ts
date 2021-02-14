@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { convertToParamMap, ParamMap } from '@angular/router';
 
@@ -55,7 +55,7 @@ describe('InboxComponent', () => {
   const currentPort = '8080';
   const addresses = [currentAccount, currentAccount2];
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
 
     TestBed.configureTestingModule({
       declarations: [

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { InboxMessagesComponent } from './inbox-messages.component';
 import { FormsModule } from '@angular/forms';
@@ -165,7 +165,7 @@ describe('InboxMessagesComponent', () => {
   ]
 
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         InboxMessagesComponent
