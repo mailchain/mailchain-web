@@ -18,11 +18,15 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     coverageReporter: {
-      type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
-      dir: 'coverage/'
+      dir: 'coverage/',
+      reporters: [
+        { type: 'html', subdir: 'report-html' },
+        { type: 'lcov', subdir: 'report-lcov' }
+      ],
+      fixWebpackSourcePaths: true
     },
     // reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls', 'spec'],
-    reporters: ['progress', 'kjhtml', 'coverage', 'coveralls'],
+    reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
