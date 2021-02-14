@@ -77,11 +77,11 @@ describe('InboxComposeComponent', () => {
       ]
     })
       .compileComponents();
-    mailchainTestService = TestBed.get(MailchainTestService);
-    publicKeyService = TestBed.get(PublicKeyService);
-    sendService = TestBed.get(SendService);
-    mailchainService = TestBed.get(MailchainService);
-    nameserviceService = TestBed.get(NameserviceService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    publicKeyService = TestBed.inject(PublicKeyService);
+    sendService = TestBed.inject(SendService);
+    mailchainService = TestBed.inject(MailchainService);
+    nameserviceService = TestBed.inject(NameserviceService);
 
   }));
 

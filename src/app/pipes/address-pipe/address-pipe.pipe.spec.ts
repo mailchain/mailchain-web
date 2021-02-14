@@ -51,7 +51,7 @@ describe('AddressPipe', () => {
       ]
     });
 
-    pipe = TestBed.get(AddressPipe);
+    pipe = TestBed.inject(AddressPipe);
   });
 
   it('should create an instance', () => {

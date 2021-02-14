@@ -33,12 +33,12 @@ describe('ConnectivityService', () => {
       ]
     })
 
-    connectivityService = TestBed.get(ConnectivityService);
-    mailchainTestService = TestBed.get(MailchainTestService);
-    versionService = TestBed.get(VersionService);
-    addressesService = TestBed.get(AddressesService);
-    protocolsService = TestBed.get(ProtocolsService);
-    http = TestBed.get(HttpClient);
+    connectivityService = TestBed.inject(ConnectivityService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    versionService = TestBed.inject(VersionService);
+    addressesService = TestBed.inject(AddressesService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    http = TestBed.inject(HttpClient);
   });
 
   it('should be created', () => {

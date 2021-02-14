@@ -62,13 +62,13 @@ describe('SettingsComponent', () => {
     })
       .compileComponents();
 
-    mailchainTestService = TestBed.get(MailchainTestService);
-    protocolsService = TestBed.get(ProtocolsService);
-    mailchainService = TestBed.get(MailchainService);
-    localStorageServerService = TestBed.get(LocalStorageServerService);
-    localStorageAccountService = TestBed.get(LocalStorageAccountService);
-    localStorageProtocolService = TestBed.get(LocalStorageProtocolService);
-    router = TestBed.get(Router);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    mailchainService = TestBed.inject(MailchainService);
+    localStorageServerService = TestBed.inject(LocalStorageServerService);
+    localStorageAccountService = TestBed.inject(LocalStorageAccountService);
+    localStorageProtocolService = TestBed.inject(LocalStorageProtocolService);
+    router = TestBed.inject(Router);
 
   }));
 

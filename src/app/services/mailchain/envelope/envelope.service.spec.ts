@@ -26,9 +26,9 @@ describe('EnvelopeService', () => {
       imports: [HttpClientTestingModule]
     });
 
-    envelopeService = TestBed.get(EnvelopeService);
-    mailchainTestService = TestBed.get(MailchainTestService);
-    httpTestingController = TestBed.get(HttpTestingController);
+    envelopeService = TestBed.inject(EnvelopeService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    httpTestingController = TestBed.inject(HttpTestingController);
 
     serverResponse = mailchainTestService.envelopeTypesMultiple()
   });
@@ -38,7 +38,7 @@ describe('EnvelopeService', () => {
   });
 
   it('should be created', () => {
-    const service: EnvelopeService = TestBed.get(EnvelopeService);
+    const service: EnvelopeService = TestBed.inject(EnvelopeService);
     expect(service).toBeTruthy();
   });
 

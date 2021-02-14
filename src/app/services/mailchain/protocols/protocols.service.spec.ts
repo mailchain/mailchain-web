@@ -24,11 +24,11 @@ describe('ProtocolsService', () => {
       ],
       imports: [HttpClientTestingModule]
     });
-    mailchainTestService = TestBed.get(MailchainTestService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
-    protocolsService = TestBed.get(ProtocolsService);
-    mailchainTestService = TestBed.get(MailchainTestService);
-    httpTestingController = TestBed.get(HttpTestingController);
+    protocolsService = TestBed.inject(ProtocolsService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    httpTestingController = TestBed.inject(HttpTestingController);
 
     serverResponse = mailchainTestService.protocolsServerResponse()
   });
@@ -38,13 +38,13 @@ describe('ProtocolsService', () => {
   });
 
   it('should be created', () => {
-    const protocolsService: ProtocolsService = TestBed.get(ProtocolsService);
+    const protocolsService: ProtocolsService = TestBed.inject(ProtocolsService);
     expect(protocolsService).toBeTruthy();
   });
 
   describe('initUrl', () => {
     it('should initialize the url', () => {
-      let protocolsService: ProtocolsService = TestBed.get(ProtocolsService)
+      let protocolsService: ProtocolsService = TestBed.inject(ProtocolsService)
       expect(protocolsService['url']).toEqual('http://127.0.0.1:8080/api/protocols')
     });
   });

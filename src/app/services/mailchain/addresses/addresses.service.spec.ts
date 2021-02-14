@@ -28,9 +28,9 @@ describe('AddressesService', () => {
       imports: [HttpClientTestingModule]
     });
 
-    addressesService = TestBed.get(AddressesService);
-    mailchainTestService = TestBed.get(MailchainTestService);
-    httpTestingController = TestBed.get(HttpTestingController);
+    addressesService = TestBed.inject(AddressesService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    httpTestingController = TestBed.inject(HttpTestingController);
 
     serverResponse = mailchainTestService.senderAddressesEthereumObserveResponse()
     // expectedAddresses = mailchainTestService.senderAddresses()

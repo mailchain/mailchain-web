@@ -46,8 +46,8 @@ describe('AppComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
-    connectivityService = TestBed.get(ConnectivityService)
-    mailchainTestService = TestBed.get(MailchainTestService);
+    connectivityService = TestBed.inject(ConnectivityService)
+    mailchainTestService = TestBed.inject(MailchainTestService);
     fixture.detectChanges();
   });
 

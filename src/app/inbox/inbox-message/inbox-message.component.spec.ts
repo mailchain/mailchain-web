@@ -51,11 +51,11 @@ describe('InboxMessageComponent', () => {
       ]
     })
       .compileComponents();
-    mailchainTestService = TestBed.get(MailchainTestService);
-    protocolsService = TestBed.get(ProtocolsService);
-    localStorageServerService = TestBed.get(LocalStorageServerService);
-    nameserviceService = TestBed.get(NameserviceService);
-    mailchainService = TestBed.get(MailchainService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    localStorageServerService = TestBed.inject(LocalStorageServerService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    mailchainService = TestBed.inject(MailchainService);
 
   }));
 

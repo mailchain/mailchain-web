@@ -25,8 +25,8 @@ describe('PublicKeyService', () => {
       imports: [HttpClientTestingModule]
     });
 
-    publicKeyService = TestBed.get(PublicKeyService);
-    mailchainTestService = TestBed.get(MailchainTestService);
+    publicKeyService = TestBed.inject(PublicKeyService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
   });
 
   it('should be created', () => {

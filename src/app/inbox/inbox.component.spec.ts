@@ -84,14 +84,14 @@ describe('InboxComponent', () => {
 
     })
       .compileComponents();
-    mailchainTestService = TestBed.get(MailchainTestService);
-    protocolsService = TestBed.get(ProtocolsService);
-    localStorageAccountService = TestBed.get(LocalStorageAccountService);
-    localStorageServerService = TestBed.get(LocalStorageServerService);
-    localStorageNameserviceService = TestBed.get(LocalStorageNameserviceService);
-    mailchainService = TestBed.get(MailchainService);
-    nameserviceService = TestBed.get(NameserviceService);
-    addressesService = TestBed.get(AddressesService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    localStorageAccountService = TestBed.inject(LocalStorageAccountService);
+    localStorageServerService = TestBed.inject(LocalStorageServerService);
+    localStorageNameserviceService = TestBed.inject(LocalStorageNameserviceService);
+    mailchainService = TestBed.inject(MailchainService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    addressesService = TestBed.inject(AddressesService);
 
   }));
 

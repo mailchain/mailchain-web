@@ -24,7 +24,7 @@ describe('LocalStorageAccountService', () => {
       imports: [HttpClientModule]
     });
 
-    localStorageAccountService = TestBed.get(LocalStorageAccountService);
+    localStorageAccountService = TestBed.inject(LocalStorageAccountService);
   });
 
   afterEach(() => {

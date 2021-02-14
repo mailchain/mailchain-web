@@ -19,9 +19,9 @@ MailchainTestService
       ]
     });
 
-    mailchainTestService = TestBed.get(MailchainTestService);
-    localStorageNameserviceService = TestBed.get(LocalStorageNameserviceService);
-    protocolsService = TestBed.get(ProtocolsService)
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    localStorageNameserviceService = TestBed.inject(LocalStorageNameserviceService);
+    protocolsService = TestBed.inject(ProtocolsService)
 
   });
 
@@ -29,7 +29,7 @@ MailchainTestService
     sessionStorage.clear();
   })
   it('should be created', () => {
-    const service: LocalStorageNameserviceService = TestBed.get(LocalStorageNameserviceService);
+    const service: LocalStorageNameserviceService = TestBed.inject(LocalStorageNameserviceService);
     expect(service).toBeTruthy();
   });
 

@@ -12,7 +12,7 @@ describe('HttpHelpersService', () => {
       providers: [HttpHelpersService]
     });
 
-    httpHelpersService = TestBed.get(HttpHelpersService);
+    httpHelpersService = TestBed.inject(HttpHelpersService);
   });
 
 

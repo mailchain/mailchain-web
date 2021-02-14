@@ -20,8 +20,8 @@ describe('LocalStorageProtocolService', () => {
       imports: [HttpClientModule]
     });
 
-    localStorageProtocolService = TestBed.get(LocalStorageProtocolService);
-    mailchainTestService = TestBed.get(MailchainTestService);
+    localStorageProtocolService = TestBed.inject(LocalStorageProtocolService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
   });
 

@@ -184,11 +184,11 @@ describe('InboxMessagesComponent', () => {
       ]
     })
       .compileComponents();
-    mailchainService = TestBed.get(MailchainService);
-    protocolsService = TestBed.get(ProtocolsService);
-    readService = TestBed.get(ReadService);
-    nameserviceService = TestBed.get(NameserviceService);
-    mailchainTestService = TestBed.get(MailchainTestService);
+    mailchainService = TestBed.inject(MailchainService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    readService = TestBed.inject(ReadService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
   }));
 

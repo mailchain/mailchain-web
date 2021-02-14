@@ -47,8 +47,8 @@ describe('MailchainService', () => {
       ]
     });
 
-    mailchainService = TestBed.get(MailchainService);
-    protocolsService = TestBed.get(ProtocolsService);
+    mailchainService = TestBed.inject(MailchainService);
+    protocolsService = TestBed.inject(ProtocolsService);
   });
 
   it('should be created', () => {

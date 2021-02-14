@@ -38,7 +38,7 @@ describe('SearchPipe', () => {
       imports: []
     });
 
-    pipe = TestBed.get(SearchPipe);
+    pipe = TestBed.inject(SearchPipe);
   });
 
   it('should create an instance', () => {
