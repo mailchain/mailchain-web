@@ -18,14 +18,14 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     coverageReporter: {
-      dir: 'coverage/',
+      dir: require('path').join(__dirname, '../coverage/mailchain-web'),
       reporters: [
         { type: 'html', subdir: 'report-html' },
-        { type: 'lcov', subdir: 'report-lcov' }
+        { type: 'lcov', subdir: 'report-lcov' },
+        { type: 'text-summary' }
       ],
       fixWebpackSourcePaths: true
     },
-    // reporters: ['progress', 'kjhtml', 'coverage-istanbul', 'coveralls', 'spec'],
     reporters: ['progress', 'kjhtml', 'coverage', 'coveralls'],
     port: 9876,
     colors: true,
