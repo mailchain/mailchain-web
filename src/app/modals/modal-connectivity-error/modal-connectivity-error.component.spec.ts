@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ModalConnectivityErrorComponent } from './modal-connectivity-error.component';
 import { ModalModule, BsModalRef } from 'ngx-bootstrap/modal';
@@ -7,7 +7,7 @@ describe('ModalConnectivityErrorComponent', () => {
   let component: ModalConnectivityErrorComponent;
   let fixture: ComponentFixture<ModalConnectivityErrorComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         ModalConnectivityErrorComponent

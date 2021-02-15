@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { convertToParamMap, ParamMap } from '@angular/router';
 
@@ -55,7 +55,7 @@ describe('InboxComponent', () => {
   const currentPort = '8080';
   const addresses = [currentAccount, currentAccount2];
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
 
     TestBed.configureTestingModule({
       declarations: [
@@ -84,14 +84,14 @@ describe('InboxComponent', () => {
 
     })
       .compileComponents();
-    mailchainTestService = TestBed.get(MailchainTestService);
-    protocolsService = TestBed.get(ProtocolsService);
-    localStorageAccountService = TestBed.get(LocalStorageAccountService);
-    localStorageServerService = TestBed.get(LocalStorageServerService);
-    localStorageNameserviceService = TestBed.get(LocalStorageNameserviceService);
-    mailchainService = TestBed.get(MailchainService);
-    nameserviceService = TestBed.get(NameserviceService);
-    addressesService = TestBed.get(AddressesService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    localStorageAccountService = TestBed.inject(LocalStorageAccountService);
+    localStorageServerService = TestBed.inject(LocalStorageServerService);
+    localStorageNameserviceService = TestBed.inject(LocalStorageNameserviceService);
+    mailchainService = TestBed.inject(MailchainService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    addressesService = TestBed.inject(AddressesService);
 
   }));
 

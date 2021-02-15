@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { InboxMessagesComponent } from './inbox-messages.component';
 import { FormsModule } from '@angular/forms';
@@ -165,7 +165,7 @@ describe('InboxMessagesComponent', () => {
   ]
 
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         InboxMessagesComponent
@@ -184,11 +184,11 @@ describe('InboxMessagesComponent', () => {
       ]
     })
       .compileComponents();
-    mailchainService = TestBed.get(MailchainService);
-    protocolsService = TestBed.get(ProtocolsService);
-    readService = TestBed.get(ReadService);
-    nameserviceService = TestBed.get(NameserviceService);
-    mailchainTestService = TestBed.get(MailchainTestService);
+    mailchainService = TestBed.inject(MailchainService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    readService = TestBed.inject(ReadService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
   }));
 

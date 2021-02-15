@@ -20,11 +20,11 @@ describe('VersionService', () => {
       ],
       imports: [HttpClientTestingModule]
     });
-    mailchainTestService = TestBed.get(MailchainTestService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
-    versionService = TestBed.get(VersionService);
-    mailchainTestService = TestBed.get(MailchainTestService);
-    httpTestingController = TestBed.get(HttpTestingController);
+    versionService = TestBed.inject(VersionService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    httpTestingController = TestBed.inject(HttpTestingController);
 
     serverResponse = mailchainTestService.versionServerResponse()
   });
@@ -34,13 +34,13 @@ describe('VersionService', () => {
   });
 
   it('should be created', () => {
-    const service: VersionService = TestBed.get(VersionService);
+    const service: VersionService = TestBed.inject(VersionService);
     expect(service).toBeTruthy();
   });
 
   describe('initUrl', () => {
     it('should initialize the url', () => {
-      let versionService: VersionService = TestBed.get(VersionService)
+      let versionService: VersionService = TestBed.inject(VersionService)
       expect(versionService['url']).toEqual('http://127.0.0.1:8080/api')
     });
   });

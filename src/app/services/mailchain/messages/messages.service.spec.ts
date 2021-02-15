@@ -21,8 +21,8 @@ describe('MessagesService', () => {
       imports: [HttpClientTestingModule]
     });
 
-    messagesService = TestBed.get(MessagesService);
-    mailchainTestService = TestBed.get(MailchainTestService);
+    messagesService = TestBed.inject(MessagesService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
   });
 
@@ -32,7 +32,7 @@ describe('MessagesService', () => {
 
   describe('initServerDetails', () => {
     it('should initialize the url', () => {
-      let messagesService: MessagesService = TestBed.get(MessagesService)
+      let messagesService: MessagesService = TestBed.inject(MessagesService)
       expect(messagesService['url']).toEqual('http://127.0.0.1:8080/api')
     });
   });

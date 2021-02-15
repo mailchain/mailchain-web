@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LocalStorageAccountService } from './local-storage-account.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -24,7 +24,7 @@ describe('LocalStorageAccountService', () => {
       imports: [HttpClientModule]
     });
 
-    localStorageAccountService = TestBed.get(LocalStorageAccountService);
+    localStorageAccountService = TestBed.inject(LocalStorageAccountService);
   });
 
   afterEach(() => {

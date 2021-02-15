@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { InboxMessageComponent } from './inbox-message.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -31,7 +31,7 @@ describe('InboxMessageComponent', () => {
   const address2 = "0x0000000000000000000000000000000000000002"
   const mcAddress2 = "<" + address2 + "@ropsten.ethereum>"
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         InboxMessageComponent,
@@ -51,11 +51,11 @@ describe('InboxMessageComponent', () => {
       ]
     })
       .compileComponents();
-    mailchainTestService = TestBed.get(MailchainTestService);
-    protocolsService = TestBed.get(ProtocolsService);
-    localStorageServerService = TestBed.get(LocalStorageServerService);
-    nameserviceService = TestBed.get(NameserviceService);
-    mailchainService = TestBed.get(MailchainService);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    protocolsService = TestBed.inject(ProtocolsService);
+    localStorageServerService = TestBed.inject(LocalStorageServerService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    mailchainService = TestBed.inject(MailchainService);
 
   }));
 

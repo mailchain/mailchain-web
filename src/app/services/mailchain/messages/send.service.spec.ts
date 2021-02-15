@@ -24,9 +24,9 @@ describe('SendService', () => {
       imports: [HttpClientTestingModule]
     });
 
-    sendService = TestBed.get(SendService);
-    httpTestingController = TestBed.get(HttpTestingController);
-    mailchainTestService = TestBed.get(MailchainTestService);
+    sendService = TestBed.inject(SendService);
+    httpTestingController = TestBed.inject(HttpTestingController);
+    mailchainTestService = TestBed.inject(MailchainTestService);
 
   });
 

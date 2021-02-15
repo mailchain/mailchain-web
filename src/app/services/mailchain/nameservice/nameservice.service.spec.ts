@@ -36,10 +36,10 @@ describe('NameserviceService', () => {
       imports: [HttpClientTestingModule]
     });
 
-    nameserviceService = TestBed.get(NameserviceService);
-    httpTestingController = TestBed.get(HttpTestingController);
-    mailchainTestService = TestBed.get(MailchainTestService);
-    protocolsService = TestBed.get(ProtocolsService);
+    nameserviceService = TestBed.inject(NameserviceService);
+    httpTestingController = TestBed.inject(HttpTestingController);
+    mailchainTestService = TestBed.inject(MailchainTestService);
+    protocolsService = TestBed.inject(ProtocolsService);
 
 
   });

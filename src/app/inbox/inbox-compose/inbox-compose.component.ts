@@ -54,7 +54,7 @@ export class InboxComposeComponent implements OnInit {
   public envelopeType
   public envelopeDescription
 
-  @ViewChild('editor', { static: false }) public editorComponent: CKEditorComponent;
+  @ViewChild('editor') public editorComponent: CKEditorComponent;
 
   constructor(
     private mailchainService: MailchainService,
