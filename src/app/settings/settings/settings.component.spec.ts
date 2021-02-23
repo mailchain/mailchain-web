@@ -259,7 +259,7 @@ describe('SettingsComponent', () => {
   describe('setNetworkList', () => {
     it('should get the available protocols', async () => {
       await component.setNetworkList()
-      expect(component.protocols).toEqual(['ethereum', 'substrate'])
+      expect(component.protocols).toEqual(['algorand', 'ethereum', 'substrate'])
     });
 
     it('should set network list for the currentProtocol', async () => {
