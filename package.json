@@ -32,7 +32,7 @@
     "rxjs": "~6.6.3",
     "semver": "^6.3.0",
     "tslib": "^2.0.0",
-    "webpack": "^4.46.0",
+    "webpack": "^5.0.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
