@@ -195,10 +195,11 @@ export class InboxComposeComponent implements OnInit {
       mergeMap(searchVal => {
         return this.resolveAddress(searchVal)
       })
-    ).subscribe((res) => {
+    ).subscribe((res) => {      
       res.subscribe(val => {
         let address = val['body']['address']
         if (
+          (this.currentProtocol == 'algorand' && this.mailchainService.validateAlgorandAddress(address)) ||
           (this.currentProtocol == 'ethereum' && this.mailchainService.validateEthAddress(address)) ||
           (this.currentProtocol == 'substrate' && this.mailchainService.validateSubstrateAddress(address))
         ) {
@@ -260,6 +261,20 @@ export class InboxComposeComponent implements OnInit {
           { body: { address: '' } }
         )
       }
+    } else if (this.currentProtocol == 'algorand') {
+      if (this.mailchainService.validateAlgorandAddress(value)) {
+        returnObs = of(
+          { body: { address: value } }
+        )
+      } else {
+        returnObs = of(
+          { body: { address: '' } }
+        )
+      }
+    } else { // return the address anyway
+      returnObs = of(
+        { body: { address: value } }
+      )
     };
 
     return returnObs

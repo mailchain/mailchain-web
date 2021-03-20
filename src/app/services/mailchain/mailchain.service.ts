@@ -265,6 +265,16 @@ export class MailchainService {
     // return regex.test(value)
     return true
   }
+  
+  /**
+   * tests the value matches the Algorand Address Regex
+   * @param value the address value to test, e.g. G0GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI
+   * expects Base32 address, 58 chars in length
+   */
+  public validateAlgorandAddress(value: any) {
+    let regex = new RegExp('^[A-Z2-7]{58}$');
+    return regex.test(value)
+  }
 
   /**
    * getContentTypeForView: determines how the application should handle various content types in messages.

@@ -514,6 +514,40 @@ describe('MailchainService', () => {
     })
   });
 
+  describe('validateAlgorandAddress', () => {
+    it('should return true for valid algorand addresses', () => {
+      let exps = [
+        "G2GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI",
+        "UWH6MCLMZSD2UYWTJVKFKX6JMTX2TGXAOYPUBNHFFQFBBVJULXJXZJNPBU"
+      ]
+      exps.forEach(exp => {
+        expect(mailchainService.validateAlgorandAddress(exp)).toBe(true)
+      })
+    })
+    it('should return false if the algorand address includes an invalid character', () => {
+      let addr = "G0GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI" // 0 or zero
+        expect(mailchainService.validateAlgorandAddress(addr)).toBe(false)
+    })
+    it('should return false if the algorand address includes an invalid character', () => {
+      let addr = "G0GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI" // 0 or zero
+      expect(mailchainService.validateAlgorandAddress(addr)).toBe(false)
+    })
+    it('should return false if the algorand address includes a lower case character', () => {
+      let addr = "G2gTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI" // lower g
+      expect(mailchainService.validateAlgorandAddress(addr)).toBe(false)
+    })
+    it('should return false if the algorand address is not the right length', () => {
+      let exps = [
+        "G2GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7C",     //-2
+        "G2GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CS",    //-1
+        "G2GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSIG",  // +1
+      ]
+      exps.forEach(exp => {        
+        expect(mailchainService.validateAlgorandAddress(exp)).toBe(false)
+      })
+    })
+  });
+
   describe('getContentTypeForView', () => {
     it('should return html for contentType: text/html', () => {
       expect(mailchainService.getContentTypeForView("text/html; charset=\"UTF-8\"")).toBe("html")
