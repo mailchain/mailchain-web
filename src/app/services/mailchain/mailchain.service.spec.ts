@@ -81,12 +81,52 @@ describe('MailchainService', () => {
   describe('parseAddressFromMailchain', () => {
     it('should return an Ethereum account address from a Mailchain address', () => {
       const mailchainAddress = "<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
-      const ethereumAccountAddress = "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+      const address = "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
       let protocol = 'ethereum'
-
+      
       let response = mailchainService.parseAddressFromMailchain(protocol, mailchainAddress)
+      
+      expect(response).toEqual(address)
+    });
+    it('should return a substrate account address from a Mailchain address', () => {
+      const mailchainAddress = "<5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2@edgeware-mainnet.substrate>"
+      const address = "5CaLgJUDdDRxw6KQXJY2f5hFkMEEGHvtUPQYDWdSbku42Dv2"
+      let protocol = 'substrate'
+      
+      let response = mailchainService.parseAddressFromMailchain(protocol, mailchainAddress)
+      
+      expect(response).toEqual(address)
+    });
+    it('should return an Algorand account address from a Mailchain address', () => {
+      const mailchainAddress = "<G2GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI@testnet.algorand>"
+      const address = "G2GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI"
+      let protocol = 'algorand'
+      
+      let response = mailchainService.parseAddressFromMailchain(protocol, mailchainAddress)
+      
+      expect(response).toEqual(address)
+    });
+    
+    describe('handling RFC2822 headers in the address fields', () => {
+      it('should handle address when only the address it present', () => {
+        let mailchainAddress = "<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
+        let ethereumAccountAddress = "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+        let protocol = 'ethereum'
 
-      expect(response).toEqual(ethereumAccountAddress)
+        let response = mailchainService.parseAddressFromMailchain(protocol, mailchainAddress)
+
+        expect(response).toEqual(ethereumAccountAddress)
+      });
+
+      it('should handle address when a name is present', () => {
+        let mailchainAddress = "Sofia <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
+        let ethereumAccountAddress = "0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6"
+        let protocol = 'ethereum'
+
+        let response = mailchainService.parseAddressFromMailchain(protocol, mailchainAddress)
+
+        expect(response).toEqual(ethereumAccountAddress)
+      });
     });
 
     it('should return a blank string if the Mailchain address is invalid', () => {
@@ -97,6 +137,25 @@ describe('MailchainService', () => {
 
       expect(response).toEqual('')
     });
+  })
+  
+  describe('parseAddressFieldOnly', () => {
+    it('should return the address when only the address it present', () => {
+      let headerField = "<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
+        let address = "<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
+        
+        let response = mailchainService.parseAddressFieldOnly(headerField)
+
+        expect(response).toEqual(address)
+    })
+    it('should return an address when a name is present', () => {
+      let headerField = "Sofia <0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
+        let address = "<0xd5ab4ce3605cd590db609b6b5c8901fdb2ef7fe6@ropsten.ethereum>"
+        
+        let response = mailchainService.parseAddressFieldOnly(headerField)
+
+        expect(response).toEqual(address)
+    })
   })
 
   describe('dedupeMessagesByIds', () => {

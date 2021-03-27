@@ -73,15 +73,28 @@ export class MailchainService {
   }
 
   /**
+   * parseAddressFieldOnly removes other header fields to return only the addressable portion of the field
+   * @param address 
+   * @returns addr: '<33456789@network.protocol>'
+   */
+   parseAddressFieldOnly(address: string) {
+    var arr = address.match(/<.*[@].*>/);
+    return(arr[0]);
+   }
+
+  /**
    * Parses an address in Mailchain form and returns public address
    * @param address an address in format '<0x00000000000000000@network.chainname>'
    */
   parseAddressFromMailchain(protocol: string, address: string) {
+    let addr = this.parseAddressFieldOnly(address)
     switch (protocol) {
       case 'ethereum':
-        return this.parseAddressZeroXHexFromMailchain(address)
+        return this.parseAddressZeroXHexFromMailchain(addr)
       case 'substrate':
-        return this.parseAddressBase58FromMailchain(address)
+        return this.parseAddressBase58FromMailchain(addr)
+      case 'algorand':
+        return this.parseAddressBase32FromMailchain(addr)
       default:
         return ''
     }
@@ -102,10 +115,23 @@ export class MailchainService {
 
   /**
    * Parses an address in Mailchain form and returns public address
-   * @param address an address in format '<0x00000000000000000@network.chainname>'
+   * @param address an address in format '<00000000000000000@network.chainname>'
    */
   parseAddressBase58FromMailchain(address: string) {
     var regexMailAddr = new RegExp('<[0-9a-zA-Z]+[@].+>$');
+    if (regexMailAddr.test(address)) {
+      return address.substr(1, address.indexOf('@') - 1);
+    } else {
+      return ''
+    }
+  }
+
+  /**
+   * Parses an address in Mailchain form and returns public address
+   * @param address an address in format '<00000000000000000@network.chainname>'
+   */
+   parseAddressBase32FromMailchain(address: string) {
+    var regexMailAddr = new RegExp('<[A-Z2-7]+[@].+>$');
     if (regexMailAddr.test(address)) {
       return address.substr(1, address.indexOf('@') - 1);
     } else {
