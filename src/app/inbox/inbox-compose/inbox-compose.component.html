@@ -7,6 +7,14 @@
 <div>
   <h4>Compose <span class="fw-semi-bold">New</span></h4>
   <div class="compose-form" id="compose-view">
+    <!-- Show Balance Label -->
+    <div class="form-group row mb-0">
+      <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0 ">
+        <b class="float-right col-sm-3 col-md-3 col-lg-3">Balance: <label for="balance"> 1.018 Eth </label></b>
+      </div>
+    </div>
+    <!-- ./Show Balance Label -->
+
 
     <form #mailForm="ngForm" id="message-compose" (ngSubmit)="onSubmit()" autocomplete="off">
 
