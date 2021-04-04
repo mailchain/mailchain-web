@@ -53,6 +53,8 @@ export class InboxComposeComponent implements OnInit {
   public contentTypeSwitchLabel: string = ""
   public envelopeType
   public envelopeDescription
+  public balance
+
 
   @ViewChild('editor') public editorComponent: CKEditorComponent;
 
