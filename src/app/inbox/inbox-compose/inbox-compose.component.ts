@@ -54,7 +54,7 @@ export class InboxComposeComponent implements OnInit {
   public envelopeType
   public envelopeDescription
   public balance
-
+  public fees
 
   @ViewChild('editor') public editorComponent: CKEditorComponent;
 
