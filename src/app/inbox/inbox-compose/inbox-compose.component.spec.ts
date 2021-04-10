@@ -47,8 +47,8 @@ describe('InboxComposeComponent', () => {
 
   const currentAccount = '0x92d8f10248c6a3953cc3692a894655ad05d61efb';
   const currentAccount2 = '0x0123456789012345678901234567890123456789';
-  const balance = '1.018 Eth';
-  const fees = '0.00008 Eth';
+  const balance = '';
+  const fees = '';
   const ensName = 'mailchain.eth';
   const addresses = [currentAccount, currentAccount2];
 
@@ -139,7 +139,6 @@ describe('InboxComposeComponent', () => {
 
         describe('handling the balance', () => {
           it('should initialize a balance in the "balance" field using an available balance', async () => {
-            component.balance = balance
             await component.ngOnInit();
             fixture.detectChanges()
             expect(component.balance).toBe(balance)
@@ -148,7 +147,6 @@ describe('InboxComposeComponent', () => {
 
         describe('handling the fees', () => {
           it('should initialize a Fees in the "fees" field', async () => {
-            component.fees = fees
             await component.ngOnInit();
             fixture.detectChanges()
             expect(component.fees).toBe(fees)

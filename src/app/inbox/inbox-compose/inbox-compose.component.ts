@@ -7,6 +7,8 @@ import { PublicKeyService } from 'src/app/services/mailchain/public-key/public-k
 import { AddressesService } from 'src/app/services/mailchain/addresses/addresses.service';
 import { EnvelopeService } from 'src/app/services/mailchain/envelope/envelope.service';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
+import { BalanceService } from 'src/app/services/mailchain/addresses/balance.service';
+
 import { Subject, of, Observable } from 'rxjs';
 
 import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
@@ -34,6 +36,8 @@ export class InboxComposeComponent implements OnInit {
   public model = new Mail()
   public fromAddresses: Array<any> = []
   public envelopes: Array<any> = []
+  public balance: string = ""
+  public fees: string = ""
 
   public sendMessagesDisabled: boolean = false;
   private subscription
@@ -53,8 +57,6 @@ export class InboxComposeComponent implements OnInit {
   public contentTypeSwitchLabel: string = ""
   public envelopeType
   public envelopeDescription
-  public balance
-  public fees
 
   @ViewChild('editor') public editorComponent: CKEditorComponent;
 
@@ -65,6 +67,7 @@ export class InboxComposeComponent implements OnInit {
     private addressesService: AddressesService,
     private envelopeService: EnvelopeService,
     private nameserviceService: NameserviceService,
+    private balanceService: BalanceService,
     private modalService: BsModalService,
   ) {
     this.initMail()
@@ -78,6 +81,7 @@ export class InboxComposeComponent implements OnInit {
     this.model.from = ""
     this.model.subject = ""
     this.model.body = ""
+
   }
 
   /**
@@ -119,6 +123,24 @@ export class InboxComposeComponent implements OnInit {
   private async setEnvelopeList() {
     this.envelopes = await this.envelopeService.getEnvelope();
   }
+
+
+  /**
+   * Sets the balance
+   */
+
+  public async updateBalanceforaddress(address) {
+    this.balance = await this.balanceService.getBalance(address, this.currentProtocol, this.currentNetwork);
+
+  }
+
+  private async setBalance() {
+    if (this.currentAccount != undefined) {
+
+      this.balance = await this.balanceService.getBalance(this.currentAccount, this.currentProtocol, this.currentNetwork);
+    }
+  }
+
 
   /**
    * Returns the identicon for the an address
@@ -330,6 +352,7 @@ export class InboxComposeComponent implements OnInit {
     this.setFirstEnvelopeInEnvelopeDropdown()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
+    await this.setBalance()
   }
 
   /**

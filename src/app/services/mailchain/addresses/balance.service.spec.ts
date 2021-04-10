@@ -55,7 +55,7 @@ describe('BalanceService', () => {
 
     describe('getBalance', () => {
         beforeEach(() => {
-            let obs: Observable<any> = of(mailchainTestService.senderAddressesEthereumObserveResponse())
+            let obs: Observable<any> = of(mailchainTestService.senderBalanceEthereumObserveResponse())
             spyOn(balanceService, 'getBalance').and.returnValue(
                 obs.toPromise()
             )
@@ -65,7 +65,7 @@ describe('BalanceService', () => {
             await balanceService.getBalance(currentAccount, 'ethereum', 'mainnet').then(res => {
                 result = res
             });
-            expect(result).toEqual(mailchainTestService.senderAddressesEthereumObserveResponse())
+            expect(result).toEqual(mailchainTestService.senderBalanceEthereumObserveResponse())
             expect(balanceService.getBalance).toHaveBeenCalled()
         });
     })
