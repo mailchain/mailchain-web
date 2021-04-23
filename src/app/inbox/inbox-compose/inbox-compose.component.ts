@@ -53,6 +53,7 @@ export class InboxComposeComponent implements OnInit {
   public contentTypeSwitchLabel: string = ""
   public envelopeType
   public envelopeDescription
+  public isReply: boolean = false
 
   @ViewChild('editor') public editorComponent: CKEditorComponent;
 
@@ -74,6 +75,7 @@ export class InboxComposeComponent implements OnInit {
   private initMail() {
     this.model.to = ""
     this.model.from = ""
+    this.model.replyTo = ""
     this.model.subject = ""
     this.model.body = ""
   }
@@ -225,6 +227,13 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
+   * resetModelReplyToField resets the reply-to field in the model
+   */
+  public resetModelReplyToField() {
+    this.model.replyTo = ""
+  }
+
+  /**
    * Determines whether an address is:
    * * a public address,
    * * an ENS address
@@ -313,7 +322,7 @@ export class InboxComposeComponent implements OnInit {
    */
   private setCurrentAccountInFromAddressDropdown() {
     if (this.currentAccount != undefined) {
-      this.model.from = this.currentAccount
+      this.model.replyTo = this.model.from = this.currentAccount
     }
   }
 
@@ -341,9 +350,10 @@ export class InboxComposeComponent implements OnInit {
     this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
     this.setFirstEnvelopeInEnvelopeDropdown()
+    this.evaluateReply()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
-  }
+  } 
 
   /**
    * Handles content-type in the view
@@ -442,21 +452,33 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
+   * Evalute if the message is a reply or a new message
+   */
+  evaluateReply() {
+    this.isReply = (this.currentMessage && this.currentMessage.headers) ? true : false
+  }
+
+  /**
    * Set the fields for a reply
    */
   private handleReplyFields() {
     if (this.currentMessage && this.currentMessage.headers) {
-
+      
       if (this.inputContentType == "html") {
         this.handleReplyInHtml()
       } else if (this.inputContentType == "plaintext") {
         this.handleReplyInPlaintext()
       }
+      
+      if (this.currentMessage.headers["reply-to"] && this.currentMessage.headers["reply-to"].length) {
+        this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["reply-to"])
+      } else {
+        this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["from"])
+      }
 
-      this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["from"])
       this.messageToField = this.currentRecipientValue = this.model.to
-
-      this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["to"])
+      
+      this.model.replyTo = this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers.to)
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
     }
   }
