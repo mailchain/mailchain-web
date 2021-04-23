@@ -114,6 +114,7 @@ export class MailchainTestService {
       "headers": {
         "date": "2019-06-07T14:53:36Z",
         "from": "\u003c0x0123456789012345678901234567890123456789@testnet.ethereum\u003e",
+        "reply-to": "\u003c0xABCDEABCDE012345678901234567890123456789@testnet.ethereum\u003e",
         "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
         "message-id": "0020c",
         "content-type": "text/plain; charset=\"UTF-8\""
