@@ -459,6 +459,18 @@ describe('InboxComposeComponent', () => {
     describe('in substrate', () => {
       it('should return an observable with body containing address hash if given an address-like value', async () => {
         component.currentProtocol = 'substrate'
+        let currentAccount = "15GJj1Lg6kL5bsN49fV1gcd4ezvU6wafsfZn3oZ7bf7EeM5U"
+        let obs = await component.resolveAddress(currentAccount)
+        let expectedBody = { address: currentAccount }
+        obs.subscribe(res => {
+          expect(res['body']).toEqual(expectedBody)
+        })
+      })
+    })
+    describe('in algorand', () => {
+      it('should return an observable with body containing address hash if given an address-like value', async () => {
+        component.currentProtocol = 'algorand'
+        let currentAccount = "UWH6MCLMZSD2UYWTJVKFKX6JMTX2TGXAOYPUBNHFFQFBBVJULXJXZJNPBU"
         let obs = await component.resolveAddress(currentAccount)
         let expectedBody = { address: currentAccount }
         obs.subscribe(res => {

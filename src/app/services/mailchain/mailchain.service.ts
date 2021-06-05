@@ -290,13 +290,13 @@ export class MailchainService {
 
   /**
    * tests the value matches the Substrate Address Regex
-   * @param value the address value to test, e.g. TODOTODO
-   * expects TODODO
+   * @param value the address value to test, e.g. 15GJj1Lg6kL5bsN49fV1gcd4ezvU6wafsfZn3oZ7bf7EeM5U
+   * expects Base58 address, length is variable because Polkadot length can change,
+   * although is commonly 47 or 48 chars in length, and expected to be > 20 chars
    */
   public validateSubstrateAddress(value: any) {
-    // let regex = new RegExp('0x[0-9a-fA-F]{40}$');
-    // return regex.test(value)
-    return true
+    let regex = new RegExp('^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{20,}$');
+    return regex.test(value)
   }
   
   /**
