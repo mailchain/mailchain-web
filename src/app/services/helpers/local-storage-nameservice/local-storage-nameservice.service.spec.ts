@@ -103,6 +103,14 @@ MailchainTestService
 
       expect(await localStorageNameserviceService.getCurrentNameserviceDomainEnabled()).toEqual("false");
     });
+    it('should look up the current nameservice domain enabled status from protocols endpoint if not defined, expecting `false` (algorand)', async () => {
+      sessionStorage.removeItem('currentNameserviceDomainEnabled');
+      sessionStorage.setItem('currentProtocol', 'algorand')
+      sessionStorage.setItem('currentNetwork', 'mainnet')
+      spyOn(protocolsService, 'getProtocols').and.returnValue(mailchainTestService.protocolsServerResponse())
+
+      expect(await localStorageNameserviceService.getCurrentNameserviceDomainEnabled()).toEqual("false");
+    });
 
   });
   describe('setCurrentNameserviceDomainEnabled', () => {

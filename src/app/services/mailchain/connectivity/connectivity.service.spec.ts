@@ -210,7 +210,7 @@ describe('ConnectivityService', () => {
       spyOn(protocolsService, 'getProtocolsResponse').and.returnValue(expectedProtocolsObs);
 
       await connectivityService.getApiProtocolsAvailability().then(res => {
-        expect(res["protocols"]).toEqual(2)
+        expect(res["protocols"]).toEqual(3)
         expect(res["status"]).toEqual("ok")
         expect(res["code"]).toEqual(200)
         expect(res["message"]).toEqual("OK")

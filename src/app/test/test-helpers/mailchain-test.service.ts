@@ -114,6 +114,7 @@ export class MailchainTestService {
       "headers": {
         "date": "2019-06-07T14:53:36Z",
         "from": "\u003c0x0123456789012345678901234567890123456789@testnet.ethereum\u003e",
+        "reply-to": "\u003c0xABCDEABCDE012345678901234567890123456789@testnet.ethereum\u003e",
         "to": "\u003c0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum\u003e",
         "message-id": "0020c",
         "content-type": "text/plain; charset=\"UTF-8\""
@@ -313,7 +314,7 @@ export class MailchainTestService {
   }
 
   public protocolsServerResponse(): any {
-    return {"protocols":[{"name":"ethereum","networks":[{"name":"goerli","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"kovan","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"mainnet","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"rinkeby","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"ropsten","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true}]},{"name":"substrate","networks":[{"name":"edgeware-beresheet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-local","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-mainnet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false}]}]}
+    return {"protocols":[{"name":"algorand","networks":[{"name":"betanet","id":"","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"mainnet","id":"","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"testnet","id":"","nameservice-domain-enabled":false,"nameservice-address-enabled":false}]},{"name":"ethereum","networks":[{"name":"goerli","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"kovan","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"mainnet","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"rinkeby","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"ropsten","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true}]},{"name":"substrate","networks":[{"name":"edgeware-beresheet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-local","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-mainnet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false}]}]}
   }
 
 

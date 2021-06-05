@@ -35,7 +35,7 @@ describe('LocalStorageProtocolService', () => {
 
   describe('getCurrentProtocol', () => {
     it('should retrieve the currentProtocol when NO value is stored', async () => {
-      expect(await localStorageProtocolService.getCurrentProtocol()).toEqual(mailchainTestService.protocolsServerResponse()["protocols"][0]["name"])
+      expect(await localStorageProtocolService.getCurrentProtocol()).toEqual(mailchainTestService.protocolsServerResponse()["protocols"][1]["name"])
     });
 
     it('should retrieve the currentProtocol when a value is stored', async () => {
