@@ -28,11 +28,12 @@ export class MessagesService {
   /**
  * Gets decrypted messages from api
  */
-  getMessages(rcptAddress: string, protocol: string, network: string): Observable<any> {
+  getMessages(rcptAddress: string, protocol: string, network: string, fetch: boolean = true): Observable<any> {
     var httpOptions = this.httpHelpersService.getHttpOptions([
       ['protocol', protocol],
       ['network', network],
       ['address', rcptAddress],
+      ['fetch', fetch],
     ])
 
     return this.http.get(
