@@ -66,13 +66,21 @@ describe('ProtocolsService', () => {
   describe('getProtocolsByName', () => {
     it('should get the protocols by name', async () => {
       spyOn(protocolsService,'getProtocols').and.returnValue(of(mailchainTestService.protocolsServerResponse()))
-      expect(await protocolsService.getProtocolsByName()).toEqual(["ethereum","substrate"])
+      expect(await protocolsService.getProtocolsByName()).toEqual(['algorand', 'ethereum','substrate'])
     });
   });
 
   describe('getProtocolNetworkAttributes', () => {
     it('should return the attributes for a protocol network', async () => {
       spyOn(protocolsService,'getProtocols').and.returnValue(of(mailchainTestService.protocolsServerResponse()))
+      expect(await protocolsService.getProtocolNetworkAttributes("algorand","mainnet")).toEqual(
+        {
+          "name": "mainnet",
+          "id": "",
+          "nameservice-domain-enabled": false,
+          "nameservice-address-enabled": false
+        }
+      )
       expect(await protocolsService.getProtocolNetworkAttributes("ethereum","mainnet")).toEqual(
         {
           "name": "mainnet",

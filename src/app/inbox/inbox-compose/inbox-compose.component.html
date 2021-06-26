@@ -35,7 +35,8 @@
                 <img class="rounded-circle addressIcon" src={{generateIdenticon(model.from)}} alt="">
               </div>
             </div>
-            <select class="form-control" [(ngModel)]="model.from" name="from"
+
+            <select class="form-control" [(ngModel)]="model.from" name="from" [disabled]="isReply"
               (change)="updateBalanceforaddress($event.target.value)">
               <option *ngFor="let address of fromAddresses; let i = index" [value]="address">
                 {{address}}
@@ -59,7 +60,7 @@
                 </div>
               </div>
               <input type="text" id="messageTo" placeholder="To" name="to" class="form-control "
-                placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField"
+                placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField" [disabled]="isReply"
                 (keyup)="recipientResolve($event)">
             </div>
           </div>

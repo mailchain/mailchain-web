@@ -245,6 +245,7 @@ describe('InboxMessagesComponent', () => {
       let protocol = 'ethereum'
       let addrIcon1 = mailchainService.generateIdenticon(protocol, address1);
       let addrIcon2 = mailchainService.generateIdenticon(protocol, address2);
+      let defaultIcon = mailchainService.mailchainLogoIdenticonImage()
       messages.forEach(msg => {
         component.addMailToInboxMessages(msg)
       })
@@ -257,7 +258,7 @@ describe('InboxMessagesComponent', () => {
         } else if ([3,4,5].includes(index)) {
           icon = addrIcon1
         } else if ([8,9].includes(index)) {
-          icon = '' // SUBSTRATE not supported
+          icon = defaultIcon // SUBSTRATE not supported
         };
 
         expect(val['senderIdenticon']).toEqual(icon);

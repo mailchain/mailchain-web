@@ -57,6 +57,7 @@ export class InboxComposeComponent implements OnInit {
   public contentTypeSwitchLabel: string = ""
   public envelopeType
   public envelopeDescription
+  public isReply: boolean = false
 
   @ViewChild('editor') public editorComponent: CKEditorComponent;
 
@@ -79,6 +80,7 @@ export class InboxComposeComponent implements OnInit {
   private initMail() {
     this.model.to = ""
     this.model.from = ""
+    this.model.replyTo = ""
     this.model.subject = ""
     this.model.body = ""
 
@@ -223,6 +225,7 @@ export class InboxComposeComponent implements OnInit {
       res.subscribe(val => {
         let address = val['body']['address']
         if (
+          (this.currentProtocol == 'algorand' && this.mailchainService.validateAlgorandAddress(address)) ||
           (this.currentProtocol == 'ethereum' && this.mailchainService.validateEthAddress(address)) ||
           (this.currentProtocol == 'substrate' && this.mailchainService.validateSubstrateAddress(address))
         ) {
@@ -245,6 +248,13 @@ export class InboxComposeComponent implements OnInit {
    */
   public resetModelToField() {
     this.model.to = ""
+  }
+
+  /**
+   * resetModelReplyToField resets the reply-to field in the model
+   */
+  public resetModelReplyToField() {
+    this.model.replyTo = ""
   }
 
   /**
@@ -284,6 +294,20 @@ export class InboxComposeComponent implements OnInit {
           { body: { address: '' } }
         )
       }
+    } else if (this.currentProtocol == 'algorand') {
+      if (this.mailchainService.validateAlgorandAddress(value)) {
+        returnObs = of(
+          { body: { address: value } }
+        )
+      } else {
+        returnObs = of(
+          { body: { address: '' } }
+        )
+      }
+    } else { // return the address anyway
+      returnObs = of(
+        { body: { address: value } }
+      )
     };
 
     return returnObs
@@ -322,7 +346,7 @@ export class InboxComposeComponent implements OnInit {
    */
   private setCurrentAccountInFromAddressDropdown() {
     if (this.currentAccount != undefined) {
-      this.model.from = this.currentAccount
+      this.model.replyTo = this.model.from = this.currentAccount
     }
   }
 
@@ -350,6 +374,7 @@ export class InboxComposeComponent implements OnInit {
     this.initEditor()
     this.setCurrentAccountInFromAddressDropdown()
     this.setFirstEnvelopeInEnvelopeDropdown()
+    this.evaluateReply()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
     await this.setBalance()
@@ -452,6 +477,13 @@ export class InboxComposeComponent implements OnInit {
   }
 
   /**
+   * Evalute if the message is a reply or a new message
+   */
+  evaluateReply() {
+    this.isReply = (this.currentMessage && this.currentMessage.headers) ? true : false
+  }
+
+  /**
    * Set the fields for a reply
    */
   private handleReplyFields() {
@@ -463,10 +495,15 @@ export class InboxComposeComponent implements OnInit {
         this.handleReplyInPlaintext()
       }
 
-      this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["from"])
+      if (this.currentMessage.headers["reply-to"] && this.currentMessage.headers["reply-to"].length) {
+        this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["reply-to"])
+      } else {
+        this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["from"])
+      }
+
       this.messageToField = this.currentRecipientValue = this.model.to
 
-      this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["to"])
+      this.model.replyTo = this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers.to)
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
     }
   }
