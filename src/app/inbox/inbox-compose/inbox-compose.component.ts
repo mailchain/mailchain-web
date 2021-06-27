@@ -7,6 +7,8 @@ import { PublicKeyService } from 'src/app/services/mailchain/public-key/public-k
 import { AddressesService } from 'src/app/services/mailchain/addresses/addresses.service';
 import { EnvelopeService } from 'src/app/services/mailchain/envelope/envelope.service';
 import { NameserviceService } from 'src/app/services/mailchain/nameservice/nameservice.service';
+import { BalanceService } from 'src/app/services/mailchain/addresses/balance.service';
+
 import { Subject, of, Observable } from 'rxjs';
 
 import { debounceTime, distinctUntilChanged, mergeMap } from "rxjs/operators";
@@ -15,6 +17,7 @@ import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivi
 
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
+import { getCurrencySymbol } from '@angular/common';
 
 @Component({
   selector: '[inbox-compose]',
@@ -34,6 +37,9 @@ export class InboxComposeComponent implements OnInit {
   public model = new Mail()
   public fromAddresses: Array<any> = []
   public envelopes: Array<any> = []
+  public balance: number = 0
+  public currency: string = ""
+  public fees: string = ""
 
   public sendMessagesDisabled: boolean = false;
   private subscription
@@ -64,6 +70,7 @@ export class InboxComposeComponent implements OnInit {
     private addressesService: AddressesService,
     private envelopeService: EnvelopeService,
     private nameserviceService: NameserviceService,
+    private balanceService: BalanceService,
     private modalService: BsModalService,
   ) {
     this.initMail()
@@ -78,6 +85,7 @@ export class InboxComposeComponent implements OnInit {
     this.model.replyTo = ""
     this.model.subject = ""
     this.model.body = ""
+
   }
 
   /**
@@ -119,6 +127,32 @@ export class InboxComposeComponent implements OnInit {
   private async setEnvelopeList() {
     this.envelopes = await this.envelopeService.getEnvelope();
   }
+
+
+  /**
+   * updates the balance whenver address dropdwon value is changed
+   */
+
+  public async updateBalanceForAddress(address) {
+    this.balance = await this.balanceService.getBalance(address, this.currentProtocol, this.currentNetwork);
+
+  }
+
+  private async setBalance() {
+    if (this.currentAccount != undefined) {
+
+      this.balance = await this.balanceService.getBalance(this.currentAccount, this.currentProtocol, this.currentNetwork);
+    }
+  }
+
+  /**
+   * Sets the currency
+   */
+  private async setCurrency() {
+    this.currency = await this.mailchainService.getCurrencyForProtocol(this.currentProtocol)
+  }
+
+
 
   /**
    * Returns the identicon for the an address
@@ -197,7 +231,7 @@ export class InboxComposeComponent implements OnInit {
       mergeMap(searchVal => {
         return this.resolveAddress(searchVal)
       })
-    ).subscribe((res) => {      
+    ).subscribe((res) => {
       res.subscribe(val => {
         let address = val['body']['address']
         if (
@@ -353,7 +387,9 @@ export class InboxComposeComponent implements OnInit {
     this.evaluateReply()
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
-  } 
+    await this.setBalance()
+    await this.setCurrency()
+  }
 
   /**
    * Handles content-type in the view
@@ -463,13 +499,13 @@ export class InboxComposeComponent implements OnInit {
    */
   private handleReplyFields() {
     if (this.currentMessage && this.currentMessage.headers) {
-      
+
       if (this.inputContentType == "html") {
         this.handleReplyInHtml()
       } else if (this.inputContentType == "plaintext") {
         this.handleReplyInPlaintext()
       }
-      
+
       if (this.currentMessage.headers["reply-to"] && this.currentMessage.headers["reply-to"].length) {
         this.model.to = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers["reply-to"])
       } else {
@@ -477,7 +513,7 @@ export class InboxComposeComponent implements OnInit {
       }
 
       this.messageToField = this.currentRecipientValue = this.model.to
-      
+
       this.model.replyTo = this.model.from = this.mailchainService.parseAddressFromMailchain(this.currentProtocol, this.currentMessage.headers.to)
       this.model.subject = this.addRePrefixToSubject(this.currentMessage["subject"])
     }

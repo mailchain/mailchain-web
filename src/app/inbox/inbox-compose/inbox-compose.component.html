@@ -7,6 +7,22 @@
 <div>
   <h4>Compose <span class="fw-semi-bold">New</span></h4>
   <div class="compose-form" id="compose-view">
+    <!-- Show Balance Label -->
+    <div class="form-group row mb-0">
+      <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0 ">
+        <b class="float-right ">Balance: <label for="balance">
+            {{balance}} {{currency}}</label></b>
+      </div>
+    </div>
+    <br />
+    <!-- ./Show Balance Label -->
+    <!-- Show Fees Label -->
+    <!-- <div class="form-group row mb-0">
+      <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0">
+        <b class="float-right col-sm-3 col-md-3 col-lg-3">Fees:<label for="fee"> 0.00008 Eth </label></b>
+      </div>
+    </div> -->
+    <!-- ./Show Fees Label -->
 
     <form #mailForm="ngForm" id="message-compose" (ngSubmit)="onSubmit()" autocomplete="off">
 
@@ -20,8 +36,9 @@
                 <img class="rounded-circle addressIcon" src={{generateIdenticon(model.from)}} alt="">
               </div>
             </div>
-            
-            <select class="form-control" [(ngModel)]="model.from" name="from" [disabled]="isReply">
+
+            <select class="form-control" [(ngModel)]="model.from" name="from" [disabled]="isReply"
+              (change)="updateBalanceForAddress($event.target.value)">
               <option *ngFor="let address of fromAddresses; let i = index" [value]="address">
                 {{address}}
               </option>
@@ -44,8 +61,7 @@
                 </div>
               </div>
               <input type="text" id="messageTo" placeholder="To" name="to" class="form-control "
-              placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField"
-              [disabled]="isReply"
+                placeholder="e.g. 0x0000...0000 or mailchain.eth" [(ngModel)]="messageToField" [disabled]="isReply"
                 (keyup)="recipientResolve($event)">
             </div>
           </div>

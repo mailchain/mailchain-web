@@ -140,6 +140,63 @@ export class MailchainTestService {
     }
   }
 
+  public senderBalanceEthereumObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses/0x92d8f10248c6a3953cc3692a894655ad05d61efb/balance?protocol=ethereum&network=mainnet",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "balance": 2183846200000000000,
+        "unit": "wei"
+      }
+
+    }
+  }
+
+  public senderBalanceSubstrateObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses/0x92d8f10248c6a3953cc3692a894655ad05d61efb/balance?protocol=substrate&network=Edgeware-mainnet",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "balance": 2183846200000000000,
+        "unit": "wei"
+      }
+
+    }
+  }
+
+  public senderBalanceAlgorandObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses/0x92d8f10248c6a3953cc3692a894655ad05d61efb/balance?protocol=algorand&network=mainnet",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "balance": 218,
+        "unit": "ALGO"
+      }
+
+    }
+  }
+
   public senderAddressEthereumServerResponse(): any {
     return {
       "addresses": [
@@ -314,7 +371,7 @@ export class MailchainTestService {
   }
 
   public protocolsServerResponse(): any {
-    return {"protocols":[{"name":"algorand","networks":[{"name":"betanet","id":"","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"mainnet","id":"","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"testnet","id":"","nameservice-domain-enabled":false,"nameservice-address-enabled":false}]},{"name":"ethereum","networks":[{"name":"goerli","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"kovan","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"mainnet","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"rinkeby","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true},{"name":"ropsten","id":"","nameservice-domain-enabled":true,"nameservice-address-enabled":true}]},{"name":"substrate","networks":[{"name":"edgeware-beresheet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-local","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false},{"name":"edgeware-mainnet","id":"7","nameservice-domain-enabled":false,"nameservice-address-enabled":false}]}]}
+    return { "protocols": [{ "name": "algorand", "networks": [{ "name": "betanet", "id": "", "nameservice-domain-enabled": false, "nameservice-address-enabled": false }, { "name": "mainnet", "id": "", "nameservice-domain-enabled": false, "nameservice-address-enabled": false }, { "name": "testnet", "id": "", "nameservice-domain-enabled": false, "nameservice-address-enabled": false }] }, { "name": "ethereum", "networks": [{ "name": "goerli", "id": "", "nameservice-domain-enabled": true, "nameservice-address-enabled": true }, { "name": "kovan", "id": "", "nameservice-domain-enabled": true, "nameservice-address-enabled": true }, { "name": "mainnet", "id": "", "nameservice-domain-enabled": true, "nameservice-address-enabled": true }, { "name": "rinkeby", "id": "", "nameservice-domain-enabled": true, "nameservice-address-enabled": true }, { "name": "ropsten", "id": "", "nameservice-domain-enabled": true, "nameservice-address-enabled": true }] }, { "name": "substrate", "networks": [{ "name": "edgeware-beresheet", "id": "7", "nameservice-domain-enabled": false, "nameservice-address-enabled": false }, { "name": "edgeware-local", "id": "7", "nameservice-domain-enabled": false, "nameservice-address-enabled": false }, { "name": "edgeware-mainnet", "id": "7", "nameservice-domain-enabled": false, "nameservice-address-enabled": false }] }] }
   }
 
 
