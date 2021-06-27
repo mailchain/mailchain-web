@@ -342,7 +342,7 @@ export class MailchainService {
       case 'algorand':
         return "ALGO"
       default:
-        return ''
+        return ""
     }
   }
 
