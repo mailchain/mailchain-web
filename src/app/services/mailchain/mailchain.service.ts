@@ -77,10 +77,10 @@ export class MailchainService {
    * @param address 
    * @returns addr: '<33456789@network.protocol>'
    */
-   parseAddressFieldOnly(address: string) {
+  parseAddressFieldOnly(address: string) {
     var arr = address.match(/<.*[@].*>/);
-    return(arr[0]);
-   }
+    return (arr[0]);
+  }
 
   /**
    * Parses an address in Mailchain form and returns public address
@@ -130,7 +130,7 @@ export class MailchainService {
    * Parses an address in Mailchain form and returns public address
    * @param address an address in format '<00000000000000000@network.chainname>'
    */
-   parseAddressBase32FromMailchain(address: string) {
+  parseAddressBase32FromMailchain(address: string) {
     var regexMailAddr = new RegExp('<[A-Z2-7]+[@].+>$');
     if (regexMailAddr.test(address)) {
       return address.substr(1, address.indexOf('@') - 1);
@@ -298,7 +298,7 @@ export class MailchainService {
     let regex = new RegExp('^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{20,}$');
     return regex.test(value)
   }
-  
+
   /**
    * tests the value matches the Algorand Address Regex
    * @param value the address value to test, e.g. G0GTKMEEEEZH5TFUDYZMWWGXZLO3Z7765CR52ZXBBNCCMNPDYM3ZII7CSI
@@ -328,5 +328,22 @@ export class MailchainService {
     }
   }
 
+  /**
+   * Returns the currency on basis of the selected protocol in Mailchain 
+   * @param protocol the cureent protocol
+   */
+  getCurrencyForProtocol(protocol: string) {
 
-} 
+    switch (protocol) {
+      case 'ethereum':
+        return "ETH"
+      case 'substrate':
+        return ""
+      case 'algorand':
+        return "ALGO"
+      default:
+        return ''
+    }
+  }
+
+}

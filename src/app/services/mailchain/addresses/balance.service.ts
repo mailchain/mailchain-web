@@ -29,6 +29,8 @@ export class BalanceService {
      * Get and return the balance for the address
      */
     async getBalance(address, protocol, network) {
+        let balance = 0;
+
         var httpOptions = this.httpHelpersService.getHttpOptions([
             ['protocol', protocol],
             ['network', network]
@@ -37,27 +39,21 @@ export class BalanceService {
         let res = await this.http.get(
             this.url + `/addresses/` + address + `/balance`,
             httpOptions
-            // TODO handle failure
         ).toPromise();
 
-        return res["body"]["balance"]
+        switch (protocol) {
+            case 'ethereum':
+                balance = ((res["body"]["balance"]) / (10 ** 18))
+                break;
+            default:
+                balance = res["body"]["balance"]
+                break;
+        }
+
+        return balance;
     }
 
-    /**
-     * handleAddressFormatting
-     * @param address 
-     * @param encoding "hex/0x-prefix" | "base58/plain"
-     */
-    handleAddressFormatting(address, encoding) {
-        switch (encoding) {
-            case 'hex/0x-prefix':
-                return address.toLowerCase()
-            case 'base58/plain':
-                return address
-            default:
-                return address
-        }
-    }
+
 
 
     /**

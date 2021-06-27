@@ -159,6 +159,43 @@ export class MailchainTestService {
     }
   }
 
+  public senderBalanceSubstrateObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses/0x92d8f10248c6a3953cc3692a894655ad05d61efb/balance?protocol=substrate&network=Edgeware-mainnet",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "balance": 2183846200000000000,
+        "unit": "wei"
+      }
+
+    }
+  }
+
+  public senderBalanceAlgorandObserveResponse() {
+    return {
+      "headers": {
+        "normalizedNames": {},
+        "lazyUpdate": null
+      },
+      "status": 200,
+      "statusText": "OK",
+      "url": "http://127.0.0.1:8080/api/addresses/0x92d8f10248c6a3953cc3692a894655ad05d61efb/balance?protocol=algorand&network=mainnet",
+      "ok": true,
+      "type": 4,
+      "body": {
+        "balance": 218,
+        "unit": "ALGO"
+      }
+
+    }
+  }
 
   public senderAddressEthereumServerResponse(): any {
     return {

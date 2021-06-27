@@ -10,10 +10,11 @@
     <!-- Show Balance Label -->
     <div class="form-group row mb-0">
       <div class="col-md-10 col-lg-9 offset-md-2 offset-sm-0 ">
-        <b class="float-right col-sm-3 col-md-3 col-lg-3">Balance: <label for="balance">
-            {{balance}} Eth </label></b>
+        <b class="float-right ">Balance: <label for="balance">
+            {{balance}} {{currency}}</label></b>
       </div>
     </div>
+    <br />
     <!-- ./Show Balance Label -->
     <!-- Show Fees Label -->
     <!-- <div class="form-group row mb-0">
@@ -37,7 +38,7 @@
             </div>
 
             <select class="form-control" [(ngModel)]="model.from" name="from" [disabled]="isReply"
-              (change)="updateBalanceforaddress($event.target.value)">
+              (change)="updateBalanceForAddress($event.target.value)">
               <option *ngFor="let address of fromAddresses; let i = index" [value]="address">
                 {{address}}
               </option>

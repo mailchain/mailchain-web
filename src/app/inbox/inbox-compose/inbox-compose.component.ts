@@ -17,6 +17,7 @@ import { ModalConnectivityErrorComponent } from 'src/app/modals/modal-connectivi
 
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
+import { getCurrencySymbol } from '@angular/common';
 
 @Component({
   selector: '[inbox-compose]',
@@ -36,7 +37,8 @@ export class InboxComposeComponent implements OnInit {
   public model = new Mail()
   public fromAddresses: Array<any> = []
   public envelopes: Array<any> = []
-  public balance: string = ""
+  public balance: number = 0
+  public currency: string = ""
   public fees: string = ""
 
   public sendMessagesDisabled: boolean = false;
@@ -128,10 +130,10 @@ export class InboxComposeComponent implements OnInit {
 
 
   /**
-   * Sets the balance
+   * updates the balance whenver address dropdwon value is changed
    */
 
-  public async updateBalanceforaddress(address) {
+  public async updateBalanceForAddress(address) {
     this.balance = await this.balanceService.getBalance(address, this.currentProtocol, this.currentNetwork);
 
   }
@@ -142,6 +144,14 @@ export class InboxComposeComponent implements OnInit {
       this.balance = await this.balanceService.getBalance(this.currentAccount, this.currentProtocol, this.currentNetwork);
     }
   }
+
+  /**
+   * Sets the currency
+   */
+  private async setCurrency() {
+    this.currency = await this.mailchainService.getCurrencyForProtocol(this.currentProtocol)
+  }
+
 
 
   /**
@@ -378,6 +388,7 @@ export class InboxComposeComponent implements OnInit {
     this.handleReplyFields()
     this.setupRecipientAddressLookupSubscription()
     await this.setBalance()
+    await this.setCurrency()
   }
 
   /**

@@ -25,6 +25,8 @@ import { EnvelopeServiceStub } from 'src/app/services/mailchain/envelope/envelop
 import { PublicKeyServiceStub } from 'src/app/services/mailchain/public-key/public-key.service.stub';
 import { SendServiceStub } from 'src/app/services/mailchain/messages/send.service.stub';
 import { NameserviceServiceStub } from 'src/app/services/mailchain/nameservice/nameservice.service.stub';
+import { BalanceService } from 'src/app/services/mailchain/addresses/balance.service';
+import { BalanceServiceStub } from 'src/app/services/mailchain/addresses/balance.service.stub';
 
 
 // Workaround:
@@ -47,7 +49,7 @@ describe('InboxComposeComponent', () => {
 
   const currentAccount = '0x92d8f10248c6a3953cc3692a894655ad05d61efb';
   const currentAccount2 = '0x0123456789012345678901234567890123456789';
-  const balance = '';
+  const balance = 0;
   const fees = '';
   const ensName = 'mailchain.eth';
   const addresses = [currentAccount, currentAccount2];
@@ -67,6 +69,7 @@ describe('InboxComposeComponent', () => {
         { provide: PublicKeyService, useClass: PublicKeyServiceStub },
         { provide: SendService, useClass: SendServiceStub },
         { provide: NameserviceService, useClass: NameserviceServiceStub },
+        { provide: BalanceService, useClass: BalanceServiceStub },
 
       ],
       imports: [
@@ -197,7 +200,7 @@ describe('InboxComposeComponent', () => {
           // TODO
           await component.ngOnInit();
           // expect(component.mailForm).toBe('0x0123456789abcdef0123456789abcdef01234567')
-        }) 
+        })
 
         it('should initialize the model "replyTo" field with the sender address', async () => {
           await component.ngOnInit();
@@ -207,27 +210,27 @@ describe('InboxComposeComponent', () => {
         it('should initialize the model "to" field with the reply-to recipient address', async () => {
           await component.ngOnInit();
           expect(component.model.to).toBe('0xABCDEABCDE012345678901234567890123456789')
-        })        
-        
+        })
+
         xit('should disable the model "to" field on page so the address cannot be changed', async () => {
           // TODO
           await component.ngOnInit();
           // expect(component.mailForm).toBe('0xABCDEABCDE012345678901234567890123456789')
-        })        
+        })
 
         it('should initialize the model "subject" field with the original message field + a prefix of "Re: "', async () => {
           await component.ngOnInit();
           expect(component.model.subject).toBe('Re: Mailchain Test!')
         })
 
-        
+
         it('should not re-initialize the model "subject" field with an extra prefix of "Re: "', async () => {
           component.currentMessage.subject = "Re: Mailchain Test!"
           await component.ngOnInit();
           expect(component.model.subject).toBe('Re: Mailchain Test!')
         })
-        
-        
+
+
 
 
 
@@ -253,7 +256,7 @@ describe('InboxComposeComponent', () => {
           component.currentMessage.headers["content-type"] = "text/html; charset=\"UTF-8\""
         })
 
-      
+
         it('should initialize the model "body" field with the original message field and wrap the body in a `blockquote`', async () => {
           let response = "<p></p><p><strong>From:</strong> <0x0123456789012345678901234567890123456789@testnet.ethereum><br><strong>Reply To:</strong> <0xABCDEABCDE012345678901234567890123456789@testnet.ethereum><br><strong>Date:</strong> 2019-06-07T14:53:36Z<br><strong>To:</strong> <0x0123456789abcdef0123456789abcdef01234567@testnet.ethereum><br><strong>Subject:</strong> Mailchain Test!</p><blockquote>A body<br></blockquote>"
 
@@ -406,7 +409,7 @@ describe('InboxComposeComponent', () => {
       component.evaluateReply()
       expect(component.isReply).toBeTrue()
     })
-    
+
   })
 
   describe('setupRecipientAddressLookupSubscription', () => {
