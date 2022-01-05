@@ -67,7 +67,7 @@ The basic message flow is as follows:
 2. Then to use the mailchain web interface, either:
 
     * download the files in `/dist`, or
-    * go to https://mailchain.xyz/inbox
+    * go to https://inbox.mailchain.xyz
 
 ## Address Formats
 
