@@ -1,4 +1,9 @@
-# MailchainWeb Readme
+# Mailchain Web LEGACY - [DEPRECATED]
+
+In the early days of Mailchain’s development we used the code in this legacy branch to send messages on chain. It’s kept for reference and educational purposes only. This branch is **NOT being worked on, will NOT have security fixes applied, and should NOT be used.** You can find the latest developments on the [main branch](https://github.com/mailchain/mailchain).
+
+-----------
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmailchain%2Fmailchain-web?ref=badge_shield)
 [![Build Status](https://travis-ci.com/mailchain/mailchain-web.svg?branch=master)](https://travis-ci.com/mailchain/mailchain-web)
 [![Coverage Status](https://coveralls.io/repos/github/mailchain/mailchain-web/badge.svg?branch=master)](https://coveralls.io/github/mailchain/mailchain-web?branch=master)
