@@ -10,7 +10,7 @@ It’s just like email but we’re convinced it’s better, it’s built for web
 - Is multi-protocol
 - And... much more 🚀
 
-**## Find out more**
+## Find out more
 
 We'd :heart: for you to join our growing community on [Discord](https://discord.gg/b258tj8z). It's the best place to reach us and get involved.
 
